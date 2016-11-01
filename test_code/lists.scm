@@ -13,7 +13,6 @@
         (else (format #f "~a" x))))
 
 ; Loop over 46 monitor points, at 4 z stations to create monitor points
-
 (define points (list '( 0.485030 . -0.052780)
                      '( 0.444990 . -0.052780)
                      '( 0.404950 . -0.052780)
@@ -60,7 +59,6 @@
                      '( 0.404950 .  0.027300)
                      '( 0.444990 .  0.027300)
                      '( 0.485030 .  0.027300)))
-
 
 
 (define x_lo  1)
