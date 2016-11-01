@@ -9,10 +9,10 @@
 
 ; Perform Newton's iteration to find the sqrt of a number. Takes the initial
 ; <guess> and the number of which you are taking a square root <x>
-(define (sqrt-iter guess_old guess x)
-  (if (good-enough? guess_old guess) ; insert "new-if" in place of "if" here
+(define (sqrt-iter-rel guess_old guess x)
+  (if (good-enough-rel? guess_old guess) ; insert "new-if" in place of "if" here
     guess
-    (sqrt-iter guess (improve guess x) x)))
+    (sqrt-iter-rel guess (improve guess x) x)))
 
 ; Improve the guess by averaging it with the quotient of the radicand and the
 ; old guess
@@ -25,14 +25,14 @@
 
 ; What is good enough? Check for relative difference between guesses
 (define tol 0.001)
-(define (good-enough? guess_old guess)
+(define (good-enough-rel? guess_old guess)
   (< (/ (abs (- guess_old guess)) 
         guess_old) 
      tol))
 
 ; start routine
 (define (mysqrt_rel x)
-  (sqrt-iter 0.1 1.0 x))
+  (sqrt-iter-rel 0.1 1.0 x))
 
 ; Ex 1.7 with relative error
 ; If tol = 0.001:
