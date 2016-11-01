@@ -44,18 +44,18 @@
   (f-iter 2 1 0 n))
 
 (define (f-iter fn1 fn2 fn3 count)
-  (if (< count 3)
-    fn1
-    (f-iter (+ fn1 (* 2 fn2) (* 3 fn3))
-            fn1
-            fn2
-            (- count 1))))
+  (cond ((< count 2) count)
+        ((< count 3) fn1)
+        (else (f-iter (+ fn1 (* 2 fn2) (* 3 fn3))
+                      fn1
+                      fn2
+                      (- count 1)))))
 
 ; Test code
-; (f -1) ; Value: -1
-; (f  0) ; Value:  0
-; (f  1) ; Value:  1
-; (f  2) ; Value:  2
+(f -1) ; Value: -1
+(f  0) ; Value:  0
+(f  1) ; Value:  1
+(f  2) ; Value:  2
 (f  3) ; Value:  4
 (f  4) ; Value: 11
 (f  5) ; Value: 25
