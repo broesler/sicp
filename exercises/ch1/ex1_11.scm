@@ -30,19 +30,12 @@
 (f 20) ; Value: 10771211 --> quite slow. 
 ; (f 30) impossibly slow.
 
-; Iterative process -- keep a running sum as we count up from 0 to n
-; Equivalent to:
-; int f[n];
-; for (int i = 0; i < n; i++) {
-;     if (i < 3) {
-;         f[i] = i;
-;     } else {
-;         f[i] = f[i-1] + 2*f[i-2] + 3*f[i-3];
-;     }
-; }
+; Iterative process -- keep a running sum as we count down from n to 0
+; Initialize with proper values
 (define (f n)
   (f-iter 2 1 0 n))
 
+; iterate! need 1 special case, and 1 stopping case
 (define (f-iter fn1 fn2 fn3 count)
   (cond ((< count 2) count)
         ((< count 3) fn1)
