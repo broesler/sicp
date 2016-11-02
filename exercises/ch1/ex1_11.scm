@@ -12,22 +12,22 @@
 ;          \ f(n-1) + 2f(n-2) + 3f(n-3), if n >= 3
 
 ; Recursive process -- straightforward from function definition
-(define (f n)
+(define (fr n)
   (if (< n 3)
     n
-    (+ (f (- n 1))
-       (* 2 (f (- n 2)))
-       (* 3 (f (- n 3))))))
+    (+ (fr (- n 1))
+       (* 2 (fr (- n 2)))
+       (* 3 (fr (- n 3))))))
 
 ; Test code
-(f -1) ; Value: -1
-(f  0) ; Value:  0
-(f  1) ; Value:  1
-(f  2) ; Value:  2
-(f  3) ; Value:  4
-(f  4) ; Value: 11
-(f  5) ; Value: 25
-(f 20) ; Value: 10771211 --> quite slow. 
+; (f -1) ; Value: -1
+; (f  0) ; Value:  0
+; (f  1) ; Value:  1
+; (f  2) ; Value:  2
+; (f  3) ; Value:  4
+; (f  4) ; Value: 11
+; (f  5) ; Value: 25
+; (f 20) ; Value: 10771211 --> quite slow. 
 ; (f 30) impossibly slow.
 
 ; Iterative process -- keep a running sum as we count down from n to 0
@@ -45,15 +45,15 @@
                       (- count 1)))))
 
 ; Test code
-(f -1) ; Value: -1
-(f  0) ; Value:  0
-(f  1) ; Value:  1
-(f  2) ; Value:  2
-(f  3) ; Value:  4
-(f  4) ; Value: 11
-(f  5) ; Value: 25
-(f 20) ; Value: 10771211 --> fast!
-(f 30) ; Value: 61354575194 --> computable!
+; (f -1) ; Value: -1
+; (f  0) ; Value:  0
+; (f  1) ; Value:  1
+; (f  2) ; Value:  2
+; (f  3) ; Value:  4
+; (f  4) ; Value: 11
+; (f  5) ; Value: 25
+; (f 20) ; Value: 10771211 --> fast!
+; (f 30) ; Value: 61354575194 --> computable!
 
 ;;==============================================================================
 ;;==============================================================================
