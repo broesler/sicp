@@ -41,14 +41,14 @@
 (define (even? n)
   (= (remainder n 2) 0))
 
-; Θ(log n)
-(define (expmod base exp m)
-  (cond ((= exp 0) 1)
-        ((even? exp)
-         (remainder (square (expmod base (/ exp 2) m))
+; Θ(log n) form of calculating b^n mod m
+(define (expmod b n m)
+  (cond ((= n 0) 1)
+        ((even? n)
+         (remainder (square (expmod b (/ n 2) m))
                     m))
         (else
-          (remainder (* base (expmod base (- exp 1) m))
+          (remainder (* b (expmod b (- n 1) m))
                      m))))
 
 ; Fermat test (for a single integer)
@@ -96,10 +96,10 @@
             (search-for-primes (+ start 2) n-primes)))))   ; keep searching...
 
 ; Test code: Use LARGE numbers to get bigger times
-(search-for-primes 1000000000    3) ; 1e09 (need to write out 0's for integer)
-(search-for-primes 10000000000   3) ; 1e10
-(search-for-primes 100000000000  3) ; 1e11
-(search-for-primes 1000000000000 3) ; 1e12
+; (search-for-primes 1000000000    3) ; 1e09 (need to write out 0's for integer)
+; (search-for-primes 10000000000   3) ; 1e10
+; (search-for-primes 100000000000  3) ; 1e11
+; (search-for-primes 1000000000000 3) ; 1e12
 
 ;------------------------------------------------------------------------------- 
 ;        Output
