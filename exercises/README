@@ -1,0 +1,40 @@
+#==============================================================================
+#     File: README
+#  Created: 11/03/2016, 16:48
+#   Author: Bernie Roesler
+#
+#  Description: README for all SCIP exercise files
+#
+#==============================================================================
+
+## SUMMARY OF FILES
+├── README
+└── ch1
+    ├── ex1_03-06.scm
+    ├── ex1_07.scm
+    ├── ex1_08.scm
+    ├── ex1_10.scm
+    ├── ex1_11.scm
+    ├── ex1_12.scm
+    ├── ex1_16.scm
+    ├── ex1_17-18.scm
+    ├── ex1_19.scm
+    ├── ex1_22.scm
+    └── fibonacci.m
+
+#------------------------------------------------------------------------------- 
+#       DESCRIPTIONS 
+#-------------------------------------------------------------------------------
+ch1/ex1_03-06.scm   Responses to exercises in Ch 1.1 of SCIP
+ch1/ex1_07.scm      Exercise 1.7, relative error in square roots
+ch1/ex1_08.scm      exercise 1.8, cube roots
+ch1/ex1_10.scm      Ackermann's function
+ch1/ex1_11.scm      Recursion and iteration
+ch1/ex1_12.scm      Pascal's triangle
+ch1/ex1_16.scm      Exponentiation
+ch1/ex1_17-18.scm   Repeated-addition multiplication
+ch1/ex1_19.scm      Fibonacci numbers in log time
+ch1/ex1_22.scm      Primality testing with (runtime) 
+ch1/fibonacci.m     Plot fibonacci numbers vs phi^n/sqrt(5) to show convergence.
+#==============================================================================
+#==============================================================================
