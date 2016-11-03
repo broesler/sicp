@@ -3,13 +3,15 @@
 %  Created: 11/01/2016, 21:24
 %   Author: Bernie Roesler
 %
-%  Description: 
+%  Description: Plot fibonacci numbers vs phi^n/sqrt(5) to show convergence.
 %
 %===============================================================================
 clear; clearfigs();
 
-n = 10;
-n_vec = 0:n';
+plot_flag = 1;
+
+n = 50;
+n_vec = (0:n)';
 
 % initialize 
 fib   = zeros(n,1);
@@ -27,13 +29,23 @@ for i = 1:8
     fprintf('%8.4f %8.4f\n', fib(i), phi_n(i));
 end
 
-% plots
-figure(1);
-hf = semilogy(n_vec, fib,'-x');
-hold on; grid on; box on;
-hp = semilogy(n_vec, phi_n,'-o');
+% calculate error
+err = abs(phi_n - fib) ./ fib;
 
-ll = legend([hf hp], 'F(n) = F(n-1) + F(n-2)', '$\frac{\phi^n}{\sqrt{5}}$');
-set(ll, 'Location', 'SouthEast', 'interpreter', 'latex');
+% plots
+if plot_flag == 1
+    figure(1);
+    hf = semilogy(n_vec, fib,'-x');
+    hold on; grid on; box on;
+    hp = semilogy(n_vec, phi_n,'-o');
+
+    ll = legend([hf hp], 'F(n) = F(n-1) + F(n-2)', '$\frac{\phi^n}{\sqrt{5}}$');
+    set(ll, 'Location', 'SouthEast', 'interpreter', 'latex');
+
+    figure(2)
+    he = semilogy(n_vec, err, '-x');
+    hold on; grid on; box on;
+    title('Relative Error')
+end
 %===============================================================================
 %===============================================================================
