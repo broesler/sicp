@@ -3,7 +3,7 @@
 ;;  Created: 11/03/2016, 18:57
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: Test if Carmichael numbers pass the Fermat test 
+;;  Description: Test if Carmichael numbers pass the Fermat test
 ;;
 ;;==============================================================================
 (load "ex1_22-24.scm") ; get necessary functions

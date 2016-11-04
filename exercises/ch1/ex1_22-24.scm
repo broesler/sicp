@@ -1,5 +1,5 @@
 ;;==============================================================================
-;;     File: ex1_22.scm
+;;     File: ex1_22-24.scm
 ;;  Created: 11/03/2016, 16:47
 ;;   Author: Bernie Roesler
 ;;
@@ -95,7 +95,7 @@
             (search-for-primes (+ start 2) (- n-primes 1)) ; found one!
             (search-for-primes (+ start 2) n-primes)))))   ; keep searching...
 
-; Test code: Use LARGE numbers to get bigger times
+; Test code: Use LARGE numbers to get bigger times (keep commented out)
 ; (search-for-primes 1000000000    3) ; 1e09 (need to write out 0's for integer)
 ; (search-for-primes 10000000000   3) ; 1e10
 ; (search-for-primes 100000000000  3) ; 1e11
