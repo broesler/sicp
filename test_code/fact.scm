@@ -12,10 +12,7 @@
   (lambda (n)
     (if (= n 0)
       1
-      (* n (! (- n 1)))
-      )
-    )
-  )
+      (* n (! (- n 1))))))
 
 ; Linear iterative definition (product from 1 to n)
 (define (factorial n)
