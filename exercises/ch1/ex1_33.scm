@@ -11,11 +11,16 @@
 (define (filtered-accumulate predicate? combiner null-value term a next b)
   (if (> a b)
     null-value
-    ; let formulation:
-    (let ((x (if (predicate? a) (term a) null-value)))
-      (combiner x
-                (filtered-accumulate 
-                  predicate? combiner null-value term (next a) next b)))))
+    ;; (let) formulation:
+    ; (let ((x (if (predicate? a) (term a) null-value)))
+    ;   (combiner x
+    ;             (filtered-accumulate 
+    ;               predicate? combiner null-value term (next a) next b)))))
+    ;; equivalent (lambda) formulation:
+    ((lambda (x) (combiner x
+                           (filtered-accumulate 
+                             predicate? combiner null-value term (next a) next b)))
+     (if (predicate? a) (term a) null-value))))
 
 ; Sum of the squares of the prime numbers in the interval a to b
 (define (sum-sq-prime a b)
