@@ -20,9 +20,12 @@
 (define (expmod b n m)
   (cond ((= n 0) 1)
         ((even? n)
-         (let ((x (expmod b (/ n 2) m)))
+         (let ((x (expmod b (/ n 2) m)))                  ; with let
          (if (non-trivial-sqrt? x m) 0 (remainder (square x) m))))
-         ; (remainder (square (expmod b (/ n 2) m))
+         ; (if (non-trivial-sqrt? (expmod b (/ n 2) m) m)     ; without let
+         ;   0 
+         ;   (remainder (square (expmod b (/ n 2) m)) m)))
+         ; (remainder (square (expmod b (/ n 2) m))         ; original code:
          ;            m))
         (else
           (remainder (* b (expmod b (- n 1) m))
@@ -46,15 +49,15 @@
         ((miller-rabin-test n) (fast-prime-mr? n (- times 1)))
         (else false)))
 
-; Test code (only run ONCE to increase chance of Carmichael numbers failing)
+; Test code (only run twice to increase chance of Carmichael numbers failing)
 (display "Fermat test:\n")
-(display (map (lambda (x) (fast-prime? x 1)) 
+(display (map (lambda (x) (fast-prime? x 2)) 
      '(7 8 13 17 561 1105 1729 2465 2821 6601)))
 (newline)
 
 ; In all Miller-Rabin tests, Carmichael numbers return "#f" (not prime)
 (display "Miller-Rabin test:\n")
-(display (map (lambda (x) (fast-prime-mr? x 1)) 
+(display (map (lambda (x) (fast-prime-mr? x 2)) 
      '(7 8 13 17 561 1105 1729 2465 2821 6601)))
 ;;==============================================================================
 ;;==============================================================================
