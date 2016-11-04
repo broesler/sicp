@@ -1,9 +1,9 @@
 ;;==============================================================================
-;;     File: ex1_29.scm
+;;     File: ex1_29-30.scm
 ;;  Created: 11/03/2016, 20:47
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: Simpson's Rule implementation 
+;;  Description: Simpson's Rule implementation and iterative sum procedure
 ;;
 ;;==============================================================================
 

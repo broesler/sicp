@@ -26,8 +26,10 @@
   (/ (+ x y) 2))
 
 ; What is good enough? Just check for tolerance of square
+(define tolerance 0.000001)
+
 (define (good-enough? guess x)
-  (< (abs (- (square guess) x)) 0.001))
+  (< (abs (- (square guess) x)) tol))
 
 ; start routine
 (define (sqrt x)
@@ -37,15 +39,16 @@
 ;        Redefine block structure
 ;-------------------------------------------------------------------------------
 ; NOTE Remove 'x' from each argument list, use *lexical scoping*
-; (define (sqrt x)
-;   (define (good-enough? guess)
-;     (< (abs (- (square guess) x)) 0.001))
-;   (define (improve guess)
-;     (average guess (/ x guess)))
-;   (define (sqrt-iter guess)
-;     (if (good-enough? guess)
-;         guess
-;         (sqrt-iter (improve guess))))
-;   (sqrt-iter 1.0))
-;;==============================================================================
-;;==============================================================================
+(define (sqrt x)
+  (define (tol 0.000001))
+  (define (good-enough? guess)
+    (< (abs (- (square guess) x)) tol))
+  (define (improve guess)
+    (average guess (/ x guess)))
+  (define (sqrt-iter guess)
+    (if (good-enough? guess)
+        guess
+        (sqrt-iter (improve guess))))
+  (sqrt-iter 1.0))
+;==============================================================================
+;==============================================================================
