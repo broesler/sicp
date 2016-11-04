@@ -11,14 +11,9 @@
 (define (filtered-accumulate predicate? combiner null-value term a next b)
   (if (> a b)
     null-value
-    (cond ((predicate? a)  ; if predicate is satisfied, combine terms
-           (combiner (term a) 
-                     (filtered-accumulate 
-                       predicate? combiner null-value term (next a) next b)))
-          (else            ; else, just combine the null-value and move on
-           (combiner null-value
-                     (filtered-accumulate 
-                       predicate? combiner null-value term (next a) next b))))))
+    (combiner (if (predicate? a) (term a) null-value)
+              (filtered-accumulate 
+                predicate? combiner null-value term (next a) next b))))
 
 ; Sum of the squares of the prime numbers in the interval a to b
 (define (sum-sq-prime a b)
