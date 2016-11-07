@@ -6,17 +6,15 @@
 ;;  Description: Compute the fixed points of a function
 ;;==============================================================================
 
-; Lecture notes:
+; Section 1.3.4 + Lecture Notes (2A)
 ; (define (sqrt x)
 ;   (fixed-point
-;     (lambda (y) (average (/ x y) y)) ; how do we know this will converge!?
-;     1))
+;     (lambda (y) (average (/ x y) y)))
+;   1.0) ; how do we know this will converge!? No damping!
 
-; Average two values
-; (define (average x y)
-;   (/ (+ x y) 2.0))
-
-; Find a point where g(x) = x
+;------------------------------------------------------------------------------- 
+;        Find a point where g(x) = x
+;-------------------------------------------------------------------------------
 (define (fixed-point f start)
   (define tol 0.0001)
   (define (close-enough? u v)
@@ -27,45 +25,75 @@
       (iter new (f new))))
   (iter start (f start)))
 
-; Redefine sqrt with average damping of y |--> x/y
-; (define (sqrt x)
-;   (fixed-point 
-;     (average-damp (lambda (y) (/ x y)))
-;     1))
-
 ; NOTE "average-damp" is a procedure which takes a procedure as its argument,
 ; and returns a procedure which takes one argument
-; (define average-damp
-;   (lambda (f) 
-;     (lambda (x) (average (f x) x))))
+(define (average-damp f)
+  (define (average x y)
+    (/ (+ x y) 2.0))
+  (lambda (x) (average (f x) x)))
+
+; Test code:
+; ((average-damp square) 10) ;Value: 55.0 (avg of x + x^2)
 
 ; "I am defining 'average-damp' to name a procedure that takes a procedure as
 ; its one argument (f), and returns a procedure that takes a number as its one
 ; argument (x), and returns a number (i.e. the average of f(x) and x)"
+
+;------------------------------------------------------------------------------- 
+;        Redefine sqrt with average damping of y |--> x/y
+;-------------------------------------------------------------------------------
+(define (sqrt x)
+  (fixed-point (average-damp (lambda (y) (/ x y))) 
+               1.0))
+
+; Test code:
+(newline)
+(display (sqrt 2)) ; Value: 1.4142135623746899
+
+;------------------------------------------------------------------------------- 
+;        cube roots
+;-------------------------------------------------------------------------------
+(define (cube-root x)
+  (fixed-point (average-damp (lambda (y) (/ x (square y))))
+               1.0))
+
+; Test code:
+(newline)
+(display (cube-root 8)) ; Value: 1.999970920454376
+
+;------------------------------------------------------------------------------- 
+;       Newton's method 
+;-------------------------------------------------------------------------------
+; Derivative of a function (first forward difference)
+(define (deriv g)
+  (lambda (x) (/ (- (g (+ x dx)) (g x))
+                 dx)))
+
+; Step-size
+(define dx 0.00001)
+
+; Test code
+(define (cube x) (* x x x))
+(newline)
+(display ((deriv cube) 5)) ; Value: 75.00014999664018
+
+; Newton's method: 
+;  Find a fixed point of the mapping
+;       x -> x - g(x)/g'(x)
+;
+(define (newton-map g)
+  (lambda (x) (- x (/ (g x) ((deriv g) x)))))
+
+(define (newton g guess)
+  (fixed-point (newton-map g) guess))
 
 ; Use Newton's method for sqrt (1 works as initial guess for ANY x!)
 (define (sqrt x)
   (newton (lambda (y) (- x (square y)))
           1.0))
 
-; Newton's method: y(i+1) = y(i) + f(x) / df/dx(x)
-(define (newton f guess)
-  (define df (deriv f)) ; define deriv here so it doesn't get recomputed
-  (fixed-point (lambda (x) (- x (/ (f x) (df x))))
-               guess))
-
-; Derivative of a function
-(define (deriv f)
-  (lambda (f)
-    (lambda (x)
-      (/ (- (f (+ x dx))
-            (f x))
-         dx))))
-
-; Step-size
-(define dx 0.00001)
-
-; Test code
-(sqrt 2) ;Value: 
+; Test code:
+(newline)
+(display (sqrt 2)) ; Value: 1.4142135623822438
 ;;==============================================================================
 ;;==============================================================================
