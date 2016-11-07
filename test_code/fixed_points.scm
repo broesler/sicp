@@ -95,5 +95,24 @@
 ; Test code:
 (newline)
 (display (sqrt 2)) ; Value: 1.4142135623822438
+
+;------------------------------------------------------------------------------- 
+;       First-class procedures 
+;-------------------------------------------------------------------------------
+; General idea of finding a fixed point of a transformation of a function
+(define (fixed-point-of-transform g transform guess)
+  (fixed-point (transform g) guess))
+
+; Recast sqrt computation (with average damp)
+(define (sqrt x)
+  (fixed-point-of-transform (lambda (y) (/ x y))
+                            average-damp
+                            1.0))
+
+; Recast again with Newton's method
+(define (sqrt x)
+  (fixed-point-of-transform (lambda (y) (- (square y) x))
+                            newton-map
+                            1.0))
 ;;==============================================================================
 ;;==============================================================================
