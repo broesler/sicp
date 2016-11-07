@@ -18,7 +18,7 @@
 
 ; Find a point where g(x) = x
 (define (fixed-point f start)
-  (define tol 0.001)
+  (define tol 0.0001)
   (define (close-enough? u v)
     (< (abs (- u v)) tol))
   (define (iter old new)
