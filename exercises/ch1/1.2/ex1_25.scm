@@ -3,7 +3,7 @@
 ;;  Created: 11/03/2016, 18:38
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: 
+;;  Description: Rewriting expmod using remainder directly
 ;;
 ;;==============================================================================
 (load "ex1_16.scm") ; for fast-expt
