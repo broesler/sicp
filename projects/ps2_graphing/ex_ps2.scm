@@ -94,5 +94,38 @@
                        (- (y-of start-pt2) (y-of end-pt1)))
             curve2-copy)))
     curve2-translated-to-curve1))
+
+;------------------------------------------------------------------------------- 
+;        Ex 5
+;-------------------------------------------------------------------------------
+;; Create graphics window
+(define g1 (make-graphics-device (car (enumerate-graphics-types))))
+; (define g2 (make-graphics-device (car (enumerate-graphics-types))))
+; (define g3 (make-graphics-device (car (enumerate-graphics-types))))
+
+;; Draw unit circles (comment out for now)
+; ((draw-connected g1 200) unit-circle)
+; ((draw-connected g2 200) alternative-unit-circle)
+; ((draw-points-on g3 200) unit-circle)
+; ((draw-points-squeezed-to-window g3 200) unit-circle)
+
+; (graphics-close g1)
+; (graphics-close g2)
+; (graphics-close g3)
+
+;------------------------------------------------------------------------------- 
+;        Ex 6
+;-------------------------------------------------------------------------------
+(define (gosper-curve-arbitrary level curve)
+  ((repeated gosperize level) curve))
+
+(define (show-points-gosper window level number-of-points initial-curve)
+  ((draw-points-on window number-of-points)
+   ((squeeze-rectangular-portion -.5 1.5 -.5 1.5)
+    (gosper-curve-arbitrary level initial-curve))))
+
+; Test code: (these two should be the same, but one is unconnected)
+; (show-connected-gosper 5)
+; (show-points-gosper g1 5 200 unit-line)
 ;;==============================================================================
 ;;==============================================================================
