@@ -1,12 +1,9 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Solutions and test code for the exercises and projects in
+[SCIP](https://mitpress.mit.edu/sicp/full-text/book/book.html). Larger
+assignments can be found
+[here](https://mitpress.mit.edu/sicp/psets/index.html).
 
 ### How do I get set up? ###
 
@@ -25,5 +22,4 @@ This README would normally document whatever steps are necessary to get your app
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* Bernie Roesler
