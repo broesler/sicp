@@ -85,6 +85,14 @@
 ; curve2 after it has been rigidly translated so its starting point coincides
 ; with the end point of curve1.
 (define (connect-ends curve1 curve2)
-  )
+  (let* ((curve1-copy curve1)
+         (curve2-copy curve2)
+         (end-pt1 (curve1-copy 1))
+         (start-pt2 (curve2-copy 0))
+         (curve2-translated-to-curve1
+           ((translate (- (x-of start-pt2) (x-of end-pt1))
+                       (- (y-of start-pt2) (y-of end-pt1)))
+            curve2-copy)))
+    curve2-translated-to-curve1))
 ;;==============================================================================
 ;;==============================================================================
