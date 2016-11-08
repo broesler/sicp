@@ -54,6 +54,12 @@
 ;        cube roots
 ;-------------------------------------------------------------------------------
 (define (cube-root x)
+  ;; Use either of these lines:
+  ; (define f (lambda (y) (/ x (square y))))
+  ; (define (f y) (/ x (square y)))
+  ;; with this line:
+  ; (fixed-point (average-damp f)
+  ;; Or write it the compact way:
   (fixed-point (average-damp (lambda (y) (/ x (square y))))
                1.0))
 
