@@ -7,41 +7,54 @@
 ;;
 ;;==============================================================================
 
-; Rational number data structure {
-; Constructor
-(define (make-rat N d) 
-  (cons n d))
-; Better way:
-; (define (make-rat n d)
-;   (let ((g (gcd n d)))
-;     (cons (/ n g)
-;           (/ d g))))
+;;; Make-rat data structure
+; (define (make-rat n d) (cons n d)) ; old definition
+; Redefine to reduce during construction
+(define (make-rat n d)
+  (let ((g (gcd n d)))
+    (cons (/ n g) (/ d g))))
 
-; Selectors
 (define (numer x) (car x))
 (define (denom x) (cdr x))
-; }
 
-; Sum 2 rational numbers, and return a rational number
-(define (+rat x y)
-  (make-rat
-    (+ (* (numer x) (denom y))
-       (* (numer y) (denom x)))
-    (* (denom x) (denom y))))
-       
-; Multiply 2 rational numbers
-(define (*rat x y)
-  (make-rat
-    (* (numer x) (numer y))
-    (* (denom x) (denom y))))
+;;; Rational numbers procedure
+(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
 
-; Test code: 
-;   1/2 + 1/4 = 3/4?
-; (define a (make-rat 1 2))
-; (define b (make-rat 1 4))
-; (define ans (+rat a b))
-; (numer ans) => 6
-; (denom ans) => 8
-;   ==> need to update make-rat to get GCD!
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
+
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+            (* (denom x) (denom y))))
+
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+            (* (denom x) (numer y))))
+
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (numer y) (denom x))))
+
+;;; Pretty-printing
+(define (print-rat x)
+  (newline)
+  (display (numer x))
+  (display "/")
+  (display (denom x)))
+
+; Test code:
+(define (test-rats)
+  (define one-half  (make-rat 1 2))
+  (define one-third (make-rat 1 3))
+  (print-rat one-half)
+  (print-rat (add-rat one-half one-third))  ; Value: 5/6
+  (print-rat (mul-rat one-half one-third))  ; Value: 1/6
+  (print-rat (add-rat one-third one-third))) ; Value: 6/9 ==> 2/3 with gcd!
+; (test-rats)
 ;;==============================================================================
 ;;==============================================================================
