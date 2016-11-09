@@ -26,6 +26,7 @@
 
 (define pi/4 (atan 1 1))
 (define pi (* 4 pi/4))
+(define pi/2 (* 2 pi/4))
 (define -pi (- pi))
 (define 2pi (* 2 pi))
 
