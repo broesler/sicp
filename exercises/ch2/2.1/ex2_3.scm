@@ -23,6 +23,14 @@
         (height (rect-height rectangle)))
     (* width height)))
 
+(define (test-rects r)
+  (newline)
+  (display ";    Perimeter = ")
+  (display (rect-perimeter r)) ; Value: 4
+  (newline)
+  (display ";    Area = ")
+  (display (rect-area r))) ; Value: 1
+
 ;------------------------------------------------------------------------------- 
 ;        Possible representations:
 ;-------------------------------------------------------------------------------
@@ -50,17 +58,11 @@
     (abs (- y1 y2))))
 
 ; Test code:
-(define (test-ex2_3-1)
-  ; define unit square
-  (define pt1 (make-point 0 0))
-  (define pt2 (make-point 1 1))
-  (define myrect (make-rectangle pt1 pt2))
-  (display "Perimeter = ")
-  (display (rect-perimeter myrect)) ; Value: 4
-  (newline)
-  (display "Area = ")
-  (display (rect-area myrect))) ; Value: 1
-(test-ex2_3-1)
+(display ";;; Two points:")
+(define pt1 (make-point 0 0))
+(define pt2 (make-point 1 1))
+(define myrect (make-rectangle pt1 pt2))
+(test-rects myrect)
 
 ;------------------------------------------------------------------------------- 
 ;        2. Represent as one corner and width + height
@@ -77,16 +79,10 @@
   (cdr (cdr rectangle)))
 
 ; Test code:
-(define (test-ex2_3-2)
-  ; define unit square
-  (define pt1 (make-point 0 0))
-  (define myrect (make-rectangle pt1 1 1))
-  (newline)
-  (display "Perimeter = ")
-  (display (rect-perimeter myrect)) ; Value: 4
-  (newline)
-  (display "Area = ")
-  (display (rect-area myrect))) ; Value: 1
-(test-ex2_3-2)
+(newline)
+(display ";;; Point and width + height:")
+(define pt1 (make-point 0 0))
+(define myrect (make-rectangle pt1 1 1))
+(test-rects myrect)
 ;;==============================================================================
 ;;==============================================================================
