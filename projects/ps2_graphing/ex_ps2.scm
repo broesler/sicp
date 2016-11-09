@@ -157,6 +157,7 @@
 
 ;; Gosperize
 ; (show-connected-gosper g1 10 100000 semi-circle)
+; (show-connected-gosper g1 100 100000 sine-curve)
 ; (show-connected-gosper g1 10 100000 unit-line)
 
 ;------------------------------------------------------------------------------- 
@@ -210,8 +211,8 @@
   (/ pi (expt 1.3 level)))
 
 ; Draw!
-; ((draw-connected-squeezed-to-window g1 10000) (param-gosper 5 angle-at-1))
-; ((draw-connected-squeezed-to-window g1 10000) (param-gosper 5 angle-at-2))
+; ((draw-connected-squeezed-to-window g1 100000) (param-gosper 10 angle-at-1))
+; ((draw-connected-squeezed-to-window g1 10000) (param-gosper 10 angle-at-2))
 
 ; (C) Compare timing among 'gosper-curve', 'param-gosper', and 'my-param-gosper'
 (show-time (lambda () ((   gosper-curve 100) .1)))
@@ -225,41 +226,76 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex 8 timing
 ;-------------------------------------------------------------------------------
-; (A) Is Ben's definition correct? yes, but it's slow...
-(define (bens-rotate theta)
-  (let ((cth (cos theta))
-        (sth (sin theta)))
-    (lambda (curve)
-      (lambda (t)
-        (let ((x (x-of (curve t)))  ;Ben writes (curve t)
-              (y (y-of (curve t)))) ;twice
-          (make-point
-              (- (* cth x) (* sth y))
-              (+ (* sth x) (* cth y))))))))
+;; (A) Is Ben's definition correct? yes, but it's slow...
+; (define (bens-rotate theta)
+;   (let ((cth (cos theta))
+;         (sth (sin theta)))
+;     (lambda (curve)
+;       (lambda (t)
+;         (let ((x (x-of (curve t)))  ;Ben writes (curve t)
+;               (y (y-of (curve t)))) ;twice
+;           (make-point
+;               (- (* cth x) (* sth y))
+;               (+ (* sth x) (* cth y))))))))
+;
+; ; (B) trace x-of
+; (trace-entry x-of)
+;
+; (define (test-gosper n)
+;   (newline)
+;   (display "n = ")
+;   (display n)
+;   ((gosper-curve n) .1))
+;
+; ; Try original rotate for 3 test runs
+; (newline)
+; (display ";;;;;;;;;; Testing original rotate:")
+; (test-gosper 1) ; x-of count:  2
+; (test-gosper 2) ; x-of count:  4
+; (test-gosper 5) ; x-of count: 12
+;
+; ; Now test Ben's rotate procedure
+; (define temp-rotate rotate-around-origin) ; store original in temp
+; (define rotate-around-origin bens-rotate)
+; (newline)
+; (display ";;;;;;;;;; Testing Ben's rotate:")
+; (test-gosper 1) ; x-of count:   3
+; (test-gosper 2) ; x-of count:   9
+; (test-gosper 5) ; x-of count: 117 
+;
+; ; Reset to original code
+; (untrace x-of)
+; (define rotate-around-origin temp-rotate)
 
-; (B) trace x-of
-(trace-entry x-of)
+;------------------------------------------------------------------------------- 
+;        Ex 9 Koch Curves
+;-------------------------------------------------------------------------------
+; (define (gosperize curve)
+;   (let ((scaled-curve ((scale (/ (sqrt 2) 2)) curve)))
+;     (connect-rigidly ((rotate-around-origin (/ pi 4)) scaled-curve)
+;                      ((translate .5 .5)
+;                       ((rotate-around-origin (/ -pi 4)) scaled-curve)))))
 
-(define (test-gosper n)
-  (newline)
-  (display "n = ")
-  (display n)
-  ((gosper-curve n) .1))
+; Koch curve is the "snowflake" with angles of 60 degrees
+(define (kochize curve)
+  (let ((scale-factor (/ 1 3)))
+    (let ((scaled-curve ((scale scale-factor) curve)))
+      (put-in-standard-position
+        (connect-ends ((rotate-around-origin (* 120 (/ pi 180))) 
+                       scaled-curve)
+                      ((rotate-around-origin (* 60 (/ pi 180))) 
+                       scaled-curve))))))
 
-; Try original rotate for 3 test runs
-(newline)
-(display ";;;;;;;;;; Testing original rotate:")
-(test-gosper 1) ; x-of count:  2
-(test-gosper 2) ; x-of count:  4
-(test-gosper 5) ; x-of count: 12
 
-; Now test Ben's rotate procedure
-(define temp-rotate rotate-around-origin) ; store original in temp
-(define rotate-around-origin bens-rotate)
-(newline)
-(display ";;;;;;;;;; Testing Ben's rotate:")
-(test-gosper 1) ; x-of count:   3
-(test-gosper 2) ; x-of count:   9
-(test-gosper 5) ; x-of count: 117 
+(define (koch-curve level)
+  ((repeated kochize level) unit-line))
+
+; Draw Koch curve
+((draw-connected g1 200)
+ ((squeeze-rectangular-portion 0.5 1.5 0.5 1.5) 
+  (koch-curve 3)))
+
+; ((draw-connected-squeezed-to-window g1 200)
+;  (param-gosper 5 (lambda (level) (/ pi 3))))
 ;;==============================================================================
 ;;==============================================================================
