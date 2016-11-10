@@ -16,25 +16,20 @@
 ;   (2 4 6)
 
 (define same-parity 
-  (lambda w
-    (define w-even? (even? (car w)))
-    (define (iter a result odd-even?)
-      (cond ((null? a) 
-             result)
-            (else 
-              (let ((x (cond (odd-even? 
-                               (if (even? (car a))
-                                 (append result (list (car a)))
-                                 result))
-                             (else
-                               (if (even? (car a))
-                                 result
-                                 (append result (list (car a))))))))
-                (iter (cdr a) x odd-even?)))))
-    (iter w '() w-even?)))
+  (lambda (z . w)
+    (let ((w-even (remainder z 2)))
+      (define (iter a result)
+        (cond ((null? a) 
+               (reverse result))
+              (else (iter 
+                      (cdr a) 
+                      (if (= (remainder (car a) 2) w-even)
+                        (cons (car a) result)
+                        result)))))
+      (iter w (cons z '())))))
 
 ;; Test code:
-(same-parity 1 2 3 4 5 6 7)  ; Value: (1 3 5 7)
-(same-parity 2 3 4 5 6 7)    ; Value: (2 4 6)
+(printval (same-parity 1 2 3 4 5 6 7))  ; Value: (1 3 5 7)
+(printval (same-parity 2 3 4 5 6 7))    ; Value: (2 4 6)
 ;;==============================================================================
 ;;==============================================================================
