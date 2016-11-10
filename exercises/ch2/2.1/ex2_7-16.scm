@@ -123,5 +123,34 @@
 ;; Test code:
 (newline)
 (display (mul-interval x y))
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.12
+;-------------------------------------------------------------------------------
+; Now make the number as "6.5 ± 0.5"
+(define (make-center-width c w)
+  (make-interval (- c w) (+ c w)))
+(define (center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+(define (width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+
+;; Unfortunately, need to use center and percentage, so define a constructor
+(define (make-center-percent c p)
+  (let ((dc (* c p)))
+    (make-interval (- c dc) (+ c dc))))
+
+;; percentage selector (center + width defined above)
+(define (percent i)
+  (let ((l (lower-bound i))
+        (u (upper-bound i)))
+    (/ (- u l) (+ u l)))) ; i.e. w/c * 100
+
+;; Test code:
+(define x (make-center-percent 6.0 5))
+(newline)
+(display (center x))
+(newline)
+(display (percent x))
 ;;==============================================================================
 ;;==============================================================================
