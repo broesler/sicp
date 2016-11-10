@@ -36,8 +36,6 @@
   (rev-iter list1 '()))
 
 ;; Test code:
-(newline)
-(display "Reversed: ")
 (printval (my-reverse sq)) ; Value: (25 16 9 4 1)
 
 ; Example procedure:
