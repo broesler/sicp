@@ -127,30 +127,83 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex 2.12
 ;-------------------------------------------------------------------------------
-; Now make the number as "6.5 ± 0.5"
+;; Now make the interval as "6.5 ± 0.5"
+;; Constructor
 (define (make-center-width c w)
   (make-interval (- c w) (+ c w)))
+
+;; Selectors
 (define (center i)
   (/ (+ (lower-bound i) (upper-bound i)) 2))
+
 (define (width i)
   (/ (- (upper-bound i) (lower-bound i)) 2))
 
 ;; Unfortunately, need to use center and percentage, so define a constructor
+;; Now make the interval as "6.5 ± 5%", i.e. "6.5 ± 0.325"
 (define (make-center-percent c p)
-  (let ((dc (* c p)))
+  (let ((dc (* c (/ p 100.0))))
     (make-interval (- c dc) (+ c dc))))
 
 ;; percentage selector (center + width defined above)
 (define (percent i)
   (let ((l (lower-bound i))
         (u (upper-bound i)))
-    (/ (- u l) (+ u l)))) ; i.e. w/c * 100
+    (* 100.0 (/ (- u l) (+ u l))))) ; i.e. w/c * 100
 
 ;; Test code:
-(define x (make-center-percent 6.0 5))
+(define x (make-center-percent 6 5))
 (newline)
 (display (center x))
 (newline)
 (display (percent x))
+(newline)
+(display (width x)) ; ±5% == [5.7,6.3]
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.14
+;-------------------------------------------------------------------------------
+; R1*R2 / (R1+R2)
+(define (par1 r1 r2)
+  (div-interval (mul-interval r1 r2)
+                (add-interval r1 r2)))
+
+; 1 / (1/R1 + 1/R2)
+(define (par2 r1 r2)
+  (let ((one (make-interval 1 1))) 
+    (div-interval one
+                  (add-interval (div-interval one r1)
+                                (div-interval one r2)))))
+
+;; Test code:
+(define x (make-center-percent  60.0 3))
+(define y (make-center-percent 100.0 5))
+(newline)
+(display (par1 x y)) ; Value:  (33.14748201438849 . 42.35639686684073)
+(newline)
+(display (par2 x y)) ; Value: (36.090078328981726 . 38.902877697841724)
+;;; Lem is right!! two different answers
+
+;;; NOT == 1!!
+(newline)
+(display "x / x = ")
+(display (div-interval x x)) ; Value: (.9417475728155341 . 1.0618556701030926)
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.15 algebraically equivalent expressions
+;-------------------------------------------------------------------------------
+;;; Check widths of intervals created by each "equivalent" operation
+(newline)
+(display "; (percent (par1 x y)) = ")
+(display (percent (par1 x y)))
+(newline)
+(display "; (percent (par2 x y)) = ")
+(display (percent (par2 x y)))
+;;; Eva Lu Ator is correct. Each operation performed increases error bounds
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.16 Why do equivalent expressions lead to different answers?
+;-------------------------------------------------------------------------------
+
 ;;==============================================================================
 ;;==============================================================================
