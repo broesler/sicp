@@ -1,5 +1,5 @@
 ;;==============================================================================
-;;     File: ex2_27.scm
+;;     File: ex_27-28.scm
 ;;  Created: 11/10/2016, 17:39
 ;;   Author: Bernie Roesler
 ;;
@@ -39,5 +39,19 @@
 (printval x)                ; Value: ((1 2) (3 4))
 (printval (reverse x))      ; Value: ((3 4) (1 2))
 (printval (deep-reverse x)) ; Value: ((4 3) (2 1))
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.28 fringe 
+;-------------------------------------------------------------------------------
+;;; like deep-reverse, but not reversed, and all in one list
+(define (fringe x)
+  (cond ((null? x) x)
+        ((not (pair? x)) (list x))          ; return a list so we can append
+        (else (append (fringe (car x)) 
+                      (fringe (cadr x)))))) ; strip to actual element
+
+;;; Test code:
+(printval (fringe x))          ; Value: (1 2 3 4)
+(printval (fringe (list x x))) ; Value: (1 2 3 4 1 2 3 4)
 ;;==============================================================================
 ;;==============================================================================
