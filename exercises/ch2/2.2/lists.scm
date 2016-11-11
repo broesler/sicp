@@ -63,5 +63,23 @@
 
 (append squares odds) ; Value: (1 4 9 16 25 1 3 5 7)
 
+;------------------------------------------------------------------------------- 
+;        Trees
+;-------------------------------------------------------------------------------
+(define (count-leaves x)
+  (cond ((null? x) 0)  
+        ((not (pair? x)) 1)
+        (else (+ (count-leaves (car x))
+                 (count-leaves (cdr x))))))
+
+;; Test code:
+(define x (cons (list 1 2) (list 3 4)))
+(printval x)                ; Value: ((1 2) 3 4)
+(printval (length x))       ; Value: 3
+(printval (count-leaves x)) ; Value: 4
+
+(printval (list x x))                ; Value: (((1 2) 3 4) ((1 2) 3 4))
+(printval (length (list x x)))       ; Value: 2
+(printval (count-leaves (list x x))) ; Value: 8
 ;;==============================================================================
 ;;==============================================================================
