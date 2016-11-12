@@ -50,7 +50,7 @@
 ;;; current mobile and for all sub-mobiles
 (define (balanced? x)
   (cond ((null? x) #f)
-        ((not (pair? x)) #t)
+        ((not (pair? x)) #t) ; just return true for the leaves
         (else 
           (let ((la (branch-length (left-branch x)))
                 (lb (branch-length (right-branch x)))
@@ -64,6 +64,35 @@
             (balanced? (branch-structure (left-branch x)))
             (balanced? (branch-structure (right-branch x))))))))
 
+;------------------------------------------------------------------------------- 
+;       (d) change constructors (use cons instead of list)
+;-------------------------------------------------------------------------------
+(define (make-mobile left right)
+    (cons left right))
+(define (make-branch length structure)
+    (cons length structure))
+
+;;; Redefine selectors
+; (printval m1) ; Value: ((1 . 2) 2 . 1) using cons vs list
+;; mobile selectors
+(define (left-branch mobile)
+  (car mobile))
+
+(define (right-branch mobile)
+  (cdr mobile)) ; change "cadr" to "cdr"
+
+;; branch selectors
+(define (branch-length branch)
+  (car branch))
+
+(define (branch-structure branch)
+  (cdr branch)) ; change "cadr" to "cdr"
+
+;;; Only have to change "cadr" to "cdr" in two places!!
+
+;------------------------------------------------------------------------------- 
+;       Test code:
+;-------------------------------------------------------------------------------
 ;;; Make simple two-branch mobile:
 ;;            m1
 ;;             |
@@ -114,6 +143,48 @@
 (printval mm) ; Value: ((1 6) (1 ((1 ((1 2) (2 1))) (1 3)))) 
 (printval (total-weight mm)) ; Value: 14
 (printval (balanced? mm))    ; Value: #f
+
+;------------------------------------------------------------------------------- 
+;        Original constructors
+;-------------------------------------------------------------------------------
+; 1 ]=> (load "/Users/bernardroesler/src/scheme/exercises/ch2/2.2/ex2_29.scm")
+;
+; ;Loading "/Users/bernardroesler/src/scheme/exercises/ch2/2.2/ex2_29.scm"...
+; Test small mobile:
+; ; Value: ((1 2) (2 1))
+; ; Value: (1 2)
+; ; Value: (2 1)
+; ; Value: 1
+; ; Value: 2
+; ; Value: 3
+; ; Value: #t
+; Test large mobile:
+; ; Value: ((1 8) (1 ((1 ((1 2) (2 1))) (1 3))))
+; ; Value: 14
+; ; Value: #f
+; ;... done
+; ;Unspecified return value
+;
+;------------------------------------------------------------------------------- 
+;        New constuctors
+;-------------------------------------------------------------------------------
+; 1 ]=> (load "/Users/bernardroesler/src/scheme/exercises/ch2/2.2/ex2_29.scm")
+;
+; ;Loading "/Users/bernardroesler/src/scheme/exercises/ch2/2.2/ex2_29.scm"...
+; Test small mobile:
+; ; Value: ((1 . 2) 2 . 1)
+; ; Value: (1 . 2)
+; ; Value: (2 . 1)
+; ; Value: 1
+; ; Value: 2
+; ; Value: 3
+; ; Value: #t
+; Test large mobile:
+; ; Value: ((1 . 8) 1 (1 (1 . 2) 2 . 1) 1 . 3)
+; ; Value: 14
+; ; Value: #f
+; ;... done
+; ;Unspecified return value
 
 ;;==============================================================================
 ;;==============================================================================
