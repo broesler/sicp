@@ -48,7 +48,7 @@
   (cond ((null? x) x)
         ((not (pair? x)) (list x))          ; return a list so we can append
         (else (append (fringe (car x)) 
-                      (fringe (cadr x)))))) ; strip to actual element
+                      (fringe (cdr x))))))
 
 ;;; Test code:
 (printval (fringe x))          ; Value: (1 2 3 4)
