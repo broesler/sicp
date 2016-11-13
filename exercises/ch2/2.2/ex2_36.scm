@@ -6,6 +6,7 @@
 ;;  Description: accumulate-n with third argument
 ;;
 ;;==============================================================================
+(load "sequence_operations.scm")
 
 ;;; seqs == a sequence of sequences, all assumed to have the same number of
 ;;; elements. It applies (op) to combine all the first elements of all the sequences,
