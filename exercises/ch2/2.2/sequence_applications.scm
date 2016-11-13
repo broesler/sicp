@@ -1,5 +1,5 @@
 ;;==============================================================================
-;;     File: sequences.scm
+;;     File: sequence_applications.scm
 ;;  Created: 11/12/2016, 17:51
 ;;   Author: Bernie Roesler
 ;;

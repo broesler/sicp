@@ -63,6 +63,16 @@
 
 (append squares odds) ; Value: (1 4 9 16 25 1 3 5 7)
 
+;;; Map a procedure to a list (apply to each element)
+(define (map proc items)
+  (if (null? items)
+      nil
+      (cons (proc (car items))
+            (map proc (cdr items)))))
+
+(map abs (list -10 2.5 -11.6 17)) ; Value: (10 2.5 11.6 17)
+(map (lambda (x) (* x x)) (list 1 2 3 4)) ; Value: (1 4 9 16)
+
 ;------------------------------------------------------------------------------- 
 ;        Trees
 ;-------------------------------------------------------------------------------
