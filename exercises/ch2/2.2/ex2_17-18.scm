@@ -32,7 +32,8 @@
   (define (rev-iter a result)
     (if (null? a)
       result
-      (rev-iter (cdr a) (cons (car a) result))))
+      (rev-iter (cdr a) 
+                (cons (car a) result))))
   (rev-iter list1 '()))
 
 ;; Test code:
