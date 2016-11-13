@@ -6,20 +6,24 @@
 ;;  Description: Rewrite list operations as accumulations
 ;;
 ;;==============================================================================
+(load "sequence_operations.scm")
+
+;; NOTE "sequence" is just the top level of a list
 
 ;;; Definitions
 (define (map p sequence)
-  (accumulate (lambda (x y) (cons (p x) y)) nil sequence))
+  (accumulate (lambda (first already-accumulated) 
+                (cons (p first) already-accumulated)) 
+              nil 
+              sequence))
 
 (define (append seq1 seq2)
   (accumulate cons seq2 seq1)) ; cons is a "push" operation
 
 (define (length sequence)
-  (accumulate (lambda (x y)
-                (if (null? x)  ; accumulate 1 per not null item
-                  (+ 0 y)
-                  (+ 1 y)))
-              0
+  (accumulate (lambda (first already-accumulated) 
+                (+ 1 already-accumulated)) 
+              0 
               sequence))
 
 ;;; Test code:
