@@ -22,7 +22,7 @@
 
 (define (length sequence)
   (accumulate (lambda (first already-accumulated) 
-                (+ 1 already-accumulated)) 
+                (+ 1 already-accumulated)) ; (null? first) done by accumulate
               0 
               sequence))
 
