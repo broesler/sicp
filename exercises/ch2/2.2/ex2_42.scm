@@ -29,12 +29,11 @@
       (list empty-board)
       (filter
         (lambda (positions) (safe? positions))
-        (flatmap 
-          (lambda (rest-of-queens)
-            (map (lambda (new-row)
-                   (adjoin-position new-row rest-of-queens))
-                 (enumerate-interval 1 board-size)))
-          (queen-cols (- k 1))))))
+        (flatmap (lambda (rest-of-queens)
+                   (map (lambda (new-row)
+                          (adjoin-position new-row rest-of-queens))
+                        (enumerate-interval 1 board-size)))
+                 (queen-cols (- k 1))))))
   (queen-cols board-size))
 
 ;;; Definitions:
@@ -61,9 +60,10 @@
     (define (safe-iter top bot remain) 
         (cond ((null? remain) 
                #t) 
-              ((or (= (car remain) this-queen) ; check row
-                   (= (car remain) top)  ; check diags
-                   (= (car remain) bot))
+              ((let ((other-queen (car remain)))
+               (or (= other-queen this-queen) ; check this row
+                   (= other-queen top)   ; upper diagonal
+                   (= other-queen bot))) ; lower diagonal
                #f) 
               (else 
                 (safe-iter (- top 1) (+ bot 1) (cdr remain))))) 
