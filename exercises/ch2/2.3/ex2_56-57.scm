@@ -87,7 +87,8 @@
 ;;; Test code:
 (newline)
 (display "Ex 2.57 -- Arbitrary terms:")
-(printval (deriv '(+ 3 y (** x 2)) 'x)) ; Value: (* 2 x)
-(printval (deriv '(* 3 x y) 'x))        ; Value: (* 3 y)
+(printval (deriv '(+ 3 y (** x 2)) 'x))    ; Value: (* 2 x)
+(printval (deriv '(* (* x y) (+ x 3)) 'x)) ; Value: (+ (* x y) (* y (+ x 3)))
+(printval (deriv '(* x y (+ x 3)) 'x))     ; Value: (+ (* x y) (* y (+ x 3)))
 ;==============================================================================
 ;==============================================================================
