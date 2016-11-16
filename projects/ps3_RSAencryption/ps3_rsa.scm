@@ -28,34 +28,6 @@
 ;        Define solve-ax+by=1
 ;-------------------------------------------------------------------------------
 ;;; Extended Euclidean algorithm to solve a*x + b*y = gcd(a,b)
-;;; Iterative version (UGLY):
-(define (solve-ax+by=1 a b)
-  (define (solve-iter old-s old-t old-r s t r)
-    (cond ((= r 0) (cons old-s old-t)) 
-          (else 
-            (let ((q (quotient old-r r)))
-              (let ((old-s s)
-                  (old-t t)
-                  (old-r r)
-                  (s (- old-s (* q s)))
-                  (t (- old-t (* q t)))
-                  (r (- old-r (* q r))))
-            (solve-iter old-s old-t old-r s t r))))))
-  (solve-iter 1 0 a 0 1 b))
-
-; function extended_gcd(a, b)
-;     s := 0;    old_s := 1
-;     t := 1;    old_t := 0
-;     r := b;    old_r := a
-;     while r ≠ 0
-;         quotient := old_r div r
-;         (old_r, r) := (r, old_r - quotient * r)
-;         (old_s, s) := (s, old_s - quotient * s)
-;         (old_t, t) := (t, old_t - quotient * t)
-;     output "Bézout coefficients:", (old_s, old_t)
-;     output "greatest common divisor:", old_r
-;     output "quotients by the gcd:", (t, s)
-
 ;;; Returns a pair (x . y)
 (define (solve-ax+by=1 a b)
   (if (= b 0)
@@ -69,7 +41,7 @@
          (y (cdr ans)))
     (= (gcd a b) (+ (* a x) (* b y)))))
 
-(SHOULD-BE (test-solve-ax+by=1 384 256))
+(SHOULD-BE (test-solve-ax+by=1 207 40))
 
 ;------------------------------------------------------------------------------- 
 ;       Exercises 
