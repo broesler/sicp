@@ -37,8 +37,10 @@
 ;        4. Assignment 
 ;-------------------------------------------------------------------------------
 ;;; Test code
+(newline)
+(display ";;;;;;;;;; Testing RSA code ;;;;;;;;;;")
 (define test-public-key1 (key-pair-public test-key-pair1))
-(define result1 (rsa-encrypt "This is a test message." test-public-key1))
+(define result1 (RSA-encrypt "This is a test message." test-public-key1))
 (SHOULD-BE (equal? 
              result1 
              '(209185193 793765302 124842465 169313344 117194397 237972864)))
@@ -46,6 +48,8 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex 1. RSA-unconvert-list
 ;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 1: Testing RSA-unconvert-list ;;;;;;;;;;")
 ;;; For reference:
 ; (define (RSA-convert-list intlist key)
 ;   (let ((n (key-modulus key)))
@@ -86,6 +90,8 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex. 2 signatures
 ;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 2: Signatures ;;;;;;;;;;")
 ;;; (a) Encrypt and sign
 (define make-signed-message cons)
 (define signed-message car)
@@ -111,19 +117,13 @@
 ;;; (b) Authenticate and decrypt
 (define (authenticate-and-decrypt s-message public-key private-key)
   (let* ((encrypted (signed-message s-message))
-         (decrypted (RSA-decrypt encrypted private-key))
          (compressed (compress encrypted))
          (maybe-sig (RSA-transform (signed-signature s-message) public-key)))
     (cond ((= compressed maybe-sig) 
-           decrypted)
+           (RSA-decrypt encrypted private-key))
           (else 
             (newline) 
-            (display "Warning! Message failed authentication!")
-            (newline)
-            (display "Message: ")
-            (display decrypted)
-            (newline)
-            (display "Signature is: ") 
+            (display "Warning! Message failed authentication! Signature: ")
             (display maybe-sig)
             #f))))
 
@@ -144,6 +144,8 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex. 3 Mystery message!
 ;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 3: Mystery Message! ;;;;;;;;;;")
 (define mystery-message (make-signed-message 
                           received-mystery-message 
                           received-mystery-signature))
@@ -169,6 +171,8 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex. 4 Define solve-ax+by=1
 ;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 4: Extended Euclidean Algorithm ;;;;;;;;;;")
 ;;; Extended Euclidean algorithm to solve a*x + b*y = gcd(a,b)
 ;;; Tracks x,y directly
 (define (solve-ax+by=1 a b)
@@ -189,7 +193,7 @@
          (y (cdr ans))
          (g (gcd a b))
          (sum (+ (* a x) (* b y))))
-    ; (printval ans)
+    (printval ans)
     (= g sum)))
 
 ;;; Test cases:
@@ -201,5 +205,91 @@
 ; (SHOULD-BE (test-solve 56 9))
 ; (SHOULD-BE (test-solve 207 40))
 (SHOULD-BE (test-solve 233987973 41111687)) ; Exercise check
+;;; Value: (-11827825 . 67318298)
+
+;;; Generate my own key pair
+(define bernie-roesler-key-pair (generate-RSA-key-pair))
+(define bernie-roesler-public-key (key-pair-public bernie-roesler-key-pair))
+(define bernie-roesler-private-key (key-pair-private bernie-roesler-key-pair))
+
+;------------------------------------------------------------------------------- 
+;        Ex. 5 Crack RSA
+;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 5: Crack RSA ;;;;;;;;;;")
+
+;;; Get private key from public key!
+(define (crack-RSA public-key)
+  (let* ((n (key-modulus public-key))
+         (e (key-exponent public-key))
+         (p (smallest-divisor n))
+         (q (/ n p))
+         (m (* (- p 1) (- q 1)))
+         (d (invert-modulo e m)))
+    (make-key n d)))
+
+;;; Test code:
+(SHOULD-BE (equal? test-private-key1 (crack-RSA test-public-key1)))
+(SHOULD-BE (equal? test-private-key2 (crack-RSA test-public-key2)))
+
+;------------------------------------------------------------------------------- 
+;        Ex. 6 Bob Dole scamming Bill
+;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 6: Bob Dole Forging Ahead ;;;;;;;;;;")
+
+;;; Get private keys
+(define bill-clinton-private-key (crack-RSA bill-clinton-public-key))
+(define al-gore-private-key (crack-RSA al-gore-public-key))
+
+;;; Forge and encrypt message
+(define forge-message "Al, would you please announce our major tax increase?")
+(define encrypt-forge (encrypt-and-sign forge-message 
+                                        bill-clinton-private-key  ; MUAHAHAHA
+                                        al-gore-public-key))
+
+(newline)
+(display ";;; Encrypted message and signature:")
+(printval (signed-message encrypt-forge))
+(printval (signed-signature encrypt-forge))
+
+;;; Sent to Gore... now decrypt on his end!
+(newline)
+(display ";;; Message received by Al Gore:")
+(printval (authenticate-and-decrypt encrypt-forge 
+                          bill-clinton-public-key 
+                          al-gore-private-key))
+
+;;; If we decrypt with Bob Dole's key...
+(newline)
+(display ";;; Message if we think its from Bob Dole:")
+(authenticate-and-decrypt encrypt-forge 
+                          bob-dole-public-key
+                          al-gore-private-key)
+
+;------------------------------------------------------------------------------- 
+;        Ex. 7 Prepare more forged messages... same as above, just repeated
+;-------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------- 
+;        Ex. 8 RSA timing
+;-------------------------------------------------------------------------------
+(newline)
+(display ";;;;;;;;;; Ex. 8: RSA Timing ;;;;;;;;;;")
+
+(let ((n (key-modulus (key-pair-public (generate-RSA-key-pair)))))
+  (newline)
+  (timed smallest-divisor n))
+;; (time: 2.0000000000000462e-2) on average, for 5-digits
+
+;;; 5, 50, 100 --> O(sqrt(n))
+;;;  50 digits --> sqrt(10^45) * 2e-2 seconds
+;;;                = 10^22.5 * 2e-2 [s]
+;;;                = 6e20 [s] / (60 * 60 * 24 * 365)
+;;;                = 2 * 10^13 [yr]
+;;; 100 digits --> sqrt(10^95) * 2e-2 seconds
+;;;                = 10^47.5 * 2e-2 [s]
+;;;                = 6e45 [s] / (60 * 60 * 24 * 365)
+;;;                = 2 * 10^38 [yr]
 ;;==============================================================================
 ;;==============================================================================
