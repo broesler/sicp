@@ -30,50 +30,44 @@
 ;;; Extended Euclidean algorithm to solve a*x + b*y = gcd(a,b)
 ;;; Tracks x,y directly
 (define (solve-ax+by=1 a b)
-  (define (solve-iter a b x y)
+  (define (solve-iter a b q x y)
+    (newline)
+    (display "; a = ") (display a) ; == old b
+    (display "; b = ") (display b) ; == old (remainder a b)
+    (display "; q = ") (display q) ; == old (quotient a b)
+    (display "; x = ") (display x) ; == old x == y
+    (display "; y = ") (display y) ; == old y == x - qy
     (if (= b 0) 
       (cons x y) ; Return the pair (x.y)
       (solve-iter b
                   (remainder a b)
-                  y
-                  (- x (* (quotient a b) y)))))
-  (solve-iter a b 1 0))
-
-;;; Another formulation? Tracks \bar{x} and \bar{y}
-; (define (solve-ax+by=1 a b)
-;   (define (solve-iter a b q x y)
-;     (newline)
-;     (display "; a = ") (display a)
-;     (display "; b = ") (display b)
-;     (display "; x = ") (display x)
-;     (display "; y = ") (display y)
-;     (if (= b 0) 
-;       (cons y (- x (* q y)))
-;       (solve-iter b
-;                   (remainder a b)
-;                   (quotient a b)
-;                   (+ y (* (quotient a b) x))
-;                   x)))
-;   (solve-iter a b 0 1 0))
-
-; Euclid's algorithm for gcd
-; ; use eqn gcd(a,b) = gcd(b,r), where r = a % b
-; (define (gcd a b)
-;   (if (= b 0)
-;       a
-;       (gcd b (remainder a b))))
+                  (quotient a b)
+                  y ; "x"
+                  (- x (* (quotient a b) y))))) ; "y"
+  (solve-iter a b 0 1 0))
 
 ;;; Test code:
-;;; (a,b) --> (x,y)
-;;; (27,4) --> (-8,54)
-(let* ((a 27) ; choose two numbers s.t. (gcd a b) == 1
-       (b  4)
-       (ans (solve-ax+by=1 a b))
-       (x (car ans))
-       (y (cdr ans)))
-  (printval ans)
-  (printval (+ (* a x) (* b y))))
+;;; (  a,  b) --> (  x,  y)
+;;; ( 27,  4) --> ( -1,  7)
+;;; ( 56,  9) --> ( -4, 25)
+;;; (207, 40) --> (-17, 88)
+(define (test-solve a b) ; choose two numbers s.t. (gcd a b) == 1
+  (let* ((ans (solve-ax+by=1 a b))
+         (x (car ans))
+         (y (cdr ans))
+         (g (gcd a b))
+         (sum (+ (* a x) (* b y))))
+    (printval ans)
+    (printval g)
+    (printval sum)
+    ; (printval (= g sum))
+  ))
 
+(test-solve 27 4)
+(test-solve 56 9)
+(test-solve 207 40)
+
+;;; NOTE: x-value is ALWAYS correct. y-value is low by 3, 16, 48 
 ;------------------------------------------------------------------------------- 
 ;       Exercises 
 ;-------------------------------------------------------------------------------
