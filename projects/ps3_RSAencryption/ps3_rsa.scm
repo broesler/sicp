@@ -28,21 +28,33 @@
 ;        Define solve-ax+by=1
 ;-------------------------------------------------------------------------------
 ;;; Extended Euclidean algorithm to solve a*x + b*y = gcd(a,b)
-;;; Returns a pair (x . y)
+;;; Tracks x,y directly
 (define (solve-ax+by=1 a b)
   (define (solve-iter a b x y)
-    (newline)
-    (display "; a = ") (display a)
-    (display "; b = ") (display b)
-    (display "; x = ") (display x)
-    (display "; y = ") (display y)
     (if (= b 0) 
-      (cons x y)
+      (cons x y) ; Return the pair (x.y)
       (solve-iter b
                   (remainder a b)
                   y
                   (- x (* (quotient a b) y)))))
   (solve-iter a b 1 0))
+
+;;; Another formulation? Tracks \bar{x} and \bar{y}
+; (define (solve-ax+by=1 a b)
+;   (define (solve-iter a b q x y)
+;     (newline)
+;     (display "; a = ") (display a)
+;     (display "; b = ") (display b)
+;     (display "; x = ") (display x)
+;     (display "; y = ") (display y)
+;     (if (= b 0) 
+;       (cons y (- x (* q y)))
+;       (solve-iter b
+;                   (remainder a b)
+;                   (quotient a b)
+;                   (+ y (* (quotient a b) x))
+;                   x)))
+;   (solve-iter a b 0 1 0))
 
 ; Euclid's algorithm for gcd
 ; ; use eqn gcd(a,b) = gcd(b,r), where r = a % b
