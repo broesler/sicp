@@ -30,21 +30,21 @@
 ;;; Extended Euclidean algorithm to solve a*x + b*y = gcd(a,b)
 ;;; Tracks x,y directly
 (define (solve-ax+by=1 a b)
-  (define (solve-iter a b q x y)
+  (define (solve-iter a b x y)
     (newline)
     (display "; a = ") (display a) ; == old b
     (display "; b = ") (display b) ; == old (remainder a b)
-    (display "; q = ") (display q) ; == old (quotient a b)
+    (display "; q = ") (display (if (= b 0) #f (quotient a b))) ; == current quotient
+    (display "; r = ") (display (if (= b 0) #f (remainder a b))) ; == old (quotient a b)
     (display "; x = ") (display x) ; == old x == y
     (display "; y = ") (display y) ; == old y == x - qy
     (if (= b 0) 
-      (cons x y) ; Return the pair (x.y)
+      (cons x y) ; a is gcd(a,b) == 1
       (solve-iter b
                   (remainder a b)
-                  (quotient a b)
                   y ; "x"
                   (- x (* (quotient a b) y))))) ; "y"
-  (solve-iter a b 0 1 0))
+  (solve-iter a b 1 0))
 
 ;;; Test code:
 ;;; (  a,  b) --> (  x,  y)
@@ -63,11 +63,13 @@
     ; (printval (= g sum))
   ))
 
-(test-solve 27 4)
-(test-solve 56 9)
+; (test-solve 27 4)
+; (test-solve 56 9)
 (test-solve 207 40)
 
-;;; NOTE: x-value is ALWAYS correct. y-value is low by 3, 16, 48 
+;;; NOTE: x-value is ALWAYS correct. 
+;;; y-value is off. Needs to be calculated "up" the stack?
+
 ;------------------------------------------------------------------------------- 
 ;       Exercises 
 ;-------------------------------------------------------------------------------
