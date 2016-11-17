@@ -30,18 +30,37 @@
 ;;; Extended Euclidean algorithm to solve a*x + b*y = gcd(a,b)
 ;;; Returns a pair (x . y)
 (define (solve-ax+by=1 a b)
-  (if (= b 0)
-    (cons 1 (- 1))
-    (solve-ax+by=1 b (remainder a b))))
+  (define (solve-iter a b x y)
+    (newline)
+    (display "; a = ") (display a)
+    (display "; b = ") (display b)
+    (display "; x = ") (display x)
+    (display "; y = ") (display y)
+    (if (= b 0) 
+      (cons x y)
+      (solve-iter b
+                  (remainder a b)
+                  y
+                  (- x (* (quotient a b) y)))))
+  (solve-iter a b 1 0))
+
+; Euclid's algorithm for gcd
+; ; use eqn gcd(a,b) = gcd(b,r), where r = a % b
+; (define (gcd a b)
+;   (if (= b 0)
+;       a
+;       (gcd b (remainder a b))))
 
 ;;; Test code:
-(define (test-solve-ax+by=1 a b)
-  (let* ((ans (solve-ax+by=1 a b))
-         (x (car ans))
-         (y (cdr ans)))
-    (= (gcd a b) (+ (* a x) (* b y)))))
-
-(SHOULD-BE (test-solve-ax+by=1 207 40))
+;;; (a,b) --> (x,y)
+;;; (27,4) --> (-8,54)
+(let* ((a 27) ; choose two numbers s.t. (gcd a b) == 1
+       (b  4)
+       (ans (solve-ax+by=1 a b))
+       (x (car ans))
+       (y (cdr ans)))
+  (printval ans)
+  (printval (+ (* a x) (* b y))))
 
 ;------------------------------------------------------------------------------- 
 ;       Exercises 
