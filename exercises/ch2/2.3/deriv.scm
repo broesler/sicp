@@ -9,7 +9,7 @@
 
 ;;; General differentiation expression
 (define (deriv expr var)
-  (cond ((number? expr) 0)
+  (cond ((constant? expr) 0)
         ((variable? expr)
          (if (same-variable? expr var) 1 0))
         ((sum? expr)
@@ -28,6 +28,9 @@
 ;        Define these subprocedures:
 ;-------------------------------------------------------------------------------
 ;;; Using prefix notation for expr, i.e. ax+b ==> (+ (* a x) b)
+
+;;; Is x a constant?
+(define (constant? x) (number? x))
 
 ;;; Is x a variable?
 (define (variable? x) (symbol? x))
@@ -56,7 +59,20 @@
 (define (multiplier p) (cadr p))
 (define (multiplicand p) (caddr p))
 
-;;; Test code:
+;;;;;;;;;; Test code:
+;;; From lecture:
+; (define foo                 ; a*x*x + b*x + c
+;   '(+ (* a (* x x)) 
+;       (+ (* b x) 
+;          c)))
+; (printval (deriv foo 'x))
+; Value:
+; (+ (+ (* a (+ (* x 1) (* 1 x))) 
+;       (* 0 (* x x))) 
+;    (+ (+ (* b 1) (* 0 x)) 
+;       0))                               ; Not simplified!!
+
+;;; From book:
 ; (printval (deriv '(+ x 3) 'x)) 
 ; (printval (deriv '(* x y) 'x)) 
 ; (printval (deriv '(* (* x y) (+ x 3)) 'x)) 
@@ -73,12 +89,14 @@
 (define (make-sum a1 a2)
   (cond ((=number? a1 0) a2)
         ((=number? a2 0) a1)
-        ((and (number? a1) (number? a2)) (+ a1 a2))
+        ((and (number? a1) 
+              (number? a2)) 
+         (+ a1 a2))
         (else (list '+ a1 a2))))
 
 ;; check if an expression is equal to a number
-(define (=number? exp num)
-  (and (number? exp) (= exp num)))
+(define (=number? expr num)
+  (and (number? expr) (= expr num)))
 
 (define (make-product m1 m2)
   (cond ((or (=number? m1 0) (=number? m2 0)) 0)
@@ -87,7 +105,7 @@
         ((and (number? m1) (number? m2)) (* m1 m2))
         (else (list '* m1 m2))))
 
-;;; Test code:
+;;;;;;;;;; Test code:
 ; (printval (deriv '(+ x 3) 'x)) 
 ; (printval (deriv '(* x y) 'x)) 
 ; (printval (deriv '(* (* x y) (+ x 3)) 'x)) 

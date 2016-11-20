@@ -32,7 +32,7 @@
            (make-product (exponent expr)
                          (make-exponentiation 
                            (base expr) 
-                           (make-sum (exponent expr) '-1))) ; only numbers as exps!!!
+                           (make-sum (exponent expr) '-1)))
            (deriv (base expr) var)))
         (else
          (error "unknown expression type -- DERIV" expr))))
@@ -41,7 +41,6 @@
 ;        Ex 2.56 Define exponentiation
 ;-------------------------------------------------------------------------------
 ;;; Define '(** b n) as an exponent term
-
 ;; Predicate
 (define (exponentiation? x)
   (and (pair? x) (eq? (car x) '**)))
@@ -61,7 +60,7 @@
 
 ;;; Test code:
 (newline)
-(display "Ex 2.56 -- Exponentiation:")
+(display ";;;;;;;;;; Ex 2.56 -- Exponentiation ;;;;;;;;;;")
 (printval (deriv '(** x 0) 'x)) ; Value: 0
 (printval (deriv '(** x 1) 'x)) ; Value: 1
 (printval (deriv '(** x 2) 'x)) ; Value: (* 2 x)
@@ -75,20 +74,22 @@
 (load "../2.2/sequence_operations.scm") ; get accumulate
 
 ;;; Redefine sum selectors
-; (define (addend s) (cadr s))
+; (define (addend s) (cadr s)) ; (same as before)
 (define (augend s) 
   (accumulate make-sum 0 (cddr s)))
 
 ;;; Redefine multiply selectors
-; (define (multiplier p) (cadr p))
+; (define (multiplier p) (cadr p)) ; (same as before)
 (define (multiplicand p) 
   (accumulate make-product 1 (cddr p)))
 
 ;;; Test code:
+;;; Old and new way to write each expression compared
 (newline)
-(display "Ex 2.57 -- Arbitrary terms:")
-(printval (deriv '(+ 3 y (** x 2)) 'x))    ; Value: (* 2 x)
-(printval (deriv '(* (* x y) (+ x 3)) 'x)) ; Value: (+ (* x y) (* y (+ x 3)))
-(printval (deriv '(* x y (+ x 3)) 'x))     ; Value: (+ (* x y) (* y (+ x 3)))
+(display ";;;;;;;;;; Ex 2.57 -- Arbitrary terms ;;;;;;;;;")
+(printval (deriv '(+ 3 (+ y (** x 2))) 'x)) ; Value: (* 2 x)
+(printval (deriv '(+ 3 y (** x 2)) 'x))     ; Value: (* 2 x)
+(printval (deriv '(* (* x y) (+ x 3)) 'x))  ; Value: (+ (* x y) (* y (+ x 3)))
+(printval (deriv '(* x y (+ x 3)) 'x))      ; Value: (+ (* x y) (* y (+ x 3)))
 ;==============================================================================
 ;==============================================================================
