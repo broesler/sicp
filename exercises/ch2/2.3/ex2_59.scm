@@ -6,7 +6,7 @@
 ;;  Description: union-set operation 
 ;;
 ;;==============================================================================
-(load "set.scm")
+(load "set-unordered.scm")
 
 ;;; Union of two sets == set of elements that appear in either set
 ;;; Type: (set, set) -> set
