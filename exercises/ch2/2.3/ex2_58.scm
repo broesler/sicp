@@ -26,14 +26,14 @@
         ((and (number? a1) 
               (number? a2)) 
          (+ a1 a2))
-        (else (list 'a1 + a2)))) ; '+ goes in the middle
+        (else (list a1 '+ a2)))) ; '+ goes in the middle
 
 (define (make-product m1 m2)
   (cond ((or (=number? m1 0) (=number? m2 0)) 0)
         ((=number? m1 1) m2)
         ((=number? m2 1) m1)
         ((and (number? m1) (number? m2)) (* m1 m2))
-        (else (list 'm1 * m2))))
+        (else (list m1 '* m2))))
 
 ;;; Selectors:
 (define (addend s) (car s))
@@ -43,8 +43,8 @@
 (define (multiplicand p) (caddr p))
 
 ;;; Test code:
-(define foo '(x + (3 * (x + (y + 2))))) ; x + 3(x + y + 2)
+(define foo '(x + (3 * (x + ((y * y) + 2))))) ; x + 3*(x + y*y + 2)
 (printval (deriv foo 'x)) ; Value: 4
-(printval (deriv foo 'y)) ; Value: 3
+(printval (deriv foo 'y)) ; Value: (3 * (y + y))
 ;;==============================================================================
 ;;==============================================================================
