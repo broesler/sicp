@@ -35,18 +35,13 @@
 ;;; encode-symbol returns a list of bits
 (define (encode-symbol symbol tree)
   (cond ((leaf? tree) '())
-        ((not (symbol-in-list? symbol (symbols tree)))
-         (error "symbol not found -- ENCODE-SYMBOL" symbol))
-        (else
-          (let ((lb (left-branch tree))
-                (rb (right-branch tree)))
-            (if (symbol-in-list? symbol (symbols lb))
-              (cons 0 (encode-symbol symbol lb))
-              (cons 1 (encode-symbol symbol rb)))))))
-
-;;; Is the symbol in the list? (i.e. (memq 'a (a b c)) => #t)
-(define (symbol-in-list? symbol symbols)
-  (if (memq symbol symbols) #t #f))
+        ((member symbol (symbols tree))
+         (let ((lb (left-branch tree))
+               (rb (right-branch tree)))
+           (if (member symbol (symbols lb))
+             (cons 0 (encode-symbol symbol lb))
+             (cons 1 (encode-symbol symbol rb)))))
+        (else (error "symbol not found -- ENCODE-SYMBOL" symbol))))
 
 ;;; Test code:
 ; (printval (encode-symbol 'A sample-tree)) ; Value: (0)
@@ -73,7 +68,7 @@
 ;;;   {({B D C} 4) (A 4)}
 ;;;   {({A B D C} 8)}
 (define (successive-merge leaves)
-  (if (= (length leaves) 1)
+  (if (null? (cdr leaves))
     (car leaves)
     (let ((left (car leaves))
           (right (cadr leaves)))
@@ -85,5 +80,26 @@
 (define leaves (make-leaf-set pairs))
 (define mytree (generate-huffman-tree pairs))
 (printval (equal? mytree sample-tree))
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.70 -- eight-symbol alphabet
+;-------------------------------------------------------------------------------
+(define rock-pairs 
+  '((A 2) (BOOM 1) (GET 2) (JOB 2) (NA 16) (SHA 3) (YIP 9) (WAH 1)))
+(define rock-tree (generate-huffman-tree rock-pairs))
+(define rock-lyrics '(Get a job
+                          Sha na na na na na na na na
+                          Get a job
+                          Sha na na na na na na na na
+                          Wah yip yip yip yip yip yip yip yip yip
+                          Sha boom))
+(define rock-encoded (encode rock-lyrics rock-tree))
+(printval (length rock-lyrics))  ; Value: 36 symbols
+(printval (length rock-encoded)) ; Value: 84 bits
+
+;;; If we used a fixed-length code, we'd need 
+;;;   log_2 n = log_2 8 = [3 bits per symbol]
+;;; or 3 bits/symbol * 36 symbols = [108 bits]
+;;; so the Huffman-encoded version is 18.5% shorter!
 ;;==============================================================================
 ;;==============================================================================
