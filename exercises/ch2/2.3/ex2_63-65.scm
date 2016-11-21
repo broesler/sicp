@@ -6,7 +6,7 @@
 ;;  Description: Lists as binary trees
 ;;
 ;;==============================================================================
-(load "set-ordered.scm")
+(load "set-ordered.scm") ; for old
 (load "ex2_61-62.scm") ; union-set and adjoint-set for ordered lists
 (load "set-tree.scm")
 
@@ -34,9 +34,11 @@
 (define tree1 '(7 (3 (1 () ()) (5 () ())) (9 () (11 () ()))))
 ; (define tree2 '(3 (1 () ()) (7 (5 () ()) (9 () (11 () ())))))
 ; (define tree3 '(5 (3 (1 () ()) ()) (9 (7 () ()) (11 () ()))))
+;; Recursive:
 ; (printval (tree->list-1 tree1)) ; Value: (1 3 5 7 9 11)
 ; (printval (tree->list-1 tree2)) ; Value: (1 3 5 7 9 11)
 ; (printval (tree->list-1 tree3)) ; Value: (1 3 5 7 9 11)
+;; Iterative:
 ; (printval (tree->list-2 tree1)) ; Value: (1 3 5 7 9 11)
 ; (printval (tree->list-2 tree2)) ; Value: (1 3 5 7 9 11)
 ; (printval (tree->list-2 tree3)) ; Value: (1 3 5 7 9 11)
