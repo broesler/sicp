@@ -6,8 +6,6 @@
 ;;  Description: lookup function for trees
 ;;
 ;;==============================================================================
-(load "ex2_63-65.scm")
-
 (define (lookup given-key set-of-records)
   (cond ((null? set-of-records) false)
         ((= given-key (key (entry set-of-records)))
