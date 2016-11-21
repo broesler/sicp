@@ -56,5 +56,34 @@
 (define encoded-message (encode decoded-message sample-tree))
 (printval encoded-message) ; Value: (0 1 1 0 0 1 0 1 0 1 1 1 0)
 (printval (equal? encoded-message sample-message)) ; Value: #t
+
+;------------------------------------------------------------------------------- 
+;        Ex 2.69 successive-merge
+;-------------------------------------------------------------------------------
+;;; (list of symbol-freq pairs) -> Huffman-tree
+(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+;;; Successive-merge takes ordered set of leaves and merges the smallest-weight
+;;; elements until there is only one element left, which is the Huffman tree!
+;;; Uses (make-code-tree) at each step of the merge
+;;; i.e. take: 
+;;;   {(D 1) (C 1) (B 2) (A 4)}
+;;;   {({D C} 2) (B 2) (A 4)}
+;;;   {({B D C} 4) (A 4)}
+;;;   {({A B D C} 8)}
+(define (successive-merge leaves)
+  (if (= (length leaves) 1)
+    (car leaves)
+    (let ((left (car leaves))
+          (right (cadr leaves)))
+      (successive-merge (adjoin-set (make-code-tree left right) 
+                                    (cddr leaves))))))
+
+;;; Test code:
+(define pairs '((A 4) (B 2) (C 1) (D 1)))
+(define leaves (make-leaf-set pairs))
+(define mytree (generate-huffman-tree pairs))
+(printval (equal? mytree sample-tree))
 ;;==============================================================================
 ;;==============================================================================
