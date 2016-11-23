@@ -630,6 +630,9 @@
     ;==(70)==>3
     ;==(71)==>3
 
+;;; A lot of intermediate variables get used in this call 
+;;; (i.e. (rec-fib (- n 1)), and these variables are eliminated by our
+;;; re-definition of (simple?) to exclude variables from the operand positions.
 
 ;;; Iterative fibonacci
 (newline)
