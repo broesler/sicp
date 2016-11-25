@@ -115,6 +115,9 @@
 ;     (inc a)))
 ;  (+ 2 3))
 
+(newline)
+(display ";;;;;;;;;; mytest ;;;;;;;;;;")
+(newline)
 (pp (desugar let*-mytest))
 ;;; Output:
   ; ((lambda (a) 
@@ -137,6 +140,9 @@
         ((scale (/ 1 end-point-on-x-axis)) curve-ended-at-x-axis)))
     (put-in-standard-position (compose unit-circle double))))
 
+(newline)
+(display ";;;;;;;;;; test1 ;;;;;;;;;;")
+(newline)
 (pp (desugar let*-test1))
 ;;; Output:
   ; ((define put-in-standard-position
@@ -156,6 +162,9 @@
   ;       (curve 0))))
   ;  (put-in-standard-position (compose unit-circle double)))
 
+(newline)
+(display ";;;;;;;;;; test2 ;;;;;;;;;;")
+(newline)
 (define let*-test2
   '(let* ((a (+ 2 3))
           (b (inc a))
