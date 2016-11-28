@@ -162,5 +162,6 @@
 ;;; 
 ;;; The only change we have to make is switching the order of the (put ...)
 ;;; commands above! So <type> is always 'deriv, and <op> is '+, '*, '**, ...
+;;; i.e. (put 'deriv '(+) deriv) ==> (put '+ '(deriv) deriv)
 ;;==============================================================================
 ;;==============================================================================
