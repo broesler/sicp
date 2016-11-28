@@ -62,8 +62,12 @@
 
   ;;---------- Interface to rest of system ----------
   ;; (put <op> <type> <item>)
+  (define (tag x) (attach-tag '+ x))
   (put 'deriv '(+) deriv)
+  (put 'make-sum '+
+       (lambda (a b) (tag (make-sum a b))))
   'done)
+
 
 (define (install-prod-package)
   ;;---------- Internal procedures ----------
@@ -88,7 +92,10 @@
                     (multiplicand expr))))
 
   ;;---------- Interface to rest of system ----------
+  (define (tag x) (attach-tag '* x))
   (put 'deriv '(*) deriv)
+  (put 'make-product '*
+       (lambda (a b) (tag (make-product a b))))
   'done)
 
 ;;;;;;;;;; Test code:
@@ -104,8 +111,15 @@
 ;        (c) include exponent
 ;-------------------------------------------------------------------------------
 (define (install-exp-package)
-  ;;; NOTE: assumes that (make-sum) and (make-product) are already available!
   ;;---------- Internal procedures ----------
+  ;;; NOTE: Need to define these procedures for use:
+  ;;; They should be able to access the table if "get" is defined outside of
+  ;;; this scope
+  (define (make-sum a b) 
+    ((get 'make-sum '+) a b))
+  (define (make-product a b) 
+    ((get 'make-product '*) a b))
+
   ;; Constructor
   (define (make-exponentiation b n) 
     (cond ((=number? b 0) 0) ; 0^n = 0
@@ -129,7 +143,10 @@
       (deriv (base expr) var)))
 
   ;;---------- Interface to rest of system ----------
+  (define (tag x) (attach-tag '** x))
   (put 'deriv '(**) deriv)
+  (put 'make-exponentiation '**
+       (lambda (b n) (tag (make-exponentiation b n))))
   'done)
 
 ;;;;;;;;;; Test code:
@@ -145,7 +162,5 @@
 ;;; 
 ;;; The only change we have to make is switching the order of the (put ...)
 ;;; commands above! So <type> is always 'deriv, and <op> is '+, '*, '**, ...
-
-
 ;;==============================================================================
 ;;==============================================================================
