@@ -121,18 +121,19 @@
 ;; If subject is not in catalog => no prereqs
 ;; Need unique list
 (define (all-prerequisites subject)
-  (let ((prereqs (get-prereqs subject)))
-    (map (lambda (x) (all-prerequisites x)) 
-         prereqs)))
-
-(define (get-prereqs subject)
   (let ((entry (find subject catalog)))
-    (if entry
-      (entry-prerequisites entry)
-      '())))
+    (if (null? entry) 
+      '()
+      (let ((prereqs (entry-prerequisites entry)))
+        (if (null? prereqs)
+          '()
+          (list-union prereqs 
+                      (reduce list-union 
+                              '() 
+                              (map all-prerequisites prereqs))))))))
 
 ;;; Check: 
-(all-prerequisites '(12:004)) 
+(all-prerequisites '12:004) 
 ; Value: (18:03 8:02 8:01 18:02 18:01)
 
 ;------------------------------------------------------------------------------- 
