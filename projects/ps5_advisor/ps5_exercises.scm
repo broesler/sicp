@@ -168,14 +168,10 @@
 ;;; prerequisites of any other subject in the list. 
 ;;; Return false if there are circular prereqs, true otherwise.
 (define (check-circular-prerequisites? subjects)
-  (define (loop all rest)
-    (cond ((null? rest) 
-           true)
-          ((not (null? (list-intersection all 
-                                          (all-prerequisites (car rest)))))
-           false)
-          (else  (loop all (cdr rest)))))
-  (loop subjects subjects))
+  (null? (list-intersection subjects
+                            (reduce list-union 
+                                    '() 
+                                    (map all-prerequisites subjects)))))
 
 (check-circular-prerequisites? '(8:01 5:11)) ; Value: true
 (check-circular-prerequisites? '(18:01 12:004)) ; Value: false
