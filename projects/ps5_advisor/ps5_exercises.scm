@@ -122,36 +122,37 @@
 ;; Need unique list
 (define (all-prerequisites subject)
   (let ((entry (find subject catalog)))
-    (if (null? entry) 
-      '()
+    (if entry  ;; find returns entry or #f
       (let ((prereqs (entry-prerequisites entry)))
         (if (null? prereqs)
           '()
           (list-union prereqs 
                       (reduce list-union 
                               '() 
-                              (map all-prerequisites prereqs))))))))
+                              (map all-prerequisites prereqs)))))
+      '())))
 
 ;;; Check: 
 (all-prerequisites '12:004) 
 ; Value: (18:03 8:02 8:01 18:02 18:01)
 
 ;------------------------------------------------------------------------------- 
-;        Exercise 4: add rule to subject-knowledge
+;        Exercise 4: add rule to (subject-knowledge)
 ;-------------------------------------------------------------------------------
-;;; (make-rule
-;;;       `(can i take (? s1 ,in-catalog) if i have not taken (? s2 ,in-catalog))
-;;;       (lambda (dict)
-;;;         (let ((sub1 (entry-subject (value 's1 dict)))
-;;;               (sub2 (entry-subject (value 's2 dict))))
-;;;           (if (member sub2 (all-prerequisites sub1)) 
-;;;             (write-line
-;;;               (append '(no you cannot take)
-;;;                       (list sub1)
-;;;                       '(because)
-;;;                       (list sub2)
-;;;                       '(is a prerequisite)))
-;;;             (write-line '(sure you can take it!))))))
+;;;;;;;;;; Rule:
+  ;;; (make-rule
+  ;;;       `(can i take (? s1 ,in-catalog) if i have not taken (? s2 ,in-catalog))
+  ;;;       (lambda (dict)
+  ;;;         (let ((sub1 (entry-subject (value 's1 dict)))
+  ;;;               (sub2 (entry-subject (value 's2 dict))))
+  ;;;           (if (member sub2 (all-prerequisites sub1)) 
+  ;;;             (write-line
+  ;;;               (append '(no you cannot take)
+  ;;;                       (list sub1)
+  ;;;                       '(because)
+  ;;;                       (list sub2)
+  ;;;                       '(is a prerequisite)))
+  ;;;             (write-line '(sure you can take it!))))))
 
 ;;;;;;;;;; Transcript:
   ;;; ** (can i take 7:012 if i have not taken 8:01)
@@ -163,8 +164,21 @@
 ;------------------------------------------------------------------------------- 
 ;        Exercise 5: check for circular prereqs
 ;-------------------------------------------------------------------------------
+;;; Take a list of subjects, and determine if any of the subjects are
+;;; prerequisites of any other subject in the list. 
+;;; Return false if there are circular prereqs, true otherwise.
 (define (check-circular-prerequisites? subjects)
+  (define (loop all rest)
+    (cond ((null? rest) 
+           true)
+          ((not (null? (list-intersection all 
+                                          (all-prerequisites (car rest)))))
+           false)
+          (else  (loop all (cdr rest)))))
+  (loop subjects subjects))
 
+(check-circular-prerequisites? '(8:01 5:11)) ; Value: true
+(check-circular-prerequisites? '(18:01 12:004)) ; Value: false
 
 ;------------------------------------------------------------------------------- 
 ;        Exercise 6: Total units
@@ -176,5 +190,37 @@
                subjects)))
 
 (total-units '(6:001 18:01 8:01)) ; Value: 39
+
+;------------------------------------------------------------------------------- 
+;        Exercise 7: check subject list for issues
+;-------------------------------------------------------------------------------
+(define (check-subject-list subjects)
+  (cond ((> (total-units subjects) 54)
+         (write-line '(these subjects exceed the freshman credit limit!)))
+        ((not (check-circular-prerequisites? subjects))
+         (write-line '(there are circular prereqs in your list!)))
+        (else
+          (write-line 
+            (append '(you need the following prerequisites:)
+                    (reduce list-union
+                            '()
+                            (map (lambda (x) (immediate-prereqs x)) 
+                                 subjects)))))))
+
+;;; Get the first level of prereqs of a subject
+(define (immediate-prereqs subject)
+  (let ((entry (find subject catalog)))
+    (if (null? entry) 
+      '()
+      (entry-prerequisites entry))))
+
+;;; Test code:
+(immediate-prereqs '12:004) ; Value: (18:03 8:02)
+(check-subject-list '(12:004 5:11))
+; Value: (you need the following prerequisites: 18:03 8:02 a-strong-stomach) 
+(check-subject-list '(6:001 18:01 8:01 7:012 5:11)) 
+; Value: (these subjects exceed the freshman credit limit!)
+(check-subject-list '(12:004 8:01))
+
 ;;==============================================================================
 ;;==============================================================================
