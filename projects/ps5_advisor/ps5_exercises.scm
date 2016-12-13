@@ -20,7 +20,7 @@
 
 ;;; Pre-lab Exercise 3:
 ;;;   Use map + reduce to compute the sum of squares of a list
-(reduce + 0 (map (lambda (x) (square x)) '(3 4 5))) ; Value: 50
+(reduce + 0 (map square '(3 4 5))) ; Value: 50
 
 ;;; Pre-lab Exercise 4:
 ;;;   What is returned by:
@@ -200,8 +200,7 @@
             (append '(you need the following prerequisites:)
                     (reduce list-union
                             '()
-                            (map (lambda (x) (immediate-prereqs x)) 
-                                 subjects)))))))
+                            (map immediate-prereqs subjects)))))))
 
 ;;; Get the first level of prereqs of a subject
 (define (immediate-prereqs subject)
@@ -217,6 +216,25 @@
 (check-subject-list '(6:001 18:01 8:01 7:012 5:11)) 
 ; Value: (these subjects exceed the freshman credit limit!)
 (check-subject-list '(12:004 8:01))
+
+;------------------------------------------------------------------------------- 
+;        Exercise 8: rule to subject-knowledge
+;-------------------------------------------------------------------------------
+;;;;;;;;;; Rule:
+  ;;; (make-rule
+  ;;;   `(i want to take (?? s ,subjects))
+  ;;;   (lambda (dict)
+  ;;;     (check-subject-list (map entry-subject (value 's dict)))))
+
+;;;;;;;;;; Transcript:
+  ;;; ** (i want to take 12:004 and 5:11)
+  ;;; (you need the following prerequisites: 18:03 8:02 a-strong-stomach)
+  ;;; 
+  ;;; ** (i want to take 6:001 18:01 8:01 7:012 and 5:11)
+  ;;; (these subjects exceed the freshman credit limit!)
+  ;;; 
+  ;;; ** (i want to take 12:004 and 8:01)
+  ;;; (there are circular prereqs in your list!)
 
 ;;==============================================================================
 ;;==============================================================================

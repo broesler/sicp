@@ -295,6 +295,7 @@
                     '(are)
                     (entry-prerequisites entry))))) )
 
+    ;; New rule (Ex 4):
     (make-rule
       `(can i take (? s1 ,in-catalog) if i have not taken (? s2 ,in-catalog))
       (lambda (dict)
@@ -309,6 +310,11 @@
                       '(is a prerequisite)))
             (write-line '(sure you can take it!))))))
 
+    ;; New rule (Ex 8):
+    (make-rule
+      `(i want to take (?? s ,subjects))
+      (lambda (dict)
+        (check-subject-list (map entry-subject (value 's dict)))))
     ))
 
             
