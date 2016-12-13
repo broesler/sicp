@@ -295,9 +295,23 @@
                     '(are)
                     (entry-prerequisites entry))))) )
 
+    (make-rule
+      `(can i take (? s1 ,in-catalog) if i have not taken (? s2 ,in-catalog))
+      (lambda (dict)
+        (let ((sub1 (entry-subject (value 's1 dict)))
+              (sub2 (entry-subject (value 's2 dict))))
+          (if (member sub2 (all-prerequisites sub1)) 
+            (write-line
+              (append '(no you cannot take)
+                      (list sub1)
+                      '(because)
+                      (list sub2)
+                      '(is a prerequisite)))
+            (write-line '(sure you can take it!))))))
+
     ))
 
-
+            
 (define (filter test? subjects)
   (cond ((null? subjects) '())
         ((test? (car subjects))

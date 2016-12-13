@@ -11,30 +11,30 @@
 
 ;;; Pre-lab Exercise 1:
 ;;;   List-union checks for duplicates, append does not!
-; (list-union '(1 2 3) '(3 4 5)) ; Value: (1 2 3 4 5)
-; (append '(1 2 3) '(3 4 5))     ; Value: (1 2 3 3 4 5)
+(list-union '(1 2 3) '(3 4 5)) ; Value: (1 2 3 4 5)
+(append '(1 2 3) '(3 4 5))     ; Value: (1 2 3 3 4 5)
 
 ;;; Pre-lab Exercise 2:
 ;;;   Compute the product of all elements in a list using reduce
-; (reduce * 1 '(1 2 3 4 5)) ; Value: 120
+(reduce * 1 '(1 2 3 4 5)) ; Value: 120
 
 ;;; Pre-lab Exercise 3:
 ;;;   Use map + reduce to compute the sum of squares of a list
-; (reduce + 0 (map (lambda (x) (square x)) '(3 4 5))) ; Value: 50
+(reduce + 0 (map (lambda (x) (square x)) '(3 4 5))) ; Value: 50
 
 ;;; Pre-lab Exercise 4:
 ;;;   What is returned by:
-; (reduce append '() '((1 2) (2 3) (4 6) (5 4)))      ; Value: (1 2 2 3 4 6 5 4)
-; (reduce list-union '() '((1 2) (2 3) (4 6) (5 4)))  ; Value: (1 2 3 6 5 4)
+(reduce append '() '((1 2) (2 3) (4 6) (5 4)))      ; Value: (1 2 2 3 4 6 5 4)
+(reduce list-union '() '((1 2) (2 3) (4 6) (5 4)))  ; Value: (1 2 3 6 5 4)
 
 ;;; Pre-lab Exercise 5:
 ;;; What does this procedure do?
-; (define (unique symbols)
-;   (reduce list-union
-;           '()
-;           (map list symbols)))
+(define (unique symbols)
+  (reduce list-union
+          '()
+          (map list symbols)))
 ;;; This procedure returns a list of unique symbols, maybe call it "unique":
-; (unique '(x y z x t t y)) ; Value: (z x t y)
+(unique '(x y z x t t y)) ; Value: (z x t y)
 
 ;------------------------------------------------------------------------------- 
 ;        Exercise 1: Expand (beginnings) and (general-advice)
@@ -137,14 +137,44 @@
 ; Value: (18:03 8:02 8:01 18:02 18:01)
 
 ;------------------------------------------------------------------------------- 
+;        Exercise 4: add rule to subject-knowledge
+;-------------------------------------------------------------------------------
+;;; (make-rule
+;;;       `(can i take (? s1 ,in-catalog) if i have not taken (? s2 ,in-catalog))
+;;;       (lambda (dict)
+;;;         (let ((sub1 (entry-subject (value 's1 dict)))
+;;;               (sub2 (entry-subject (value 's2 dict))))
+;;;           (if (member sub2 (all-prerequisites sub1)) 
+;;;             (write-line
+;;;               (append '(no you cannot take)
+;;;                       (list sub1)
+;;;                       '(because)
+;;;                       (list sub2)
+;;;                       '(is a prerequisite)))
+;;;             (write-line '(sure you can take it!))))))
+
+;;;;;;;;;; Transcript:
+  ;;; ** (can i take 7:012 if i have not taken 8:01)
+  ;;; (sure you can take it!)
+  ;;; 
+  ;;; ** (can i take 12:004 if i have not taken 8:01)
+  ;;; (no you cannot take 12:004 because 8:01 is a prerequisite)
+
+;------------------------------------------------------------------------------- 
+;        Exercise 5: check for circular prereqs
+;-------------------------------------------------------------------------------
+(define (check-circular-prerequisites? subjects)
+
+
+;------------------------------------------------------------------------------- 
 ;        Exercise 6: Total units
 ;-------------------------------------------------------------------------------
-; (define (total-units subjects)
-;   (reduce + 
-;           0 
-;           (map (lambda (x) (entry-units (find x catalog))) 
-;                subjects)))
-;
-; (printval (total-units '(6:001 18:01 8:01))) ; Value: 39
+(define (total-units subjects)
+  (reduce + 
+          0 
+          (map (lambda (x) (entry-units (find x catalog))) 
+               subjects)))
+
+(total-units '(6:001 18:01 8:01)) ; Value: 39
 ;;==============================================================================
 ;;==============================================================================
