@@ -196,11 +196,14 @@
         ((not (check-circular-prerequisites? subjects))
          (write-line '(there are circular prereqs in your list!)))
         (else
-          (write-line 
-            (append '(you need the following prerequisites:)
-                    (reduce list-union
-                            '()
-                            (map immediate-prereqs subjects)))))))
+          (let ((prereqs (reduce list-union
+                                 '()
+                                 (map immediate-prereqs subjects))))
+            (if (null? prereqs)
+              (write-line '(great!))
+              (write-line 
+                (append '(you need the following prerequisites:)
+                        prereqs)))))))
 
 ;;; Get the first level of prereqs of a subject
 (define (immediate-prereqs subject)
@@ -235,6 +238,44 @@
   ;;; 
   ;;; ** (i want to take 12:004 and 8:01)
   ;;; (there are circular prereqs in your list!)
+  ;;; 
+  ;;; ** (i want to take 8:01)
+  ;;; (great!)
+
+;------------------------------------------------------------------------------- 
+;        Exercise 9: ask about subject descriptions
+;-------------------------------------------------------------------------------
+;;;;;;;;;; Rule:
+  ;;; (make-rule
+  ;;;       '(is there a course about (?? x))
+  ;;;       (lambda (dict)
+  ;;;         (let ((topic (value 'x dict)))
+  ;;;           (write-line (append '(you asked about) topic))
+  ;;;           (let ((matches (filter (in-description? topic) catalog)))
+  ;;;             (if (null? matches)
+  ;;;               (write-line '(no there is not))
+  ;;;               (for-each (lambda (entry)
+  ;;;                           (write-line
+  ;;;                             (append '(the course)
+  ;;;                                     (list (entry-subject entry))
+  ;;;                                     '(is about)
+  ;;;                                     (entry-summary entry))))
+  ;;;                         matches))))))
+  ;;;
+  ;;; ;;; Auxiliary procedure for Ex 9 rule
+  ;;; (define (in-description? topic)
+  ;;;   (lambda (entry) 
+  ;;;     (member topic (entry-summary entry))))
+
+
+;;;;;;;;;; Transcript:
+  ;;; ** (is there a course about magnetism)
+  ;;; (the course 8:02 is about electricity and magnetism)
+  ;;; 
+  ;;; ** (is there a course about diseases)
+  ;;; (the course 7:012 is about diseases and their applications)
+  ;;; (the course 7:013 is about diseases and their applications)
+  ;;; (the course 7:014 is about diseases and their applications)
 
 ;;==============================================================================
 ;;==============================================================================

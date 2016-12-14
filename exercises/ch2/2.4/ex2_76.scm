@@ -19,10 +19,12 @@
 ;;;     -- to add a new operation, we just add it to each type, and add the row
 ;;;     into the table
 ;;;     -- (cond) is essentially in each (get ...), which is defined in each
-;;;     external operation
+;;;     external operation 
+;;;         ==> most work required to add operation
 ;;; 3. message-passing-style
 ;;;     -- each data object (constructor) dispatches on operation name
-;;;     -- (cond) is in each data object, instead of each operation
+;;;     -- (cond) is in each data object, instead of each operation 
+;;;         ==> most work required to add data type
 ;;;     -- to add a new type, we create a new constructor 
 
 ;;; If new TYPES are often added, we want to use: data-directed

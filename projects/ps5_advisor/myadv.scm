@@ -315,9 +315,31 @@
       `(i want to take (?? s ,subjects))
       (lambda (dict)
         (check-subject-list (map entry-subject (value 's dict)))))
+
+    ;; New rule (Ex 9):
+    ;; TODO: update to use (?? x) for multiple topics
+    (make-rule
+      '(is there a course about (? x))
+      (lambda (dict)
+        (let ((topic (value 'x dict)))
+          (let ((matches (filter (in-description? topic) catalog)))
+            (if (null? matches)
+              (write-line '(no there is not))
+              (for-each (lambda (entry)
+                          (write-line
+                            (append '(the course)
+                                    (list (entry-subject entry))
+                                    '(is about)
+                                    (entry-summary entry))))
+                        matches))))))
     ))
 
-            
+;;; Auxiliary procedure for Ex 9 rule
+(define (in-description? topic)
+  (lambda (entry) 
+    (member topic (entry-summary entry))))
+
+;;; Pre-defined helper procedures
 (define (filter test? subjects)
   (cond ((null? subjects) '())
         ((test? (car subjects))
