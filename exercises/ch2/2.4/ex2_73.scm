@@ -6,16 +6,16 @@
 ;;  Description: Derivatives as a data-directed system 
 ;;
 ;;==============================================================================
-(load "../../../sicp_code/ch2support.scm")
+(load "../../../sicp_code/ch2support.scm") ;; for put/get operations
+(load "complex.scm") ;; for (attach-tag)
 
 ;;; Constuctor
 (define (deriv expr var)
   (cond ((constant? expr) 0)
         ((variable? expr) 
          (if (same-variable? expr var) 1 0))
-        (else 
-          ((get 'deriv (operator expr)) (operands expr)
-                                        var))))
+        (else ((get 'deriv (operator expr)) (operands expr)
+                                            var))))
 
 ;;; Selectors
 (define (operator expr) (car expr))
@@ -40,6 +40,10 @@
 ;------------------------------------------------------------------------------- 
 ;        (b) Sums and products + installation code
 ;-------------------------------------------------------------------------------
+;;; Compare expression to number
+(define (=number? expr num)
+  (and (number? expr) (= expr num)))
+
 (define (install-sum-package)
   ;;---------- Internal procedures ----------
   ;; Constructor
@@ -49,74 +53,74 @@
           ((and (number? a1) 
                 (number? a2)) 
            (+ a1 a2))
-          (else (list '+ a1 a2))))
-  (define (=number? expr num)
-    (and (number? expr) (= expr num)))
+          (else (list '+ a1 a2)))) ; NOTE: "tag" included here!
 
-  ;; Selectors
-  (define (addend s) (cadr s))
-  (define (augend s) (caddr s))
-
-  ;; Take the derivative of a sum
-  (define (deriv expr) 
-    (make-sum (deriv (addend expr) var)
-              (deriv (augend expr) var)))
+  ;; Selectors (only take 2 operators, NOT complete expression)
+  (define (addend s) (car s))
+  (define (augend s) (cadr s))
 
   ;;---------- Interface to rest of system ----------
   ;; (put <op> <type> <item>)
-  (define (tag x) (attach-tag '+ x))
-  (put 'deriv '(+) deriv)
+  ;; NOTE: Do not put "'(+)" if we are using (get) above. List form only
+  ;; works with (apply-generic)
+  ;; Derivative procedure:
+  (put 'deriv '+ 
+       (lambda (opers var) 
+         (make-sum (deriv (addend opers) var)
+                   (deriv (augend opers) var))))
   (put 'make-sum '+
-       (lambda (a b) (tag (make-sum a b))))
+       (lambda (a b) (make-sum a b)))
   'done)
 
+;;;;;;;;;; Test code:
+(install-sum-package)
+(printval (deriv '(+ x 2) 'x)) ; Value: 1
 
 (define (install-prod-package)
   ;;---------- Internal procedures ----------
+  ;; Requires sum-package
+  (define (make-sum a b)
+    ((get 'make-sum '+) a b))
+
   ;; Constructor
   (define (make-product m1 m2)
     (cond ((or (=number? m1 0) (=number? m2 0)) 0)
           ((=number? m1 1) m2)
           ((=number? m2 1) m1)
           ((and (number? m1) (number? m2)) (* m1 m2))
-          (else (list '* m1 m2))))
+          (else (list '* m1 m2)))) ; NOTE: "tag" included here!
 
-  ;; Selectors
-  (define (multiplier p) (cadr p))
-  (define (multiplicand p) (caddr p))
-
-  ;; Take the derivative of a product
-  (define (deriv expr)
-    (make-sum
-      (make-product (multiplier expr)
-                    (deriv (multiplicand expr) var))
-      (make-product (deriv (multiplier expr) var)
-                    (multiplicand expr))))
+  ;; Selectors (only take 2 operators, NOT complete expression)
+  (define (multiplier p) (car p))
+  (define (multiplicand p) (cadr p))
 
   ;;---------- Interface to rest of system ----------
-  (define (tag x) (attach-tag '* x))
-  (put 'deriv '(*) deriv)
+  ;; Derivative procedure:
+  (put 'deriv '* 
+       (lambda (opers var)
+         (make-sum
+           (make-product (multiplier opers)
+                         (deriv (multiplicand opers) var))
+           (make-product (deriv (multiplier opers) var)
+                         (multiplicand opers)))))
   (put 'make-product '*
-       (lambda (a b) (tag (make-product a b))))
+       (lambda (a b) (make-product a b)))
   'done)
 
 ;;;;;;;;;; Test code:
-; (install-sum-package)
-; (install-prod-package)
-; (define foo                 ; a*x*x + b*x + c
-;   '(+ (* a (* x x)) 
-;       (+ (* b x) 
-;          c)))
-; (printval (deriv foo 'x))
+(install-prod-package)
+(printval (deriv '(* x y) 'x))
+(define foo                 ; a*x*x + b*x + c
+  '(+ (* a (* x x)) 
+      (+ (* b x) 
+         c)))
+(printval (deriv foo 'x)) ; Value: (+ (* a (+ x x)) b)
 
 ;------------------------------------------------------------------------------- 
 ;        (c) include exponent
 ;-------------------------------------------------------------------------------
 (define (install-exp-package)
   ;;---------- Internal procedures ----------
-  ;;; NOTE: Need to define these procedures for use:
-  ;;; They should be able to access the table if "get" is defined outside of
-  ;;; this scope
   (define (make-sum a b) 
     ((get 'make-sum '+) a b))
   (define (make-product a b) 
@@ -132,28 +136,31 @@
           (else (list '** b n))))
 
   ;; Selectors
-  (define (base x) (cadr x))
-  (define (exponent x) (caddr x))
+  (define (base x) (car x))
+  (define (exponent x) (cadr x))
 
   ;;; Take the derivative of an exponent
-  (define (deriv expr)
-    (make-product
-      (make-product (exponent expr)
-                    (make-exponentiation 
-                      (base expr) 
-                      (make-sum (exponent expr) '-1)))
-      (deriv (base expr) var)))
 
   ;;---------- Interface to rest of system ----------
-  (define (tag x) (attach-tag '** x))
-  (put 'deriv '(**) deriv)
+  (put 'deriv '** 
+       (lambda (expr var)
+         (make-product
+           (make-product (exponent expr)
+                         (make-exponentiation 
+                           (base expr) 
+                           (make-sum (exponent expr) '-1)))
+           (deriv (base expr) var))))
   (put 'make-exponentiation '**
-       (lambda (b n) (tag (make-exponentiation b n))))
+       (lambda (b n) (make-exponentiation b n)))
   'done)
 
 ;;;;;;;;;; Test code:
-; (install-exp-package)
-; (printval (deriv '(** x 2) 'x)) ; Value: (* 2 x)
+(install-exp-package)
+(define foo                 ; a*x^2 + b*x + c
+  '(+ (* a (** x 2)) 
+      (+ (* b x) 
+         c)))
+(printval (deriv foo 'x)) ; Value: (+ (* a (* 2 x)) b)
 
 ;------------------------------------------------------------------------------- 
 ;        (d) opposite indexing?
