@@ -6,6 +6,8 @@
 ;;  Description: Derivatives as a data-directed system 
 ;;
 ;;==============================================================================
+(load "../../../sicp_code/ch2support.scm")
+
 ;;; Constuctor
 (define (deriv expr var)
   (cond ((constant? expr) 0)
