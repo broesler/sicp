@@ -7,7 +7,6 @@
 ;;
 ;;==============================================================================
 (load "../../../sicp_code/ch2support.scm") ;; for put/get operations
-(load "complex.scm") ;; for (attach-tag)
 
 ;;; Constuctor
 (define (deriv expr var)
