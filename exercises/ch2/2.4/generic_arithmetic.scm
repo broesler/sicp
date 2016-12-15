@@ -6,17 +6,8 @@
 ;;  Description: Generic arithmetic package from SICP Section 2.5 
 ;;
 ;;==============================================================================
-(load "../../../sicp_code/ch2support.scm") ; for put/get operations
-
-;;; Apply generic operation (from Section 2.4)
-(define (apply-generic op . args)
-  (let ((type-tags (map type-tag args)))
-    (let ((proc (get op type-tags)))
-      (if proc
-        (apply proc (map contents args))
-        (error
-          "No method for these types -- APPLY-GENERIC"
-          (list op type-tags))))))
+; (load "../../../sicp_code/ch2support.scm") ;; Include put/get operations
+(load "complex.scm") ; need complex procedures, also loads put/get
 
 ;------------------------------------------------------------------------------- 
 ;        Operations
@@ -127,6 +118,13 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
+
+  ;; Alyssa P. Hacker adds:
+  (put 'real-part '(complex) real-part)
+  (put 'imag-part '(complex) imag-part)
+  (put 'magnitude '(complex) magnitude)
+  (put 'angle '(complex) angle)
+
   'done)
 
 ;;; Constructors
@@ -134,6 +132,13 @@
   ((get 'make-from-real-imag 'complex) x y))
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
+;------------------------------------------------------------------------------- 
+;        Install packages
+;-------------------------------------------------------------------------------
+(install-scheme-number-package)
+(install-rational-package)
+(install-complex-package)
 
 ;;==============================================================================
 ;;==============================================================================
