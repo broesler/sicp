@@ -21,6 +21,8 @@
 (define (div x y) (apply-generic 'div x y))
 ;; Ex 2.79:
 (define (equ? x y) (apply-generic 'equ? x y))
+;; Ex 2.80:
+(define (=zero? x) (apply-generic '=zero? x))
 
 ;------------------------------------------------------------------------------- 
 ;        Tagging data  (Ex 2.78)
@@ -57,6 +59,9 @@
   ;; Ex 2.79:
   (put 'equ? '(scheme-number scheme-number)
        (lambda (x y) (= x y)))
+  ;; Ex 2.80:
+  (put '=zero? '(scheme-number)
+       (lambda (x) (= x 0)))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
   'done)
@@ -102,9 +107,12 @@
   ;; Ex 2.79:
   (put 'equ? '(rational rational)
        (lambda (x y) (and (= (numer x)
-                                  (numer y))
-                               (= (denom x)
-                                  (denom y)))))
+                             (numer y))
+                          (= (denom x)
+                             (denom y)))))
+  ;; Ex 2.80:
+  (put '=zero? '(rational)
+       (lambda (x) (= (numer x) 0))) ;; denom check already done
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -148,9 +156,13 @@
   ;; Ex 2.79:
   (put 'equ? '(complex complex)
        (lambda (x y) (and (= (real-part x)
-                                  (real-part y))
-                               (= (imag-part x)
-                                  (imag-part y)))))
+                             (real-part y))
+                          (= (imag-part x)
+                             (imag-part y)))))
+  ;; Ex 2.80:
+  (put '=zero? '(complex)
+       (lambda (x) (and (= (real-part x) 0)
+                        (= (imag-part x) 0))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex

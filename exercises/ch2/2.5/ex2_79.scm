@@ -15,9 +15,11 @@
 (printval (equ? a b)) ; Value: #f
 
 (define a (make-rational 3 4))
-(define b (make-rational 4 5))
+(define b (make-rational 6 8))
+(define c (make-rational 1 8))
 (printval (equ? a a)) ; Value: #t
-(printval (equ? a b)) ; Value: #f
+(printval (equ? a b)) ; Value: #t <== gcd makes sure it works!
+(printval (equ? a c)) ; Value: #f
 
 (define a (make-complex-from-real-imag 1 1))
 (define b (make-complex-from-real-imag 1 2))
