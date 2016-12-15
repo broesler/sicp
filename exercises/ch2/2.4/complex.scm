@@ -108,7 +108,8 @@
 (define (make-from-mag-ang r a)
   ((get 'make-from-mag-ang 'polar) r a))
 
-;;; Test code:
-(load "complex_test.scm")
+;;; Install packages:
+(install-rectangular-package)
+(install-polar-package)
 ;;==============================================================================
 ;;==============================================================================

@@ -6,13 +6,8 @@
 ;;  Description: Test complex variable procedures
 ;;
 ;;==============================================================================
-;;; Test code from sicp_code/ch2tests.scm
-
-;;; Load packages
-(install-rectangular-package)
-(install-polar-package)
-
 ;;; SECTION 2.4.2
+(load "complex.scm")
 
 (define z1 (make-from-real-imag 1 1)) ;Value: z1
 

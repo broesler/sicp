@@ -7,7 +7,10 @@
 ;;
 ;;==============================================================================
 ; (load "../../../sicp_code/ch2support.scm") ;; Include put/get operations
-(load "complex.scm") ; need complex procedures, also loads put/get
+
+; load internal complex procedures, also loads put/get, apply-generic, and
+; original tagging procedures
+(load "../2.4/complex.scm")
 
 ;------------------------------------------------------------------------------- 
 ;        Operations
@@ -16,6 +19,26 @@
 (define (sub x y) (apply-generic 'sub x y))
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
+;; Ex 2.79:
+(define (equ? x y) (apply-generic 'equ? x y))
+
+;------------------------------------------------------------------------------- 
+;        Tagging data  (Ex 2.78)
+;-------------------------------------------------------------------------------
+(define (attach-tag type-tag contents)
+  (if (not (eq? type-tag 'scheme-number))
+    (cons type-tag contents)
+    contents)) ; for a regular number, just return the number (no tag)
+
+(define (type-tag datum)
+  (cond ((number? datum) 'scheme-number) ; pretend we have a tag
+        ((pair? datum) (car datum))
+        (else (error "Bad tagged datum -- TYPE-TAG" datum))))
+
+(define (contents datum)
+  (cond ((number? datum) datum) ; number is not a pair
+        ((pair? datum) (cdr datum))
+        (else (error "Bad tagged datum -- CONTENTS" datum))))
 
 ;------------------------------------------------------------------------------- 
 ;        Regular numbers
@@ -31,6 +54,9 @@
        (lambda (x y) (tag (* x y))))
   (put 'div '(scheme-number scheme-number)
        (lambda (x y) (tag (/ x y))))
+  ;; Ex 2.79:
+  (put 'equ? '(scheme-number scheme-number)
+       (lambda (x y) (= x y)))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
   'done)
@@ -73,6 +99,12 @@
        (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
+  ;; Ex 2.79:
+  (put 'equ? '(rational rational)
+       (lambda (x y) (and (= (numer x)
+                                  (numer y))
+                               (= (denom x)
+                                  (denom y)))))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -113,12 +145,18 @@
        (lambda (z1 z2) (tag (mul-complex z1 z2))))
   (put 'div '(complex complex)
        (lambda (z1 z2) (tag (div-complex z1 z2))))
+  ;; Ex 2.79:
+  (put 'equ? '(complex complex)
+       (lambda (x y) (and (= (real-part x)
+                                  (real-part y))
+                               (= (imag-part x)
+                                  (imag-part y)))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
-  ;; Alyssa P. Hacker adds these procedures to provide a second layer of tags so
-  ;; that we can access the underlying rectangular/polar procedures:
+  ;; Ex 2.78: Alyssa P. Hacker adds these procedures to provide a second layer
+  ;; of tags so that we can access the underlying rectangular/polar procedures:
   (put 'real-part '(complex) real-part)
   (put 'imag-part '(complex) imag-part)
   (put 'magnitude '(complex) magnitude)
@@ -137,6 +175,5 @@
 (install-scheme-number-package)
 (install-rational-package)
 (install-complex-package)
-
 ;;==============================================================================
 ;;==============================================================================
