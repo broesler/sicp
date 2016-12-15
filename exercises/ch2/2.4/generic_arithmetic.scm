@@ -73,7 +73,6 @@
        (lambda (x y) (tag (mul-rat x y))))
   (put 'div '(rational rational)
        (lambda (x y) (tag (div-rat x y))))
-
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -118,13 +117,12 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
-
-  ;; Alyssa P. Hacker adds:
+  ;; Alyssa P. Hacker adds these procedures to provide a second layer of tags so
+  ;; that we can access the underlying rectangular/polar procedures:
   (put 'real-part '(complex) real-part)
   (put 'imag-part '(complex) imag-part)
   (put 'magnitude '(complex) magnitude)
   (put 'angle '(complex) angle)
-
   'done)
 
 ;;; Constructors

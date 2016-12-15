@@ -22,7 +22,7 @@
   (make-from-mag-ang (/ (magnitude z1) (magnitude z2))
                      (- (angle z1) (angle z2))))
 
-;;; Tagging data
+;;; Tagging data (Section 2.4.2)
 (define (attach-tag type-tag contents)
   (cons type-tag contents))
 
