@@ -6,17 +6,22 @@
 ;;  Description: make-from-mag-ang in message passing style 
 ;;
 ;;==============================================================================
-; (define (make-from-real-imag x y)
-;   (define (dispatch op)
-;     (cond ((eq? op 'real-part) x)
-;           ((eq? op 'imag-part) y)
-;           ((eq? op 'magnitude)
-;            (sqrt (+ (square x) (square y))))
-;           ((eq? op 'angle) (atan y x))
-;           (else
-;            (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
-;   dispatch)
+;;; Given code:
+(define (make-from-real-imag x y)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part) x)
+          ((eq? op 'imag-part) y)
+          ((eq? op 'magnitude)
+           (sqrt (+ (square x) (square y))))
+          ((eq? op 'angle) (atan y x))
+          (else
+           (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
+  dispatch)
 
+;;; Re-define generic procedure:
+(define (apply-generic op arg) (arg op))
+
+;;; Write corresponding procedure:
 (define (make-from-mag-ang r a)
   (define (dispatch op)
     (cond ((eq? op 'magnitude) r)
@@ -29,5 +34,10 @@
            (error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
   dispatch)
 
+;;; Re-run tests
+(load "complex_test.scm")
+;;; Show how message-passing works
+(pp real-part)
+(pp z1)
 ;;==============================================================================
 ;;==============================================================================

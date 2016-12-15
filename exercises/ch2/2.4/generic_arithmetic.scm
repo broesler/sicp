@@ -6,6 +6,7 @@
 ;;  Description: Generic arithmetic package from SICP Section 2.5 
 ;;
 ;;==============================================================================
+(load "../../../sicp_code/ch2support.scm") ; for put/get operations
 
 ;;; Apply generic operation (from Section 2.4)
 (define (apply-generic op . args)
@@ -133,5 +134,6 @@
   ((get 'make-from-real-imag 'complex) x y))
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
 ;;==============================================================================
 ;;==============================================================================

@@ -29,7 +29,7 @@
 ;;; Divisions must have a procedure (get-salary) that operates on an individual
 ;;; employee record, and is tagged with the division ID.
 (define (get-salary employee division)
-  (let ((emp ((get 'get-record division) employee)))
+  (let ((emp (get-record employee division)))
     ((get 'get-salary division) emp)))
 
 ;------------------------------------------------------------------------------- 
