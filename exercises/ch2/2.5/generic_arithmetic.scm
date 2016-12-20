@@ -6,8 +6,6 @@
 ;;  Description: Generic arithmetic package from SICP Section 2.5 
 ;;
 ;;==============================================================================
-; (load "../../../sicp_code/ch2support.scm") ;; Include put/get operations
-
 ; load internal complex procedures, also loads put/get, apply-generic, and
 ; original tagging procedures
 (load "../2.4/complex.scm")
@@ -25,7 +23,7 @@
 (define (=zero? x) (apply-generic '=zero? x))
 
 ;------------------------------------------------------------------------------- 
-;        Tagging data  (Ex 2.78)
+;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
 (define (attach-tag type-tag contents)
   (if (not (eq? type-tag 'scheme-number))
@@ -43,7 +41,7 @@
         (else (error "Bad tagged datum -- CONTENTS" datum))))
 
 ;------------------------------------------------------------------------------- 
-;        Regular numbers
+;        Scheme numbers
 ;-------------------------------------------------------------------------------
 (define (install-scheme-number-package)
   (define (tag x)
@@ -64,6 +62,9 @@
        (lambda (x) (= x 0)))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
+  ;; Ex 2.81 (given):
+  (put 'exp '(scheme-number scheme-number)
+       (lambda (x y) (tag (expt x y)))) ; using primitive expt
   'done)
 
 ;;; Constructor 
