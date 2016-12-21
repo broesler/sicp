@@ -27,12 +27,10 @@
 
   ;; Coerce a list to all the same type
   (define (coerce-list lst type)
-    (if (null? lst)
-      '()
-      (let ((t1->t2 (get-coercion (type-tag (car lst)) type)))
-        (if t1->t2
-          (cons (t1->t2 (car lst)) (coerce-list (cdr lst) type))
-          (cons (car lst) (coerce-list (cdr lst) type))))))
+    (map (lambda (x) 
+           (let ((t1->t2 (get-coercion (type-tag x) type)))
+             (if t1->t2 (t1->t2 x) x))) 
+         lst))
 
   ;; Main procedure
   (let ((type-tags (map type-tag args)))
