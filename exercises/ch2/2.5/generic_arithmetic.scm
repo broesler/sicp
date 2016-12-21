@@ -6,9 +6,12 @@
 ;;  Description: Generic arithmetic package from SICP Section 2.5 
 ;;
 ;;==============================================================================
-; load internal complex procedures, also loads put/get, apply-generic, and
-; original tagging procedures
 (load "../2.4/complex.scm")
+;;; loads 
+;;;   -- internal complex procedures (rectangular/polar)
+;;;   -- put/get, put/get-coercion
+;;;   -- apply-generic
+;;;   -- original tagging procedures
 
 ;------------------------------------------------------------------------------- 
 ;        Operations
@@ -25,10 +28,11 @@
 ;------------------------------------------------------------------------------- 
 ;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
+;;; Redefine tagging procedures to recognize scheme-numbers as regular numbers
 (define (attach-tag type-tag contents)
-  (if (not (eq? type-tag 'scheme-number))
-    (cons type-tag contents)
-    contents)) ; for a regular number, just return the number (no tag)
+  (if (eq? type-tag 'scheme-number)
+    contents
+    (cons type-tag contents)))
 
 (define (type-tag datum)
   (cond ((number? datum) 'scheme-number) ; pretend we have a tag

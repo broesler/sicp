@@ -58,7 +58,7 @@
 ;;; (b) Is Louis correct that something had to be done about coercion with
 ;;; arguments of the same type, or does apply-generic work correctly as is?
 ;;;   If no operation is found, i.e. (exp a b) where each is complex,
-;;;   apply-generic will just give an error "No method for these types"
+;;;   apply-generic will just give an error "No method for these types".
 
 ;;; (c) modify apply-generic so that it will not try coercion if two types are
 ;;; the same
