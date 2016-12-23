@@ -72,6 +72,9 @@
   ;; Ex 2.81 (given):
   (put 'exp '(scheme-number scheme-number)
        (lambda (x y) (tag (expt x y)))) ; using primitive expt
+  ;; Ex 2.83:
+  (put 'raise '(scheme-number)
+       (lambda (x) (make-rational (contents x) 1)))
   'done)
 
 ;;; Constructor 
@@ -123,9 +126,13 @@
        (lambda (x) (= (numer x) 0))) ;; denom check already done
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
-  ;; Include these proecedures for use
+  ;; Include these proecedures for use in Ex. 2.83 external procedures
   (put 'numer '(rational) numer)
   (put 'denom '(rational) denom)
+  ;; Ex 2.83:
+  (put 'raise '(rational)
+       (lambda (x) (make-real (/ (make-real (numer x))
+                                 (denom x)))))
   'done)
 
 ;;; Constructor
@@ -162,6 +169,9 @@
   ;; Ex 2.81 (given):
   (put 'exp '(real real)
        (lambda (x y) (tag (expt x y)))) ; using primitive expt
+  ;; Ex 2.83:
+  (put 'raise '(real)
+       (lambda (x) (make-complex-from-real-imag (contents x) 0.0)))
   'done)
 
 ;;; Constructor 
@@ -220,6 +230,9 @@
   (put 'imag-part '(complex) imag-part)
   (put 'magnitude '(complex) magnitude)
   (put 'angle '(complex) angle)
+  ;; Ex 2.83:
+  (put 'raise '(complex)
+       (lambda (x) (tag x)))
   'done)
 
 ;;; Constructors

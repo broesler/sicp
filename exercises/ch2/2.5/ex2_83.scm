@@ -9,7 +9,9 @@
 ;;==============================================================================
 (load "generic_arithmetic.scm")
 
-;;; For each type, raise one level in tower
+;------------------------------------------------------------------------------- 
+;        Method 1
+;-------------------------------------------------------------------------------
 ;; scheme-number -> rational == n/1
 (define (scheme-number->rational n)
   (make-rational (contents n) 1))
@@ -30,17 +32,22 @@
 
 ;;; Generic raise procedure
 (define (raise n)
-  (define mytower '(scheme-number rational real complex))
-  (define (try tower)
-    (if (null? (cdr tower)) 
-      (error "Could not raise type" (type-tag n))
-      (let ((current-type (car tower)) 
-            (next-types (cdr tower)) 
-            (next-type (cadr tower))) 
-          (if (equal? (type-tag n) current-type) 
-            ((get-coercion current-type next-type) n) 
-            (try next-types)))))
-  (try mytower))
+  (let ((type (type-tag n)))
+    (cond ((equal? type 'scheme-number)
+           ((get-coercion 'scheme-number 'rational) n))
+          ((equal? type 'rational)
+           ((get-coercion 'rational 'real) n))
+          ((equal? type 'real)
+           ((get-coercion 'real 'complex) n))
+          ((equal? type 'complex)
+           n)
+          (else (error "No raise procedure exists for this type!" type)))))
+
+;------------------------------------------------------------------------------- 
+;        Method 2
+;-------------------------------------------------------------------------------
+;;; Put above procedures into each respective package
+(define (raise n) (apply-generic 'raise n))
 
 ;;; Test code:
 (define n (make-scheme-number 3))
