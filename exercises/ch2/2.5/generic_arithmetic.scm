@@ -120,6 +120,8 @@
        (lambda (x) (= (numer x) 0))) ;; denom check already done
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
+  (put 'numerator '(rational) numer)
+  (put 'denominator '(rational) denom)
   'done)
 
 ;;; Constructor
@@ -185,6 +187,15 @@
   ((get 'make-from-real-imag 'complex) x y))
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
+
+;------------------------------------------------------------------------------- 
+;        Coercion
+;-------------------------------------------------------------------------------
+;;; Put procedure in table
+(define (scheme-number->complex n)
+  (make-complex-from-real-imag (contents n) 0))
+
+(put-coercion 'scheme-number 'complex scheme-number->complex)
 
 ;------------------------------------------------------------------------------- 
 ;        Install packages

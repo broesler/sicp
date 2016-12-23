@@ -31,12 +31,6 @@
           (error "No method for these types"
                  (list op type-tags)))))))
 
-;;; Put procedure in table
-(define (scheme-number->complex n)
-  (make-complex-from-real-imag (contents n) 0))
-
-(put-coercion 'scheme-number 'complex scheme-number->complex)
-
 ;;; Louis Reasoner argues that we need:
 ; (define (scheme-number->scheme-number n) n)
 ; (define (complex->complex z) z)
