@@ -30,17 +30,20 @@
 ;-------------------------------------------------------------------------------
 ;;; Redefine tagging procedures to recognize scheme-numbers as regular numbers
 (define (attach-tag type-tag contents)
-  (if (eq? type-tag 'scheme-number)
+  (if (or (eq? type-tag 'scheme-number) (eq? type-tag 'real))
     contents
     (cons type-tag contents)))
 
 (define (type-tag datum)
-  (cond ((number? datum) 'scheme-number) ; pretend we have a tag
+  (cond ((integer? datum) 'scheme-number) ; pretend we have a tag
+        ((real? datum) 'real)
         ((pair? datum) (car datum))
         (else (error "Bad tagged datum -- TYPE-TAG" datum))))
 
 (define (contents datum)
-  (cond ((number? datum) datum) ; number is not a pair
+  (cond ((or (integer? datum) 
+             (real? datum)) 
+         datum) ; number is not a pair
         ((pair? datum) (cdr datum))
         (else (error "Bad tagged datum -- CONTENTS" datum))))
 
@@ -120,13 +123,50 @@
        (lambda (x) (= (numer x) 0))) ;; denom check already done
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
-  (put 'numerator '(rational) numer)
-  (put 'denominator '(rational) denom)
+  ;; Include these proecedures for use
+  (put 'numer '(rational) numer)
+  (put 'denom '(rational) denom)
   'done)
 
 ;;; Constructor
 (define (make-rational n d)
   ((get 'make 'rational) n d))
+
+;;; Selectors
+(define (numer x) (apply-generic 'numer x))
+(define (denom x) (apply-generic 'denom x))
+
+;------------------------------------------------------------------------------- 
+;        Real numbers (Ex. 2.83 auxiliary code for testing)
+;-------------------------------------------------------------------------------
+;;; NOTE: same as scheme-number, but inclue "0.0" or "1.0" to make into decimal
+(define (install-real-number-package)
+  (define (tag x)
+    (attach-tag 'real x))    
+  (put 'add '(real real)
+       (lambda (x y) (tag (+ x y 0.0))))
+  (put 'sub '(real real)
+       (lambda (x y) (tag (- x y 0.0))))
+  (put 'mul '(real real)
+       (lambda (x y) (tag (* x y 1.0))))
+  (put 'div '(real real)
+       (lambda (x y) (tag (/ x y 1.0))))
+  ;; Ex 2.79:
+  (put 'equ? '(real real)
+       (lambda (x y) (= x y)))
+  ;; Ex 2.80:
+  (put '=zero? '(real)
+       (lambda (x) (= x 0.0)))
+  (put 'make 'real
+       (lambda (x) (tag (* 1.0 x)))) ; ensure we have a decimal
+  ;; Ex 2.81 (given):
+  (put 'exp '(real real)
+       (lambda (x y) (tag (expt x y)))) ; using primitive expt
+  'done)
+
+;;; Constructor 
+(define (make-real n)
+  ((get 'make 'real) n))
 
 ;------------------------------------------------------------------------------- 
 ;        Complex numbers
@@ -202,6 +242,7 @@
 ;-------------------------------------------------------------------------------
 (install-scheme-number-package)
 (install-rational-package)
+(install-real-number-package)
 (install-complex-package)
 ;;==============================================================================
 ;;==============================================================================
