@@ -47,7 +47,7 @@
 ;        Method 2
 ;-------------------------------------------------------------------------------
 ;;; Put above procedures into each respective package
-(define (raise n) (apply-generic 'raise n))
+; (define (raise n) (apply-generic 'raise n))
 
 ;;; Test code:
 (define n (make-scheme-number 3))
@@ -58,6 +58,6 @@
 (printval (raise n)) ; Value: (rational 3 . 1)
 (printval (raise n-rat)) ; Value: 3.
 (printval (raise n-real)) ; Value: (complex rectangular 3. . 0.)
-(printval (raise n-comp)) ; Value: (
+(printval (raise n-comp)) ; Value: (complex rectangular 3. . 0.)
 ;;==============================================================================
 ;;==============================================================================

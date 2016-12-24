@@ -20,30 +20,29 @@
 (define (sub x y) (apply-generic 'sub x y))
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
-;; Ex 2.79:
-(define (equ? x y) (apply-generic 'equ? x y))
-;; Ex 2.80:
-(define (=zero? x) (apply-generic '=zero? x))
+(define (equ? x y) (apply-generic 'equ? x y)) ; Ex 2.79
+(define (=zero? x) (apply-generic '=zero? x)) ; Ex 2.80
+(define (raise n) (apply-generic 'raise n)) ; Ex 2.83
 
 ;------------------------------------------------------------------------------- 
 ;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
 ;;; Redefine tagging procedures to recognize scheme-numbers as regular numbers
 (define (attach-tag type-tag contents)
-  (if (or (eq? type-tag 'scheme-number) (eq? type-tag 'real))
+  (if (number? contents)
     contents
     (cons type-tag contents)))
 
 (define (type-tag datum)
-  (cond ((integer? datum) 'scheme-number) ; pretend we have a tag
-        ((real? datum) 'real)
+  (cond ((number? datum)    ; pretend we have a tag
+         (if (exact? datum) 
+           'scheme-number 
+           'real))
         ((pair? datum) (car datum))
         (else (error "Bad tagged datum -- TYPE-TAG" datum))))
 
 (define (contents datum)
-  (cond ((or (integer? datum) 
-             (real? datum)) 
-         datum) ; number is not a pair
+  (cond ((number? datum) datum) ; number is not a pair
         ((pair? datum) (cdr datum))
         (else (error "Bad tagged datum -- CONTENTS" datum))))
 
