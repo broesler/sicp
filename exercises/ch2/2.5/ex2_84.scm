@@ -10,62 +10,90 @@
 
 ;;; (a) apply-generic with arbitrary number of arguments
 (define (apply-generic op . args)
-  ;; compare 2 elements at a time:
-  ;;    (a b c d) => ((a b) c d) => (a (b c) d) => (a b (c d))
-  ;; raise lower element up to higher element, or nothing if they're the same 
-  ;; cycle through the list until all elements are the same
-  ;; Try to coerce a list to all the same level of the tower
-  (define (raise-list elems)
-    (if (all-same-type? elems)
-      elems
-      (let ((a (car elems))
-            (b (cadr elems)))
-        (cond ((higher? a b) 
-               (raise-list 
-                 (cons a (cons (raise b a) (cddr elems)))))
-              ((higher? b a) 
-               (raise-list 
-                 (cons (raise a b) (cons b (cddr elems)))))
-              (else (raise-list elems))))))
+  ;; Raising to the prespecified type (the issue is known that it will go into
+  ;; an infinite loop in case the type is lower than argument's. but still it
+  ;; works fine as a part of apply-generic procedure) 
+  (define (raise-to arg type) 
+    (let ((this-tag (type-tag arg))) 
+      (if (eq? this-tag type) 
+        arg 
+        (raise-to (raise arg) type)))) 
 
-  ;; Apply operation in pairs, and cons together since our package's arithmetic
-  ;; procedures were specified for maximum of 2 arguments:
-  (define (apply-by-twos op args) 
-    (if (null? (cdr args)) 
-      (car args) 
-      (let ((a1 (car args)) 
-            (a2 (cadr args)) 
-            (rest-args (cddr args))) 
-        (apply-by-twos op (cons (apply-generic op a1 a2) rest-args))))) 
+  ;; Testing 2 arguments which has the highest type 
+  (define (pick-higher arg1 arg2) 
+    (define (find-iter arg1 arg2 result) 
+      (let ((tag1 (type-tag arg1)) 
+            (tag2 (type-tag arg2)) 
+            (move-a1 (raise arg1))) 
+        (let ((next-tag1 (type-tag move-a1))) 
+          (cond ((eq? tag1 tag2) arg2) ; arg2 > arg1, but we've moved arg1 up
+                ((eq? tag1 next-tag1) result) ; we've hit the top of the tower
+                (else (find-iter move-a1 arg2 result)))))) 
+    (find-iter arg1 arg2 arg1)) ; start with arg1 in case arg1 > arg2
+
+  ;; Picking the highest type argument from the list 
+  (define (find-highest myargs) 
+    (if (null? (cdr myargs)) 
+      (car myargs) 
+      (let ((this (car myargs)) 
+            (next (cadr myargs)) 
+            (rest (cddr myargs))) 
+        (let ((t1 (type-tag this)) 
+              (t2 (type-tag next))) 
+          (if (eq? t1 t2) 
+            (find-highest (cdr myargs)) 
+            (find-highest (cons (pick-higher this next) 
+                                rest))))))) 
+
+  ;; Raising the entire argument list to the type (accumulate operation)
+  (define (raise-all-to-highest myargs type) 
+    (if (null? myargs) 
+      '() 
+      (cons (raise-to (car myargs) type) 
+            (raise-all-to-highest (cdr myargs) type))))
+
+  ;; Special procedure to partition our argument list in pieces of two, since
+  ;; our packages arithmetic procedures were specified for maximum of
+  ;; 2 arguments, we'll do it this way: 
+  (define (partition-and-apply op myargs) 
+    (if (null? (cdr myargs)) 
+      (car myargs) 
+      (let ((a1 (car myargs)) 
+            (a2 (cadr myargs)) 
+            (rest-args (cddr myargs))) 
+        (partition-and-apply op (cons (apply-generic op a1 a2) rest-args))))) 
 
   ;; Main procedure
-  (let ((type-tags (map type-tag args)))
-    (let ((proc (get op type-tags)))
-      (if proc
-        (apply proc (map contents args))
-        (apply-generic op (raise-list args))))))
-
-;; Check if all elements are the same type
-(define (all-same-type? elems)
-  (define (iter lst)
-    (if (null? (cdr lst))
-      true
-      (if (equal? (type-tag (car lst)) 
-                  (type-tag (cadr lst)))
-        (iter (cdr lst))
-        false)))
-  (iter elems))
-
-; ;; Check if element a is higher in tower than b
-; (define (higher? a b)
+  (let ((type-tags (map type-tag args))) 
+    (let ((proc (get op type-tags))) 
+      (if proc 
+        (apply proc (map contents args)) 
+        (if (> (length args) 1) 
+          (let ((t1 (car type-tags)) 
+                (t2 (cadr type-tags)) 
+                (rest-args (cddr args))) 
+            (if (and (null? rest-args) (eq? t1 t2)) 
+              (error "No procedure specified for these types" op) 
+              (let ((highest-type (type-tag (find-highest args)))) 
+                (let ((raised-args (raise-all-to-highest args highest-type))) 
+                  (newline)
+                  (pp raised-args)
+                  ; (apply-generic op raised-args))))) 
+                  (partition-and-apply op raised-args))))) 
+          (error "No procedure specified for this type" (list op type-tags)))))))
 
 ;;; Test code:
 (define a (make-complex-from-real-imag 1 1))
 (define b (make-rational 3 4))
 (define c (make-scheme-number 7))
-(printval (add a b))
-(printval (add a c))
-(printval (add b c))
+(printval (add a b)) ; Value: (complex rectangular 1.75 . 1.)
+(printval (add a c)) ; Value: (complex rectangular 8. . 1.)
+(printval (add b c)) ; Value: (rational 31 . 4)
+
+;;; NOTE: The following does not work without redefining (add)
+; (printval (add a b c))
+;;; This works though:
+(printval (apply-generic 'add a b c)) ; Value: (complex rectangular 8.75 . 1.)
 
 ;;==============================================================================
 ;;==============================================================================
