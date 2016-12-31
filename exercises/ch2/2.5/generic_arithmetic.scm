@@ -22,7 +22,7 @@
 (define (div x y) (apply-generic 'div x y))
 (define (equ? x y) (apply-generic 'equ? x y)) ; Ex 2.79
 (define (=zero? x) (apply-generic '=zero? x)) ; Ex 2.80
-(define (raise n) (apply-generic 'raise n)) ; Ex 2.83
+(define (raise n) (apply-generic 'raise n))   ; Ex 2.83
 
 ;------------------------------------------------------------------------------- 
 ;        Ex 2.78: Redefine tagging data
@@ -246,7 +246,6 @@
 ;;; Put procedure in table
 (define (scheme-number->complex n)
   (make-complex-from-real-imag (contents n) 0))
-
 (put-coercion 'scheme-number 'complex scheme-number->complex)
 
 ;------------------------------------------------------------------------------- 

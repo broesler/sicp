@@ -44,8 +44,7 @@
 (define c (make-scheme-number 3))
 (printval (add a b))
 (printval (add a c))
-
-;;; TODO: add generic "add" etc. to allow for > 2 arguments
+; (printval (add a b c))
 
 ;;; (b) Give an example of a situation where this strategy (and likewise the
 ;;; two-argument version given above) is not sufficiently general. (Hint:

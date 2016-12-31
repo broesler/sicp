@@ -46,18 +46,23 @@
 ;------------------------------------------------------------------------------- 
 ;        Method 2
 ;-------------------------------------------------------------------------------
-;;; Put above procedures into each respective package
-; (define (raise n) (apply-generic 'raise n))
+;;; Put above procedures into each respective package. To add a new type, just
+;;; define the two procedures to raise to/from that type.
+(define (raise n) (apply-generic 'raise n))
 
 ;;; Test code:
+(define (repeated f n)
+  (define (compose f g)
+    (lambda (x) (f (g x))))
+  (if (= n 1)
+    (lambda (x) (f x))
+    (repeated (compose f f) (- n 1))))
+
 (define n (make-scheme-number 3))
-(define n-rat (scheme-number->rational n))
-(define n-real (rational->real n-rat))
-(define n-comp (real->complex n-real))
-(printval n) ; Value: 3
-(printval (raise n)) ; Value: (rational 3 . 1)
-(printval (raise n-rat)) ; Value: 3.
-(printval (raise n-real)) ; Value: (complex rectangular 3. . 0.)
-(printval (raise n-comp)) ; Value: (complex rectangular 3. . 0.)
+(printval n)                       ; Value: 3
+(printval (raise n))               ; Value: (rational 3 . 1)
+(printval ((repeated raise 2) n))  ; Value: 3.
+(printval ((repeated raise 3) n))  ; Value: (complex rectangular 3. . 0.)
+(printval ((repeated raise 4) n))  ; Value: (complex rectangular 3. . 0.)
 ;;==============================================================================
 ;;==============================================================================
