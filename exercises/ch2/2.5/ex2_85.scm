@@ -16,12 +16,12 @@
 
 ;;; Test code:
 ;; values defined in ex2_84.scm
-(newline)
-(display "Projecting...")
-(printval (project a)) ; Value: 7
-(printval (project b)) ; Value: 3
-(printval (project c)) ; Value: (rational 3. . 1.)
-(printval (project d)) ; Value: 1.
+; (newline)
+; (display "Projecting...")
+; (printval (project a)) ; Value: 7
+; (printval (project b)) ; Value: 3
+; (printval (project c)) ; Value: (rational 3. . 1.)
+; (printval (project d)) ; Value: 1.
 
 ;------------------------------------------------------------------------------- 
 ;        Drop as far as possible
@@ -36,11 +36,11 @@
           (else n))))
 
 ;;; Test (drop)
-(newline)
-(display "3..2..1..dropping!")
-(printval (drop (make-complex-from-real-imag 2   3))) ; Value: (complex rectangular 2 . 3)
-(printval (drop (make-complex-from-real-imag 1.5 0))) ; Value: 1.5
-(printval (drop (make-complex-from-real-imag 1   0))) ; Value: 1
+; (newline)
+; (display "3..2..1..dropping!")
+; (printval (drop (make-complex-from-real-imag 2   3))) ; Value: (complex rectangular 2 . 3)
+; (printval (drop (make-complex-from-real-imag 1.5 0))) ; Value: 1.5
+; (printval (drop (make-complex-from-real-imag 1   0))) ; Value: 1
 
 ;------------------------------------------------------------------------------- 
 ;        Redefine apply-generic using "drop"
@@ -116,13 +116,14 @@
           (error "No procedure specified for this type" (list op type-tags)))))))
 
 ;;; Test code:
-(newline)
-(display "drop apply-generic:")
-(printval (add a b)) ; Value: (rational 31 . 4)
-(printval (add a c)) ; Value: 10.14159
-(printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
-(printval (add d a)) ; Value: (complex rectangular 8. . 1.)
-(printval (add (make-rational 1 1) a)) ; Value: 8
-(printval (add (make-complex-from-real-imag 1 0) a)) ; Value: 8
+; (newline)
+; (display "drop apply-generic:")
+; (printval (add a b)) ; Value: (rational 31 . 4)
+; (printval (add a c)) ; Value: 10.14159
+; (printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
+; (printval (add d a)) ; Value: (complex rectangular 8. . 1.)
+;;; Simplified answers:
+; (printval (add (make-rational 1 1) a)) ; Value: 8
+; (printval (add (make-complex-from-real-imag 1 0) a)) ; Value: 8
 ;;==============================================================================
 ;;==============================================================================

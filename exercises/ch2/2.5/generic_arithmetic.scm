@@ -3,28 +3,34 @@
 ;;  Created: 12/13/2016, 22:46
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: Generic arithmetic package from SICP Section 2.5 
+;;  Description: Generic arithmetic package from SICP Section 2.5
 ;;
 ;;==============================================================================
 (load "../2.4/complex.scm")
-;;; loads 
+;;; loads
 ;;;   -- internal complex procedures (rectangular/polar)
 ;;;   -- put/get, put/get-coercion
 ;;;   -- apply-generic
 ;;;   -- original tagging procedures
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Operations
 ;-------------------------------------------------------------------------------
 (define (add x y) (apply-generic 'add x y))
 (define (sub x y) (apply-generic 'sub x y))
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
+
 (define (equ? x y) (apply-generic 'equ? x y)) ; Ex 2.79
 (define (=zero? x) (apply-generic '=zero? x)) ; Ex 2.80
 (define (raise n) (apply-generic 'raise n))   ; Ex 2.83
 
-;------------------------------------------------------------------------------- 
+(define (sine x) (apply-generic 'sine x))     ; Ex 2.86
+(define (cose x) (apply-generic 'cose x))
+(define (arctan x) (apply-generic 'arctan x))
+(define (expp x y) (apply-generic 'expp x y))
+
+;-------------------------------------------------------------------------------
 ;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
 ;;; Redefine tagging procedures to recognize scheme-numbers as regular numbers
@@ -35,8 +41,8 @@
 
 (define (type-tag datum)
   (cond ((number? datum)    ; pretend we have a tag
-         (if (exact? datum) 
-           'scheme-number 
+         (if (exact? datum)
+           'scheme-number
            'real))
         ((pair? datum) (car datum))
         (else (error "Bad tagged datum -- TYPE-TAG" datum))))
@@ -46,12 +52,12 @@
         ((pair? datum) (cdr datum))
         (else (error "Bad tagged datum -- CONTENTS" datum))))
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Scheme numbers
 ;-------------------------------------------------------------------------------
 (define (install-scheme-number-package)
   (define (tag x)
-    (attach-tag 'scheme-number x))    
+    (attach-tag 'scheme-number x))
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -77,13 +83,19 @@
   ;; Ex 2.85:
   (put 'project '(scheme-number)
        (lambda (x) (make-scheme-number x)))
+  ;; Ex 2.86:
+  (put 'sine '(scheme-number) sin)
+  (put 'cose '(scheme-number) cos)
+  (put 'arctan '(scheme-number) atan)
+  (put 'expp '(scheme-number scheme-number) 
+       (lambda (x y) (expt x y)))
   'done)
 
-;;; Constructor 
+;;; Constructor
 (define (make-scheme-number n)
   ((get 'make 'scheme-number) n))
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Rational numbers
 ;-------------------------------------------------------------------------------
 (define (install-rational-package)
@@ -133,11 +145,27 @@
   (put 'denom '(rational) denom)
   ;; Ex 2.83:
   (put 'raise '(rational)
-       (lambda (x) (make-real (/ (make-real (numer x))
-                                 (denom x)))))
+       (lambda (x) (/ (make-real (numer x))
+                                 (denom x))))
   ;; Ex 2.85:
   (put 'project '(rational)
        (lambda (x) (make-scheme-number (inexact->exact (round (numer x))))))
+  ;; Ex 2.86:
+  ;; NOTE: sin, cos, etc. can only be defined for real numbers
+  (put 'sine '(rational)
+       (lambda (x) (sin (/ (numer x)
+                           (denom x)))))
+  (put 'cose '(rational)
+       (lambda (x) (cos (/ (numer x)
+                           (denom x)))))
+  (put 'arctan '(rational)
+       (lambda (x) (atan (/ (numer x)
+                            (denom x)))))
+  (put 'expp '(rational rational)
+       (lambda (x y) (expt (/ (numer x)
+                              (denom x))
+                           (/ (numer y)
+                              (denom y)))))
   'done)
 
 ;;; Constructor
@@ -148,13 +176,13 @@
 (define (numer x) (apply-generic 'numer x))
 (define (denom x) (apply-generic 'denom x))
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Real numbers (Ex. 2.83 auxiliary code for testing)
 ;-------------------------------------------------------------------------------
 ;;; NOTE: same as scheme-number, but inclue "0.0" or "1.0" to make into decimal
 (define (install-real-number-package)
   (define (tag x)
-    (attach-tag 'real x))    
+    (attach-tag 'real x))
   (put 'add '(real real)
        (lambda (x y) (tag (+ x y 0.0))))
   (put 'sub '(real real)
@@ -180,13 +208,22 @@
   ;; Ex 2.85:
   (put 'project '(real)
        (lambda (x) (make-rational (round x) 1.0)))
+  ;; Ex 2.86:
+  (put 'sine '(real) 
+       (lambda (x) (tag (+ (sin x) 0.0))))
+  (put 'cose '(real)
+       (lambda (x) (tag (+ (cos x) 0.0))))
+  (put 'arctan '(real)
+       (lambda (x) (tag (+ (atan x) 0.0))))
+  (put 'expp '(real real) 
+       (lambda (x y) (tag (+ (expt x y) 0.0))))
   'done)
 
-;;; Constructor 
+;;; Constructor
 (define (make-real n)
   ((get 'make 'real) n))
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Complex numbers
 ;-------------------------------------------------------------------------------
 (define (install-complex-package)
@@ -197,17 +234,17 @@
     ((get 'make-from-mag-ang 'polar) r a))
   ;; internal procedures
   (define (add-complex z1 z2)
-    (make-from-real-imag (+ (real-part z1) (real-part z2))
-                         (+ (imag-part z1) (imag-part z2))))
+    (make-from-real-imag (add (real-part z1) (real-part z2))
+                         (add (imag-part z1) (imag-part z2))))
   (define (sub-complex z1 z2)
-    (make-from-real-imag (- (real-part z1) (real-part z2))
-                         (- (imag-part z1) (imag-part z2))))
+    (make-from-real-imag (sub (real-part z1) (real-part z2))
+                         (sub (imag-part z1) (imag-part z2))))
   (define (mul-complex z1 z2)
-    (make-from-mag-ang (* (magnitude z1) (magnitude z2))
-                       (+ (angle z1) (angle z2))))
+    (make-from-mag-ang (mul (magnitude z1) (magnitude z2))
+                       (add (angle z1) (angle z2))))
   (define (div-complex z1 z2)
-    (make-from-mag-ang (/ (magnitude z1) (magnitude z2))
-                       (- (angle z1) (angle z2))))
+    (make-from-mag-ang (div (magnitude z1) (magnitude z2))
+                       (sub (angle z1) (angle z2))))
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'complex z))
   (put 'add '(complex complex)
@@ -220,14 +257,14 @@
        (lambda (z1 z2) (tag (div-complex z1 z2))))
   ;; Ex 2.79:
   (put 'equ? '(complex complex)
-       (lambda (x y) (and (= (real-part x)
-                             (real-part y))
-                          (= (imag-part x)
-                             (imag-part y)))))
+       (lambda (x y) (and (equ? (real-part x)
+                                (real-part y))
+                          (equ? (imag-part x)
+                                (imag-part y)))))
   ;; Ex 2.80:
   (put '=zero? '(complex)
-       (lambda (x) (and (= (real-part x) 0)
-                        (= (imag-part x) 0))))
+       (lambda (x) (and (=zero? (real-part x))
+                        (=zero? (imag-part x)))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
@@ -242,6 +279,8 @@
   (put 'raise '(complex)
        (lambda (x) (tag x)))
   ;; Ex 2.85:
+  ;; NOTE: In Ex 2.86, this procedure fails if the real-part of x is a rational
+  ;; number... need to update for generic usage.
   (put 'project '(complex)
        (lambda (x) (make-real (real-part x))))
   'done)
@@ -252,7 +291,7 @@
 (define (make-complex-from-mag-ang r a)
   ((get 'make-from-mag-ang 'complex) r a))
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Coercion
 ;-------------------------------------------------------------------------------
 ;;; Put procedure in table
@@ -260,7 +299,7 @@
   (make-complex-from-real-imag (contents n) 0))
 (put-coercion 'scheme-number 'complex scheme-number->complex)
 
-;------------------------------------------------------------------------------- 
+;-------------------------------------------------------------------------------
 ;        Install packages
 ;-------------------------------------------------------------------------------
 (install-scheme-number-package)

@@ -88,6 +88,10 @@
 ; (printval (add a c)) ; Value: 10.14159
 ; (printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
 ; (printval (add d a)) ; Value: (complex rectangular 8. . 1.)
+;;; Unsimplified answers:
+; (printval (add (make-rational 1 1) a)) ; Value: (rational 8 . 1)
+; (printval (add (make-complex-from-real-imag 1 0) a))
+; Value: (complex rectangular 8. . 0.)
 
 ;;; NOTE: The following does not work without redefining (add)
 ; (printval (add a b c d))

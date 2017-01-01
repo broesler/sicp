@@ -36,19 +36,25 @@
       (cdr datum)
       (error "Bad tagged datum -- CONTENTS" datum)))
 
+;------------------------------------------------------------------------------- 
+;        Rectangular and Polar packages (to be used in 2.5)
+;-------------------------------------------------------------------------------
 ;;; Ben's implementation
 (define (install-rectangular-package)
+  ;; Ex 2.86
+  (define (square x) (mul x x))
+  (define (sqrt x) (expp x 0.5))
   ;; internal procedures
   (define (real-part z) (car z))
   (define (imag-part z) (cdr z))
   (define (make-from-real-imag x y) (cons x y))
   (define (magnitude z)
-    (sqrt (+ (square (real-part z))
-             (square (imag-part z)))))
+    (sqrt (add (square (real-part z))     ; use generic operation
+               (square (imag-part z)))))
   (define (angle z)
-    (atan (imag-part z) (real-part z)))
+    (arctan (div (imag-part z) (real-part z))))
   (define (make-from-mag-ang r a) 
-    (cons (* r (cos a)) (* r (sin a))))
+    (cons (mul r (cose a)) (mul r (sine a))))
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'rectangular x))
   (put 'real-part '(rectangular) real-part)
@@ -63,17 +69,20 @@
 
 ;;; Alyssa's implementation
 (define (install-polar-package)
+  ;; Ex 2.86
+  (define (square x) (mul x x))
+  (define (sqrt x) (expp x 0.5))
   ;; internal procedures
   (define (magnitude z) (car z))
   (define (angle z) (cdr z))
   (define (make-from-mag-ang r a) (cons r a))
   (define (real-part z)
-    (* (magnitude z) (cos (angle z))))
+    (mul (magnitude z) (cose (angle z))))
   (define (imag-part z)
-    (* (magnitude z) (sin (angle z))))
+    (mul (magnitude z) (sine (angle z))))
   (define (make-from-real-imag x y) 
-    (cons (sqrt (+ (square x) (square y)))
-          (atan y x)))
+    (cons (sqrt (add (square x) (square y)))
+          (arctan (div y x))))
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'polar x))
   (put 'real-part '(polar) real-part)
