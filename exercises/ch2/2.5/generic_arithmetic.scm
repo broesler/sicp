@@ -74,6 +74,9 @@
   ;; Ex 2.83:
   (put 'raise '(scheme-number)
        (lambda (x) (make-rational (contents x) 1)))
+  ;; Ex 2.85:
+  (put 'project '(scheme-number)
+       (lambda (x) (make-scheme-number x)))
   'done)
 
 ;;; Constructor 
@@ -132,6 +135,9 @@
   (put 'raise '(rational)
        (lambda (x) (make-real (/ (make-real (numer x))
                                  (denom x)))))
+  ;; Ex 2.85:
+  (put 'project '(rational)
+       (lambda (x) (make-scheme-number (inexact->exact (round (numer x))))))
   'done)
 
 ;;; Constructor
@@ -170,7 +176,10 @@
        (lambda (x y) (tag (expt x y)))) ; using primitive expt
   ;; Ex 2.83:
   (put 'raise '(real)
-       (lambda (x) (make-complex-from-real-imag (contents x) 0.0)))
+       (lambda (x) (make-complex-from-real-imag x 0.0)))
+  ;; Ex 2.85:
+  (put 'project '(real)
+       (lambda (x) (make-rational (round x) 1.0)))
   'done)
 
 ;;; Constructor 
@@ -232,6 +241,9 @@
   ;; Ex 2.83:
   (put 'raise '(complex)
        (lambda (x) (tag x)))
+  ;; Ex 2.85:
+  (put 'project '(complex)
+       (lambda (x) (make-real (real-part x))))
   'done)
 
 ;;; Constructors

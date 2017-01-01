@@ -6,7 +6,7 @@
 ;;  Description: Redefine apply-generic for use with (raise)
 ;;
 ;;==============================================================================
-(load "generic_arithmetic.scm")
+(load "ex2_83.scm") ; loads (raise) and generic_arithmetic.scm
 
 ;;; (a) apply-generic with arbitrary number of arguments
 (define (apply-generic op . args)
@@ -76,24 +76,24 @@
               (error "No procedure specified for these types" op) 
               (let ((highest-type (type-tag (find-highest args)))) 
                 (let ((raised-args (raise-all-to-highest args highest-type))) 
-                  (newline)
-                  (pp raised-args)
-                  ; (apply-generic op raised-args))))) 
                   (partition-and-apply op raised-args))))) 
           (error "No procedure specified for this type" (list op type-tags)))))))
 
 ;;; Test code:
-(define a (make-complex-from-real-imag 1 1))
+(define a (make-scheme-number 7))
 (define b (make-rational 3 4))
-(define c (make-scheme-number 7))
-(printval (add a b)) ; Value: (complex rectangular 1.75 . 1.)
-(printval (add a c)) ; Value: (complex rectangular 8. . 1.)
-(printval (add b c)) ; Value: (rational 31 . 4)
+(define c (make-real 3.14159))
+(define d (make-complex-from-real-imag 1 1))
+(printval (add a b)) ; Value: (rational 31 . 4)
+(printval (add a c)) ; Value: 10.14159
+(printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
+(printval (add d a)) ; Value: (complex rectangular 8. . 1.)
 
 ;;; NOTE: The following does not work without redefining (add)
-; (printval (add a b c))
+; (printval (add a b c d))
 ;;; This works though:
-(printval (apply-generic 'add a b c)) ; Value: (complex rectangular 8.75 . 1.)
+(printval (apply-generic 'add a b c d)) 
+; Value: (complex rectangular 11.89159 . 1.)
 
 ;;==============================================================================
 ;;==============================================================================
