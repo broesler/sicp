@@ -59,10 +59,10 @@
     (repeated (compose f f) (- n 1))))
 
 (define n (make-scheme-number 3))
-(printval n)                       ; Value: 3
-(printval (raise n))               ; Value: (rational 3 . 1)
-(printval ((repeated raise 2) n))  ; Value: 3.
-(printval ((repeated raise 3) n))  ; Value: (complex rectangular 3. . 0.)
-(printval ((repeated raise 4) n))  ; Value: (complex rectangular 3. . 0.)
+; (printval n)                       ; Value: 3
+; (printval (raise n))               ; Value: (rational 3 . 1)
+; (printval ((repeated raise 2) n))  ; Value: 3.
+; (printval ((repeated raise 3) n))  ; Value: (complex rectangular 3. . 0.)
+; (printval ((repeated raise 4) n))  ; Value: (complex rectangular 3. . 0.)
 ;;==============================================================================
 ;;==============================================================================

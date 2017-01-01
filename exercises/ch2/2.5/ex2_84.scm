@@ -84,15 +84,15 @@
 (define b (make-rational 3 4))
 (define c (make-real 3.14159))
 (define d (make-complex-from-real-imag 1 1))
-(printval (add a b)) ; Value: (rational 31 . 4)
-(printval (add a c)) ; Value: 10.14159
-(printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
-(printval (add d a)) ; Value: (complex rectangular 8. . 1.)
+; (printval (add a b)) ; Value: (rational 31 . 4)
+; (printval (add a c)) ; Value: 10.14159
+; (printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
+; (printval (add d a)) ; Value: (complex rectangular 8. . 1.)
 
 ;;; NOTE: The following does not work without redefining (add)
 ; (printval (add a b c d))
 ;;; This works though:
-(printval (apply-generic 'add a b c d)) 
+; (printval (apply-generic 'add a b c d)) 
 ; Value: (complex rectangular 11.89159 . 1.)
 
 ;;==============================================================================
