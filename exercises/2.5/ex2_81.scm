@@ -3,7 +3,7 @@
 ;;  Created: 12/19/2016, 22:13
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: 
+;;  Description: Apply generic update with Louis Reasoner
 ;;
 ;;==============================================================================
 (load "generic_arithmetic.scm")

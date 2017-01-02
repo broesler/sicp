@@ -208,7 +208,7 @@
 2.5/ex2_78.scm                  Modify tagging for regular numbers
 2.5/ex2_79.scm                  Test equ? procedure
 2.5/ex2_80.scm                  Test =zero? procedure
-2.5/ex2_81.scm                  
+2.5/ex2_81.scm                  apply-generic update with Louis Reasoner
 2.5/ex2_82.scm                  Generalize apply-generic to more than 2 arguments
 2.5/ex2_83.scm                  raise a type up the tower
 2.5/ex2_84.scm                  Redefine apply-generic for use with (raise)

@@ -6,21 +6,21 @@
 ;;  Description: Complex numbers generic system Section 2.4.3
 ;;
 ;;==============================================================================
-(load "../../../sicp_code/ch2support.scm") ;; Include put/get operations
+(load "../../sicp_code/ch2support.scm") ;; Include put/get operations
 
 ;;; Top-level operations
 (define (add-complex z1 z2)
-  (make-from-real-imag (+ (real-part z1) (real-part z2))
-                       (+ (imag-part z1) (imag-part z2))))
+  (make-from-real-imag (+ (c-real-part z1) (c-real-part z2))
+                       (+ (c-imag-part z1) (c-imag-part z2))))
 (define (sub-complex z1 z2)
-  (make-from-real-imag (- (real-part z1) (real-part z2))
-                       (- (imag-part z1) (imag-part z2))))
+  (make-from-real-imag (- (c-real-part z1) (c-real-part z2))
+                       (- (c-imag-part z1) (c-imag-part z2))))
 (define (mul-complex z1 z2)
-  (make-from-mag-ang (* (magnitude z1) (magnitude z2))
-                     (+ (angle z1) (angle z2))))
+  (make-from-mag-ang (* (c-magnitude z1) (c-magnitude z2))
+                     (+ (c-angle z1) (c-angle z2))))
 (define (div-complex z1 z2)
-  (make-from-mag-ang (/ (magnitude z1) (magnitude z2))
-                     (- (angle z1) (angle z2))))
+  (make-from-mag-ang (/ (c-magnitude z1) (c-magnitude z2))
+                     (- (c-angle z1) (c-angle z2))))
 
 ;;; Tagging data (Section 2.4.2)
 (define (attach-tag type-tag contents)
@@ -98,7 +98,6 @@
           (error
             "No method for these types -- APPLY-GENERIC"
             (list op type-tags))))))
-            (drop result)
 
 ;;; Selectors
 (define (c-real-part z) (apply-generic 'c-real-part z))
