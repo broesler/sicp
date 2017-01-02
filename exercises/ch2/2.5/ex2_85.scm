@@ -19,8 +19,8 @@
 ; (newline)
 ; (display "Projecting...")
 ; (printval (project a)) ; Value: 7
-; (printval (project b)) ; Value: 3
-; (printval (project c)) ; Value: (rational 3. . 1.)
+; (printval (project b)) ; Value: 1
+; (printval (project c)) ; Value: (rational 4 . 1)
 ; (printval (project d)) ; Value: 1.
 
 ;------------------------------------------------------------------------------- 
@@ -31,9 +31,10 @@
 (define (drop n)
   (let* ((p (project n))
          (rp (raise p)))
-    (cond ((equal? (type-tag n) (type-tag p)) n)
-          ((equ? rp n) (drop p)) 
-          (else n))))
+    (if (and (not (equal? (type-tag n) (type-tag p)))
+             (equ? rp n)) 
+      (drop p)
+      n)))
 
 ;;; Test (drop)
 ; (newline)
@@ -102,7 +103,8 @@
                   (eq? op 'sub) 
                   (eq? op 'mul)
                   (eq? op 'div))
-            (drop result)
+            ; (drop result)
+            result
             result))
         (if (> (length args) 1) 
           (let ((t1 (car type-tags)) 
@@ -119,7 +121,7 @@
 ; (newline)
 ; (display "drop apply-generic:")
 ; (printval (add a b)) ; Value: (rational 31 . 4)
-; (printval (add a c)) ; Value: 10.14159
+; (printval (add a c)) ; Value: (rational 21 . 2)
 ; (printval (add d b)) ; Value: (complex rectangular 1.75 . 1.)
 ; (printval (add d a)) ; Value: (complex rectangular 8. . 1.)
 ;;; Simplified answers:

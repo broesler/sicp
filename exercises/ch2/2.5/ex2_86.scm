@@ -8,17 +8,29 @@
 ;;==============================================================================
 (load "ex2_85.scm")
 
-;;; NOTE: see updates in "generic_arithmetic.scm"
-;;; + - * / ==> add sub mul div
-(define aa (make-complex-from-real-imag a a))
-(define ac (make-complex-from-mag-ang a (div c 4)))
-(define bb (make-complex-from-real-imag b (make-rational 2 5)))
-(printval (add aa aa)) ; Value: (complex rectangular 14 . 14)
-(printval (add aa ac)) ; Value: (complex rectangular 11.949750751954584 . 11.949744184654904)
-;; These lines fail:
-;; Need to redefine "project" for a complex number... could now contain parts
-;; that are various types, so we have to recursively project?
-(printval (add aa bb))
-(printval (add bb bb))
+;;; Test Code:
+(printval (square-root (make-scheme-number -1))) 
+; Value: (complex rectangular 0 . 1)
+
+(printval (add (make-complex-from-real-imag (make-scheme-number 4) 
+                                            (make-rational 2 4))
+               (make-scheme-number 4)))
+;; (4 + 2/4i) + 4 = (4 + 1/2i) + 4 = (4 + 1/2i) + (4 + 0i) = 8 + 1/2i
+;; ==> ; Value: (complex rectangular 8 . .5)
+
+(printval (sub (make-complex-from-real-imag (make-rational 3 2) 
+                                            (make-scheme-number 3))
+               (make-complex-from-real-imag (make-rational 1 2) 
+                                            (make-real 3))))
+;; (1.5 + 3i) - (1/2 + 3i) = (1.5 - 1/2) + (3 - 3)i = (1.0 + 0i)
+;; ==> ; Value: 1
+
+;;; These lines fail:
+(define bb (make-complex-from-real-imag (make-rational 3 4) 
+                                        (make-rational 2 5)))
+(printval (add bb bb)) 
+
+;;; NOTE: (project bb) fails when real-part cannot be dropped to an integer from
+;;; a rational number... need to recursively project?
 ;;==============================================================================
 ;;==============================================================================

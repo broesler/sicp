@@ -86,7 +86,7 @@
   (put 'project '(scheme-number)
        (lambda (x) (make-scheme-number x)))
   ;; Ex 2.86:
-  (put 'sqrt '(scheme-number)
+  (put 'square-root '(scheme-number)
        (lambda (x)
          (let ((root (sqrt x)))
            (make-complex-from-real-imag (make-real (real-part root))
@@ -174,7 +174,8 @@
                                  (denom x))))
   ;; Ex 2.85:
   (put 'project '(rational)
-       (lambda (x) (make-scheme-number (inexact->exact (round (numer x))))))
+       (lambda (x) (make-scheme-number (inexact->exact (round (/ (numer x)
+                                                                 (denom x)))))))
   ;; Ex 2.86:
   (put 'square-root '(rational)
        (lambda (x) (make-real (sqrt-rat x))))
@@ -218,7 +219,7 @@
   (put '=zero? '(real)
        (lambda (x) (= x 0.0)))
   (put 'make 'real
-       (lambda (x) (tag (* 1.0 x)))) ; ensure we have a decimal
+       (lambda (x) (tag (exact->inexact x)))) ; ensure we have a decimal
   ;; Ex 2.81 (given):
   (put 'exp '(real real)
        (lambda (x y) (tag (expt x y)))) ; using primitive expt
@@ -228,6 +229,12 @@
   ;; Ex 2.85:
   (put 'project '(real)
        (lambda (x) (make-rational (round x) 1.0)))
+       ; (lambda (x) (make-rational (inexact->exact (numerator x))
+       ;                            (inexact->exact (denominator x)))))
+       ; (lambda (x) (make-rational (numerator (rationalize (inexact->exact x) 
+       ;                                                    1/100))
+       ;                            (denominator (rationalize (inexact->exact x) 
+       ;                                                      1/100)))))
   ;; Ex 2.86:
   (put 'square-root '(real) 
        (lambda (x)
@@ -282,14 +289,13 @@
        (lambda (z1 z2) (tag (div-complex z1 z2))))
   ;; Ex 2.79:
   (put 'equ? '(complex complex)
-       (lambda (x y) (and (equ? (c-real-part x)
-                                (c-real-part y))
-                          (equ? (c-imag-part x)
-                                (c-imag-part y)))))
+       (lambda (x y) (and (equ? (c-real-part x) (c-real-part y))
+                          (equ? (c-imag-part x) (c-imag-part y)))))
   ;; Ex 2.80:
   (put '=zero? '(complex)
-       (lambda (x) (and (=zero? (c-real-part x))
-                        (=zero? (c-imag-part x)))))
+       (lambda (x) (=zero? (c-magnitude x))))
+       ; (lambda (x) (and (=zero? (c-real-part x))
+       ;                  (=zero? (c-imag-part x)))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
@@ -304,8 +310,6 @@
   (put 'raise '(complex)
        (lambda (x) (tag x)))
   ;; Ex 2.85:
-  ;; NOTE: In Ex 2.86, this procedure fails if the real-part of x is a rational
-  ;; number... need to update for generic usage.
   (put 'project '(complex)
        (lambda (x) (make-real (c-real-part x))))
   'done)

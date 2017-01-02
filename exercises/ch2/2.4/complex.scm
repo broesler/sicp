@@ -46,10 +46,10 @@
   (define (imag-part z) (cdr z))
   (define (make-from-real-imag x y) (cons x y))
   (define (magnitude z)
-    (sqrt (add (square (real-part z))     ; use generic operation
-               (square (imag-part z)))))
+    (square-root (add (square (real-part z))     ; use generic operation
+                 (square (imag-part z)))))
   (define (angle z)
-    (arctan (div (imag-part z) (real-part z))))
+    (arctan (imag-part z) (real-part z)))
   (define (make-from-mag-ang r a) 
     (cons (mul r (cose a)) (mul r (sine a))))
   ;; interface to the rest of the system
@@ -75,8 +75,8 @@
   (define (imag-part z)
     (mul (magnitude z) (sine (angle z))))
   (define (make-from-real-imag x y) 
-    (cons (sqrt (add (square x) (square y)))
-          (arctan (div y x))))
+    (cons (square-root (add (square x) (square y)))
+          (arctan y x)))
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'polar x))
   (put 'c-real-part '(polar) real-part)
