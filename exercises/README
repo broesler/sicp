@@ -1,19 +1,21 @@
-#==============================================================================
+#===============================================================================
 #     File: README
 #  Created: 11/03/2016, 16:48
 #   Author: Bernie Roesler
 #
 #  Description: README for all SCIP exercise files
 #
-#==============================================================================
-
-## SUMMARY OF FILES
+#===============================================================================
+### SUMMARY OF FILES {{{
 .
 ├── 1.1
 │   ├── ex1_03-06.scm
 │   ├── ex1_07.scm
-│   └── ex1_08.scm
+│   ├── ex1_08.scm
+│   └── sqrt.scm
 ├── 1.2
+│   ├── ackermann.scm
+│   ├── count_change.scm
 │   ├── ex1_10.scm
 │   ├── ex1_11.scm
 │   ├── ex1_12.scm
@@ -24,7 +26,11 @@
 │   ├── ex1_25.scm
 │   ├── ex1_27.scm
 │   ├── ex1_28.scm
-│   └── fibonacci.m
+│   ├── fact.scm
+│   ├── fibonacci.m
+│   ├── fibonacci.scm
+│   ├── gcd.scm
+│   └── primes.scm
 ├── 1.3
 │   ├── ex1_29-30.scm
 │   ├── ex1_31.scm
@@ -35,33 +41,180 @@
 │   ├── ex1_40.scm
 │   ├── ex1_41.scm
 │   ├── ex1_42-46.scm
-│   └── ex1_46.scm
+│   ├── ex1_46.scm
+│   ├── fixed_points.scm
+│   └── sigma.scm
+├── 2.1
+│   ├── ex2_1.scm
+│   ├── ex2_2.scm
+│   ├── ex2_3.scm
+│   ├── ex2_4.scm
+│   ├── ex2_5.scm
+│   ├── ex2_6.scm
+│   ├── ex2_7-16.scm
+│   └── rationals.scm
+├── 2.2
+│   ├── ex2_17-18.scm
+│   ├── ex2_19.scm
+│   ├── ex2_20.scm
+│   ├── ex2_21-22.scm
+│   ├── ex2_23.scm
+│   ├── ex2_24-26.scm
+│   ├── ex2_27-28.scm
+│   ├── ex2_29.scm
+│   ├── ex2_30-31.scm
+│   ├── ex2_32.scm
+│   ├── ex2_33.scm
+│   ├── ex2_34.scm
+│   ├── ex2_35.scm
+│   ├── ex2_36.scm
+│   ├── ex2_37.scm
+│   ├── ex2_38-39.scm
+│   ├── ex2_40.scm
+│   ├── ex2_41.scm
+│   ├── ex2_42.scm
+│   ├── lists.scm
+│   ├── nested_mappings.scm
+│   ├── picture_language
+│   │   ├── einstein.pgm
+│   │   ├── fovnder.pgm
+│   │   ├── hend.scm
+│   │   ├── hutils.scm
+│   │   ├── prmpnt.scm
+│   │   ├── prmpnt.so
+│   │   └── psgo.scm
+│   ├── sequence_applications.scm
+│   └── sequence_operations.scm
+├── 2.3
+│   ├── deriv.scm
+│   ├── ex2_53-55.scm
+│   ├── ex2_56-57.scm
+│   ├── ex2_58.scm
+│   ├── ex2_59.scm
+│   ├── ex2_60.scm
+│   ├── ex2_61-62.scm
+│   ├── ex2_63-65.scm
+│   ├── ex2_66.scm
+│   ├── ex2_67-70.scm
+│   ├── huffman.scm
+│   ├── set-ordered.scm
+│   ├── set-tree.scm
+│   └── set-unordered.scm
+├── 2.4
+│   ├── complex.scm
+│   ├── complex_test.scm
+│   ├── ex2_73.scm
+│   ├── ex2_74.scm
+│   ├── ex2_75.scm
+│   └── ex2_76.scm
+├── 2.5
+│   ├── ex2_77.scm
+│   ├── ex2_78.scm
+│   ├── ex2_79.scm
+│   ├── ex2_80.scm
+│   ├── ex2_81.scm
+│   ├── ex2_82.scm
+│   ├── ex2_83.scm
+│   ├── ex2_84.scm
+│   ├── ex2_85.scm
+│   ├── ex2_86.scm
+│   └── generic_arithmetic.scm
 └── README
+#}}}
+### DESCRIPTIONS {{{
+## Chapter 1 {{{
+1.1/ex1_03-06.scm   Responses to exercises in Ch 1.1 of SCIP
+1.1/ex1_07.scm      Exercise 1.7, relative error in square roots
+1.1/ex1_08.scm      exercise 1.8, cube roots
 
-#------------------------------------------------------------------------------- 
-#       DESCRIPTIONS 
-#-------------------------------------------------------------------------------
-./1.1/ex1_03-06.scm   Responses to exercises in Ch 1.1 of SCIP
-./1.1/ex1_07.scm      Exercise 1.7, relative error in square roots
-./1.1/ex1_08.scm      exercise 1.8, cube roots
-./1.2/ex1_10.scm      Ackermann's function
-./1.2/ex1_11.scm      Recursion and iteration
-./1.2/ex1_12.scm      Pascal's triangle
-./1.2/ex1_16.scm      Exponentiation
-./1.2/ex1_17-18.scm   Repeated-addition multiplication
-./1.2/ex1_19.scm      Fibonacci numbers in log time
-./1.2/ex1_22-24.scm   Primality testing with (runtime) 
-./1.2/ex1_25.scm      Rewriting expmod using remainder directly
-./1.2/ex1_27.scm      Test if Carmichael numbers pass the Fermat test
-./1.2/ex1_28.scm      Miller-Rabin test (non-foolable Fermat test)
-./1.3/ex1_29-30.scm   Simpson's Rule implementation and iterative sum procedure
-./1.3/ex1_31.scm      General product procedure analogous to sum
-./1.3/ex1_32.scm      Accumulate (general sum + product)
-./1.3/ex1_33.scm      Even more general accumulate --> filter
-./1.3/ex1_35-36.scm   fixed points
-./1.3/ex1_37-39.scm   k-term continued fractions
-./1.3/ex1_40.scm      Cubic root-finding 
-./1.3/ex1_41.scm      Procedure double that applies a procedure twice 
-./1.3/ex1_46.scm      iterative improvement
-#==============================================================================
-#==============================================================================
+1.2/ex1_10.scm      Ackermann's function
+1.2/ex1_11.scm      Recursion and iteration
+1.2/ex1_12.scm      Pascal's triangle
+1.2/ex1_16.scm      Exponentiation
+1.2/ex1_17-18.scm   Repeated-addition multiplication
+1.2/ex1_19.scm      Fibonacci numbers in log time
+1.2/ex1_22-24.scm   Primality testing with (runtime) 
+1.2/ex1_25.scm      Rewriting expmod using remainder directly
+1.2/ex1_27.scm      Test if Carmichael numbers pass the Fermat test
+1.2/ex1_28.scm      Miller-Rabin test (non-foolable Fermat test)
+
+1.3/ex1_29-30.scm   Simpson's Rule implementation and iterative sum procedure
+1.3/ex1_31.scm      General product procedure analogous to sum
+1.3/ex1_32.scm      Accumulate (general sum + product)
+1.3/ex1_33.scm      Even more general accumulate --> filter
+1.3/ex1_35-36.scm   fixed points
+1.3/ex1_37-39.scm   k-term continued fractions
+1.3/ex1_40.scm      Cubic root-finding 
+1.3/ex1_41.scm      Procedure double that applies a procedure twice 
+1.3/ex1_46.scm      iterative improvement
+#}}}
+## Chapter 2 {{{
+2.1/ex2_1.scm                   make-rat improved
+2.1/ex2_2.scm                   Constructing line segments 
+2.1/ex2_3.scm                   Representation of rectangles in a plane
+2.1/ex2_4.scm                   Alternative representations
+2.1/ex2_5.scm                   Pairs as arithmetic operations only
+2.1/ex2_6.scm                   Church numerals 
+2.1/ex2_7-16.scm                Extended example: interval arithmetic
+2.1/rationals.scm               Rational number computation
+
+2.2/ex2_17-18.scm               List operations
+2.2/ex2_19.scm                  change counting with lists 
+2.2/ex2_20.scm                  dotted-tail notation 
+2.2/ex2_21-22.scm               Mapping square-list
+2.2/ex2_23.scm                  Implement for-each (map without returning a list) 
+2.2/ex2_24-26.scm               Simple tree exercises
+2.2/ex2_27-28.scm               Modify reverse to deep-reverse
+2.2/ex2_29.scm                  binary mobile
+2.2/ex2_30-31.scm               tree mapping
+2.2/ex2_32.scm                  Set of all subsets
+2.2/ex2_33.scm                  Rewrite list operations as accumulations
+2.2/ex2_34.scm                  Horner's Rule implementation
+2.2/ex2_35.scm                  count-leaves as an accumulation 
+2.2/ex2_36.scm                  accumulate-n with third argument
+2.2/ex2_37.scm                  Matrix operations with sequences
+2.2/ex2_38-39.scm               folding operations
+2.2/ex2_40.scm                  Find unique pairs to simplify prime-sum-pairs procedure
+2.2/ex2_41.scm                  Ordered triples 
+2.2/ex2_42.scm                  Eight queens puzzle (all queens are safe)
+2.2/lists.scm                   Simple list operations
+2.2/nested_mappings.scm         Nested mappings example
+2.2/sequence_applications.scm   Sequence operations examples 
+2.2/sequence_operations.scm     Conventional interface book code examples 
+
+2.3/deriv.scm                   Symbolic differentiation 
+2.3/ex2_53-55.scm               Quoting basics
+2.3/ex2_56-57.scm               Extending differentiation
+2.3/ex2_58.scm                  Modify differentiation for ordinary math notation (infix)
+2.3/ex2_59.scm                  union-set operation 
+2.3/ex2_60.scm                  Sets allowing duplicates 
+2.3/ex2_61-62.scm               adjoint and union of ordered sets
+2.3/ex2_63-65.scm               Lists as binary trees
+2.3/ex2_66.scm                  lookup function for trees
+2.3/ex2_67-70.scm               Huffman encoding exercises 
+2.3/huffman.scm                 Huffman encoding
+2.3/set-ordered.scm             Sets as ordered lists 
+2.3/set-tree.scm                Sets as binary trees 
+2.3/set-unordered.scm           Representing sets book code
+
+2.4/complex.scm                 Complex numbers generic system Section 2.4.3
+2.4/complex_test.scm            Test complex variable procedures
+2.4/ex2_73.scm                  Derivatives as a data-directed system 
+2.4/ex2_74.scm                  Insatiable Enterprises record system
+2.4/ex2_75.scm                  make-from-mag-ang in message passing style 
+2.4/ex2_76.scm                  Summary of generic operations strategies
+
+2.5/ex2_77.scm                  Louis Reasoner fails
+2.5/ex2_78.scm                  Modify tagging for regular numbers
+2.5/ex2_79.scm                  Test equ? procedure
+2.5/ex2_80.scm                  Test =zero? procedure
+2.5/ex2_81.scm                  
+2.5/ex2_82.scm                  Generalize apply-generic to more than 2 arguments
+2.5/ex2_83.scm                  raise a type up the tower
+2.5/ex2_84.scm                  Redefine apply-generic for use with (raise)
+2.5/ex2_85.scm                  Define drop procedure to simplify answers
+2.5/ex2_86.scm                  Complex numbers with generic parts
+2.5/generic_arithmetic.scm      Generic arithmetic package from SICP Section 2.5
+#}}}
+#===============================================================================
+#============================================================================}}}
