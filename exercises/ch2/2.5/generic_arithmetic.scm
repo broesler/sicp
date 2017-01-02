@@ -25,10 +25,12 @@
 (define (=zero? x) (apply-generic '=zero? x)) ; Ex 2.80
 (define (raise n) (apply-generic 'raise n))   ; Ex 2.83
 
-(define (sine x) (apply-generic 'sine x))     ; Ex 2.86
+;;; Ex 2.86:
+(define (square-root x) (apply-generic 'square-root x))
+(define (square x) (apply-generic 'square x))
+(define (sine x) (apply-generic 'sine x))
 (define (cose x) (apply-generic 'cose x))
-(define (arctan x) (apply-generic 'arctan x))
-(define (expp x y) (apply-generic 'expp x y))
+(define (arctan x y) (apply-generic 'arctan x y))
 
 ;-------------------------------------------------------------------------------
 ;        Ex 2.78: Redefine tagging data
@@ -84,11 +86,19 @@
   (put 'project '(scheme-number)
        (lambda (x) (make-scheme-number x)))
   ;; Ex 2.86:
-  (put 'sine '(scheme-number) sin)
-  (put 'cose '(scheme-number) cos)
-  (put 'arctan '(scheme-number) atan)
-  (put 'expp '(scheme-number scheme-number) 
-       (lambda (x y) (expt x y)))
+  (put 'sqrt '(scheme-number)
+       (lambda (x)
+         (let ((root (sqrt x)))
+           (make-complex-from-real-imag (make-real (real-part root))
+                                        (make-real (imag-part root))))))
+  (put 'square '(scheme-number) 
+       (lambda (x) (tag (* x x))))
+  (put 'sine '(scheme-number) 
+       (lambda (x) (make-real (sin x))))
+  (put 'cose '(scheme-number)
+       (lambda (x) (make-real (cos x))))
+  (put 'arctan '(scheme-number scheme-number) 
+       (lambda (x y) (make-real (atan x y))))
   'done)
 
 ;;; Constructor
@@ -119,6 +129,21 @@
   (define (div-rat x y)
     (make-rat (* (numer x) (denom y))
               (* (denom x) (numer y))))
+  ;; Ex 2.86:
+  (define (sqrt-rat x)
+    (let ((root (sqrt (/ (numer x) (denom x)))))
+      (make-complex-from-real-imag (make-real (real-part root))
+                                   (make-real (imag-part root)))))
+  (define (square-rat x) (mul-rat x x))
+  (define (sin-rat x) 
+    (sin (/ (numer x)
+            (denom x))))
+  (define (cos-rat x)
+    (cos (/ (numer x)
+            (denom x))))
+  (define (atan-rat x y)
+    (atan (/ (numer x) (denom x)) 
+          (/ (numer y) (denom y))))
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
   (put 'add '(rational rational)
@@ -151,21 +176,16 @@
   (put 'project '(rational)
        (lambda (x) (make-scheme-number (inexact->exact (round (numer x))))))
   ;; Ex 2.86:
-  ;; NOTE: sin, cos, etc. can only be defined for real numbers
+  (put 'square-root '(rational)
+       (lambda (x) (make-real (sqrt-rat x))))
+  (put 'square '(rational)
+       (lambda (x) (tag (square-rat x))))
   (put 'sine '(rational)
-       (lambda (x) (sin (/ (numer x)
-                           (denom x)))))
+       (lambda (x) (make-real (sin-rat x))))
   (put 'cose '(rational)
-       (lambda (x) (cos (/ (numer x)
-                           (denom x)))))
-  (put 'arctan '(rational)
-       (lambda (x) (atan (/ (numer x)
-                            (denom x)))))
-  (put 'expp '(rational rational)
-       (lambda (x y) (expt (/ (numer x)
-                              (denom x))
-                           (/ (numer y)
-                              (denom y)))))
+       (lambda (x) (make-real (cos-rat x))))
+  (put 'arctan '(rational rational)
+       (lambda (x) (make-real (atan-rat x y))))
   'done)
 
 ;;; Constructor
@@ -209,14 +229,19 @@
   (put 'project '(real)
        (lambda (x) (make-rational (round x) 1.0)))
   ;; Ex 2.86:
+  (put 'square-root '(real) 
+       (lambda (x)
+         (let ((root (sqrt x)))
+           (make-complex-from-real-imag (tag (real-part root))
+                                        (tag (imag-part root))))))
+  (put 'square '(real)
+       (lambda (x) (tag (* x x 1.0))))
   (put 'sine '(real) 
        (lambda (x) (tag (+ (sin x) 0.0))))
   (put 'cose '(real)
        (lambda (x) (tag (+ (cos x) 0.0))))
   (put 'arctan '(real)
        (lambda (x) (tag (+ (atan x) 0.0))))
-  (put 'expp '(real real) 
-       (lambda (x y) (tag (+ (expt x y) 0.0))))
   'done)
 
 ;;; Constructor
@@ -234,17 +259,17 @@
     ((get 'make-from-mag-ang 'polar) r a))
   ;; internal procedures
   (define (add-complex z1 z2)
-    (make-from-real-imag (add (real-part z1) (real-part z2))
-                         (add (imag-part z1) (imag-part z2))))
+    (make-from-real-imag (add (c-real-part z1) (c-real-part z2))
+                         (add (c-imag-part z1) (c-imag-part z2))))
   (define (sub-complex z1 z2)
-    (make-from-real-imag (sub (real-part z1) (real-part z2))
-                         (sub (imag-part z1) (imag-part z2))))
+    (make-from-real-imag (sub (c-real-part z1) (c-real-part z2))
+                         (sub (c-imag-part z1) (c-imag-part z2))))
   (define (mul-complex z1 z2)
-    (make-from-mag-ang (mul (magnitude z1) (magnitude z2))
-                       (add (angle z1) (angle z2))))
+    (make-from-mag-ang (mul (c-magnitude z1) (c-magnitude z2))
+                       (add (c-angle z1) (c-angle z2))))
   (define (div-complex z1 z2)
-    (make-from-mag-ang (div (magnitude z1) (magnitude z2))
-                       (sub (angle z1) (angle z2))))
+    (make-from-mag-ang (div (c-magnitude z1) (c-magnitude z2))
+                       (sub (c-angle z1) (c-angle z2))))
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'complex z))
   (put 'add '(complex complex)
@@ -257,24 +282,24 @@
        (lambda (z1 z2) (tag (div-complex z1 z2))))
   ;; Ex 2.79:
   (put 'equ? '(complex complex)
-       (lambda (x y) (and (equ? (real-part x)
-                                (real-part y))
-                          (equ? (imag-part x)
-                                (imag-part y)))))
+       (lambda (x y) (and (equ? (c-real-part x)
+                                (c-real-part y))
+                          (equ? (c-imag-part x)
+                                (c-imag-part y)))))
   ;; Ex 2.80:
   (put '=zero? '(complex)
-       (lambda (x) (and (=zero? (real-part x))
-                        (=zero? (imag-part x)))))
+       (lambda (x) (and (=zero? (c-real-part x))
+                        (=zero? (c-imag-part x)))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))
   ;; Ex 2.78: Alyssa P. Hacker adds these procedures to provide a second layer
   ;; of tags so that we can access the underlying rectangular/polar procedures:
-  (put 'real-part '(complex) real-part)
-  (put 'imag-part '(complex) imag-part)
-  (put 'magnitude '(complex) magnitude)
-  (put 'angle '(complex) angle)
+  (put 'c-real-part '(complex) c-real-part)
+  (put 'c-imag-part '(complex) c-imag-part)
+  (put 'c-magnitude '(complex) c-magnitude)
+  (put 'c-angle '(complex) c-angle)
   ;; Ex 2.83:
   (put 'raise '(complex)
        (lambda (x) (tag x)))
@@ -282,7 +307,7 @@
   ;; NOTE: In Ex 2.86, this procedure fails if the real-part of x is a rational
   ;; number... need to update for generic usage.
   (put 'project '(complex)
-       (lambda (x) (make-real (real-part x))))
+       (lambda (x) (make-real (c-real-part x))))
   'done)
 
 ;;; Constructors

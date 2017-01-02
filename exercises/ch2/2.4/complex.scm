@@ -41,9 +41,6 @@
 ;-------------------------------------------------------------------------------
 ;;; Ben's implementation
 (define (install-rectangular-package)
-  ;; Ex 2.86
-  (define (square x) (mul x x))
-  (define (sqrt x) (expp x 0.5))
   ;; internal procedures
   (define (real-part z) (car z))
   (define (imag-part z) (cdr z))
@@ -57,10 +54,10 @@
     (cons (mul r (cose a)) (mul r (sine a))))
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'rectangular x))
-  (put 'real-part '(rectangular) real-part)
-  (put 'imag-part '(rectangular) imag-part)
-  (put 'magnitude '(rectangular) magnitude)
-  (put 'angle '(rectangular) angle)
+  (put 'c-real-part '(rectangular) real-part)
+  (put 'c-imag-part '(rectangular) imag-part)
+  (put 'c-magnitude '(rectangular) magnitude)
+  (put 'c-angle '(rectangular) angle)
   (put 'make-from-real-imag 'rectangular 
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'rectangular 
@@ -69,9 +66,6 @@
 
 ;;; Alyssa's implementation
 (define (install-polar-package)
-  ;; Ex 2.86
-  (define (square x) (mul x x))
-  (define (sqrt x) (expp x 0.5))
   ;; internal procedures
   (define (magnitude z) (car z))
   (define (angle z) (cdr z))
@@ -85,10 +79,10 @@
           (arctan (div y x))))
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'polar x))
-  (put 'real-part '(polar) real-part)
-  (put 'imag-part '(polar) imag-part)
-  (put 'magnitude '(polar) magnitude)
-  (put 'angle '(polar) angle)
+  (put 'c-real-part '(polar) real-part)
+  (put 'c-imag-part '(polar) imag-part)
+  (put 'c-magnitude '(polar) magnitude)
+  (put 'c-angle '(polar) angle)
   (put 'make-from-real-imag 'polar
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'polar 
@@ -106,10 +100,10 @@
             (list op type-tags))))))
 
 ;;; Selectors
-(define (real-part z) (apply-generic 'real-part z))
-(define (imag-part z) (apply-generic 'imag-part z))
-(define (magnitude z) (apply-generic 'magnitude z))
-(define (angle z) (apply-generic 'angle z))
+(define (c-real-part z) (apply-generic 'c-real-part z))
+(define (c-imag-part z) (apply-generic 'c-imag-part z))
+(define (c-magnitude z) (apply-generic 'c-magnitude z))
+(define (c-angle z) (apply-generic 'c-angle z))
 
 ;;; Constructors
 (define (make-from-real-imag x y)
