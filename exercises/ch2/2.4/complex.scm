@@ -98,6 +98,7 @@
           (error
             "No method for these types -- APPLY-GENERIC"
             (list op type-tags))))))
+            (drop result)
 
 ;;; Selectors
 (define (c-real-part z) (apply-generic 'c-real-part z))

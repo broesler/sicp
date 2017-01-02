@@ -293,9 +293,8 @@
                           (equ? (c-imag-part x) (c-imag-part y)))))
   ;; Ex 2.80:
   (put '=zero? '(complex)
-       (lambda (x) (=zero? (c-magnitude x))))
-       ; (lambda (x) (and (=zero? (c-real-part x))
-       ;                  (=zero? (c-imag-part x)))))
+       (lambda (x) (and (=zero? (c-real-part x))
+                        (=zero? (c-imag-part x)))))
   (put 'make-from-real-imag 'complex
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
@@ -311,7 +310,8 @@
        (lambda (x) (tag x)))
   ;; Ex 2.85:
   (put 'project '(complex)
-       (lambda (x) (make-real (c-real-part x))))
+       (lambda (x) (project (c-real-part x)))) ; Ex 2.86
+       ; (lambda (x) (make-real (c-real-part x)))) ; old way
   'done)
 
 ;;; Constructors

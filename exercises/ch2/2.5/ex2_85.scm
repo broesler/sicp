@@ -103,8 +103,7 @@
                   (eq? op 'sub) 
                   (eq? op 'mul)
                   (eq? op 'div))
-            ; (drop result)
-            result
+            (drop result)
             result))
         (if (> (length args) 1) 
           (let ((t1 (car type-tags)) 

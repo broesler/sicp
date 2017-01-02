@@ -25,12 +25,9 @@
 ;; (1.5 + 3i) - (1/2 + 3i) = (1.5 - 1/2) + (3 - 3)i = (1.0 + 0i)
 ;; ==> ; Value: 1
 
-;;; These lines fail:
 (define bb (make-complex-from-real-imag (make-rational 3 4) 
                                         (make-rational 2 5)))
 (printval (add bb bb)) 
-
-;;; NOTE: (project bb) fails when real-part cannot be dropped to an integer from
-;;; a rational number... need to recursively project?
+; Value: (complex rectangular (rational 3 . 2) rational 4 . 5)
 ;;==============================================================================
 ;;==============================================================================
