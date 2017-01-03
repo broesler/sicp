@@ -32,6 +32,9 @@
 (define (cose x) (apply-generic 'cose x))
 (define (arctan x y) (apply-generic 'arctan x y))
 
+;;; Ex 2.88:
+(define (negate x) (apply-generic 'negate x))
+
 ;-------------------------------------------------------------------------------
 ;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
@@ -99,6 +102,9 @@
        (lambda (x) (make-real (cos x))))
   (put 'arctan '(scheme-number scheme-number) 
        (lambda (x y) (make-real (atan x y))))
+  ;; Ex 2.88:
+  (put 'negate '(scheme-number)
+       (lambda (x) (tag (- x)))) 
   'done)
 
 ;;; Constructor
@@ -187,6 +193,10 @@
        (lambda (x) (make-real (cos-rat x))))
   (put 'arctan '(rational rational)
        (lambda (x) (make-real (atan-rat x y))))
+  ;; Ex 2.88:
+  (put 'negate '(rational)
+       (lambda (x) (make-rat (- (numer x))
+                             (denom x)))) 
   'done)
 
 ;;; Constructor
@@ -249,6 +259,9 @@
        (lambda (x) (tag (+ (cos x) 0.0))))
   (put 'arctan '(real)
        (lambda (x) (tag (+ (atan x) 0.0))))
+  ;; Ex 2.88:
+  (put 'negate '(real)
+       (lambda (x) (tag (- x)))) 
   'done)
 
 ;;; Constructor
@@ -311,7 +324,11 @@
   ;; Ex 2.85:
   (put 'project '(complex)
        (lambda (x) (project (c-real-part x)))) ; Ex 2.86
-       ; (lambda (x) (make-real (c-real-part x)))) ; old way
+       ; (lambda (x) (make-real (c-real-part x)))) ; prior to 3x 2.86
+  ;; Ex 2.88:
+  (put 'negate '(complex)
+       (lambda (x) (make-complex-from-real-imag (negate (c-real-part x))
+                                                (negate (c-imag-part x))))) 
   'done)
 
 ;;; Constructors

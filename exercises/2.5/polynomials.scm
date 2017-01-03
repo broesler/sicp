@@ -46,6 +46,7 @@
                             (term-list p2)))
       (error "Polys not in same var -- ADD-POLY"
              (list p1 p2))))
+
   ;; Procedures used by add-poly
   (define (add-terms L1 L2)
     (cond ((empty-termlist? L1) L2)
@@ -70,6 +71,7 @@
                             (term-list p2)))
       (error "Polys not in same var -- MUL-POLY"
              (list p1 p2))))
+
   ;; Procedures used by mul-poly
   (define (mul-terms L1 L2)
     (if (empty-termlist? L1)
@@ -85,17 +87,36 @@
                      (mul (coeff t1) (coeff t2)))
           (mul-term-by-all-terms t1 (rest-terms L))))))
 
+  ;; Ex 2.88:
+  (define (sub-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+      (add-poly p1 (negate-poly p2))
+      (error "Polys not in same var -- SUB-POLY"
+             (list p1 p2))))
+
+  ;; Procedures used by sub-poly
+  (define (negate-poly p)
+    (make-poly (variable p) (negate-terms (term-list p))))
+
+  (define (negate-terms L)
+    (if (empty-termlist? L)
+      (the-empty-termlist)
+      (let ((t1 (first-term L)))
+        (adjoin-term (make-term (order t1)
+                                (negate (coeff t1)))
+                     (negate-terms (rest-terms L))))))
+
   ;; Ex 2.87:
   (define (p=zero? p) ; distinguish name from generic =zero?
+    (define (all-coeffs-zero? terms)
+      (if (null? terms) 
+        #t
+        (and (=zero? (coeff (first-term terms)))
+             (all-coeffs-zero? (rest-terms terms)))))
+    ; main procedure
     (let ((terms (term-list p)))
       (or (empty-termlist? terms)
           (all-coeffs-zero? terms))))
-  ;; Call generic =zero? on all coeffs
-  (define (all-coeffs-zero? terms)
-    (if (null? terms) 
-      #t
-      (and (=zero? (coeff (first-term terms)))
-           (all-coeffs-zero? (rest-terms terms)))))
 
   ;; Interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
@@ -105,6 +126,10 @@
        (lambda (p1 p2) (tag (add-poly p1 p2))))
   (put 'mul '(polynomial polynomial) 
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
+  (put 'sub '(polynomial polynomial)
+       (lambda (p1 p2) (tag (sub-poly p1 p2))))
+  (put 'negate '(polynomial)
+       (lambda (p) (tag (negate-poly p))))
   ;; Ex 2.87:
   (put '=zero? '(polynomial) p=zero?)
   'done)
