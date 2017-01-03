@@ -9,8 +9,8 @@
 ;;; SECTION 2.4.2
 (load "complex.scm")
 
-;; Dummy these procedures to allow these tests to work without the generic
-;; arithmetic system from Section 2.5:
+;; Dummy these procedures to their built-in counterparts to allow these tests to
+;; work without the generic arithmetic system from Section 2.5:
 (define add +)
 (define mul *)
 (define square-root sqrt)

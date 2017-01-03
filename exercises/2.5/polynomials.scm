@@ -9,6 +9,37 @@
 (load "ex2_85.scm")
 
 ;------------------------------------------------------------------------------- 
+;        Sparse and dense polynomials
+;-------------------------------------------------------------------------------
+; (define (install-dense-package)
+  ;; internal procedures
+  ;; Terms are represented as: (coeff coeff ...) for DENSE polynomials
+  (define (the-empty-termlist) '())
+  ;; Add 0's to term-list until we match the desired order
+  (define (adjoin-term term term-list)
+    (let ((ord (order term))
+          (len (length term-list)))
+      (define (iter-adjoin terms times)
+        (cond ((=zero? (coeff term))
+               terms)
+              ((= len times)
+               (cons (coeff term) terms))
+              (else 
+                (iter-adjoin (cons 0 terms) (+ times 1)))))
+      (iter-adjoin term-list len)))
+  ;; first term returns artifical "pair"
+  (define (first-term term-list) 
+    (list (car term-list) 
+          (- (length term-list) 1)))
+  ;; Rest of procedures do not change from sparse representation
+  (define (rest-terms term-list) (cdr term-list))
+  (define (empty-termlist? term-list) (null? term-list))
+  (define (make-term order coeff) (list order coeff))
+  (define (order term) (car term))
+  (define (coeff term) (cdr term))
+  ; 'done)
+
+;------------------------------------------------------------------------------- 
 ;        Polynomial package
 ;-------------------------------------------------------------------------------
 (define (install-polynomial-package)
