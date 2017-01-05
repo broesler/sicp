@@ -123,5 +123,77 @@
 ;------------------------------------------------------------------------------- 
 ;        Exercise 5.5
 ;-------------------------------------------------------------------------------
+;;; (A) What type it map-terms?
+;;; map-terms : ((RepTerm->RepTerm), RepTerms) -> RepTerms
+(define (map-terms proc tlist)
+  (if (empty-termlist? tlist)
+    (the-empty-termlist)
+    (adjoin-term (proc (first-term tlist))
+                 (map-terms proc (rest-terms tlist)))))
+
+;;; (B) 
+;;; create-numerical-polynomial : (Variable, List(Sch-Num)) -> RepPoly
+(define (create-numerical-polynomial var coeffs)
+  (create-polynomial var (map create-number coeffs)))
+
+(define p1 (create-numerical-polynomial 'x '(1 5 0 -2)))
+
+;;; (C) Evaluate map-terms
+(newline)
+(display ";;; Exercise 5.5")
+(newline)
+(pp (square p1))
+; (polynomial x
+;             (6 (number . 1))
+;             (5 (number . 10))
+;             (4 (number . 25))
+;             (3 (number . -4))
+;             (2 (number . -20))
+;             (0 (number . 4)))
+
+;------------------------------------------------------------------------------- 
+;        Exercise 5.6
+;-------------------------------------------------------------------------------
+(define p2-mixed
+  (create-polynomial 'z (list p1 (create-number 3) (create-number 5))))
+; (square p2-mixed) ; Fails!
+
+;; Define coeffs as polynomials instead!
+(define p2
+  (create-polynomial 
+    'z 
+    (list p1 
+          (create-polynomial 'x (list (create-number 3)))
+          (create-polynomial 'x (list (create-number 5))))))
+
+;;; (A) Define the following: p = 3/y, q = (y^2+1)/y, r = 1/(y-1), s = 2
+(define p (create-rational (create-numerical-polynomial 'y (list 3))
+                           (create-numerical-polynomial 'y (list 1 0))))
+(define q (create-rational (create-numerical-polynomial 'y (list 1 0 1))
+                           (create-numerical-polynomial 'y (list 1 0))))
+(define r (create-rational (create-numerical-polynomial 'y (list 1))
+                           (create-numerical-polynomial 'y (list 1 -1))))
+(define s (create-rational (create-numerical-polynomial 'y (list 2))
+                           (create-numerical-polynomial 'y (list 1))))
+
+(define p3 (create-polynomial 'x (list p 
+                                       (create-numerical-polynomial 'y (list 0)) 
+                                       q 
+                                       r 
+                                       s)))
+
+;;; (B)
+(newline)
+(display ";;; Exercise 5.6") (newline)
+(display "(square p2) = ") (newline)
+(pp (square p2))
+(display "(square p3) = ") (newline)
+(pp (square p3))
+(display "(square (square p2)) = ") (newline)
+(pp (square (square p2)))
+
+;------------------------------------------------------------------------------- 
+;        Exercise 5.7
+;-------------------------------------------------------------------------------
 ;;==============================================================================
 ;;==============================================================================

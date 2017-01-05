@@ -220,11 +220,11 @@
       (let ((coeff (car rev-coeffs))
             (rev-coeffs (cdr rev-coeffs)))
         (if (=zero? coeff)
-          (dt->st rev-coeffs terms (inc degree))
+          (dt->st rev-coeffs terms (1+ degree))
           (dt->st rev-coeffs
                   (adjoin-term (make-term degree coeff)
                                terms)
-                  (inc degree))))))
+                  (1+ degree))))))
   (dt->st (reverse coeffs) (the-empty-termlist) 0))
 
 
@@ -282,7 +282,8 @@
   (cond ((empty-termlist? L1) L2)
         ((empty-termlist? L2) L1)
         (else
-          (let ((t1 (first-term L1)) (t2 (first-term L2)))
+          (let ((t1 (first-term L1)) 
+                (t2 (first-term L2)))
             (cond ((> (order t1) (order t2))
                    (adjoin-term t1
                                 (+terms (rest-terms L1) L2)))
