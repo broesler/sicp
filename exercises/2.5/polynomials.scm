@@ -52,7 +52,8 @@
     (cond ((empty-termlist? L1) L2)
           ((empty-termlist? L2) L1)
           (else
-            (let ((t1 (first-term L1)) (t2 (first-term L2)))
+            (let ((t1 (first-term L1)) 
+                  (t2 (first-term L2)))
               (cond ((> (order t1) (order t2))
                      (adjoin-term t1 (add-terms (rest-terms L1) L2)))
                     ((< (order t1) (order t2))
@@ -94,6 +95,9 @@
       (error "Polys not in same var -- SUB-POLY"
              (list p1 p2))))
 
+  (define (sub-terms L1 L2)
+    (add-terms L1 (negate-terms L2)))
+
   ;; Procedures used by sub-poly
   (define (negate-poly p)
     (make-poly (variable p) (negate-terms (term-list p))))
@@ -105,6 +109,36 @@
         (adjoin-term (make-term (order t1)
                                 (negate (coeff t1)))
                      (negate-terms (rest-terms L))))))
+
+  ;; Ex 2.91: Division
+  (define (div-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+      (let ((qr (div-terms (term-list p1)
+                           (term-list p2))))
+        ;; return both quotient and remainder
+        (list (make-poly (variable p1) 
+                         (car qr))
+              (make-poly (variable p1) 
+                         (cadr qr))))
+      (error "Polys not in same var -- MUL-POLY"
+             (list p1 p2))))
+
+  ;; Procedures used by div-poly
+  ;; div-terms returns (list quotient remainder)
+  (define (div-terms L1 L2)
+    (if (empty-termlist? L1)
+      (list (the-empty-termlist) (the-empty-termlist))
+      (let ((t1 (first-term L1))
+            (t2 (first-term L2)))
+        (if (> (order t2) (order t1))
+          (list (the-empty-termlist) L1)
+          (let ((new-c (div (coeff t1) (coeff t2)))
+                (new-o (- (order t1) (order t2))))
+            (let* ((res (make-term new-o new-c))
+                   (rest-of-result
+                    (div-terms (sub-terms L1 (mul-terms (list res) L2)) L2)))
+              (list (adjoin-term res (car rest-of-result))
+                    (cadr rest-of-result))))))))
 
   ;; Ex 2.87:
   (define (p=zero? p) ; distinguish name from generic =zero?
@@ -128,6 +162,8 @@
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
   (put 'sub '(polynomial polynomial)
        (lambda (p1 p2) (tag (sub-poly p1 p2))))
+  (put 'div '(polynomial polynomial)
+       (lambda (p1 p2) (tag (div-poly p1 p2))))
   (put 'negate '(polynomial)
        (lambda (p) (tag (negate-poly p))))
   ;; Ex 2.87:
