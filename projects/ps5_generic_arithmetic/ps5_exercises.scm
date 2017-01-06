@@ -14,12 +14,12 @@
 ;        Exercise 5.1
 ;-------------------------------------------------------------------------------
 ;;; (A) "install" =number in number package:
-;; (RepNum, RepNum) -> Bool
+;; (RepNum, RepNum) --> Bool
 (define (=number x y)
   (= x y))
 
 ;;; (B) install equ? as generic operator
-;; equ? : (GN, GN) -> Bool
+;; equ? : (GN, GN) --> Bool
 (define (equ? x y) (apply-generic 'equ? x y))
 
 ;; put into table
@@ -46,13 +46,16 @@
 ;        Exercise 5.3
 ;-------------------------------------------------------------------------------
 ;;; (A) define equ-rat?
-;;; (RepRat,RepRat) -> Bool
+;;; (RepRat, RepRat) --> Bool
 (define (equ-rat? x y)
   (and (equ? (numer x) (numer y))
        (equ? (denom x) (denom y))))
 
+;;; (RepRat, RepRat) --> Bool
+(define (equ-rational? x y) (equ-rat? x y))
+
 ;;; (B) install as generic operator
-(put 'equ? '(rational rational) equ-rat?)
+(put 'equ? '(rational rational) equ-rational?)
 
 ;;; Test code:
 (newline)
@@ -65,54 +68,40 @@
 ;------------------------------------------------------------------------------- 
 ;        Exercise 4
 ;-------------------------------------------------------------------------------
-(define n2 (create-number 2))
 ;;; Before adding the new methods, the following returns:
 ;;;     (add n2 r5/13) 
 ;;; ;No method for the given types -- APPLY-GENERIC (add (number rational))
 
 ;;; (A) define procedure
-;;;     repnum->reprat : RepNum -> RepRat
+;;;     repnum->reprat : RepNum --> RepRat
 (define (repnum->reprat n)
-  (create-rational n (create-number 1)))
-
-;;; Test code:
-(repnum->reprat n2) ;Value: (rational (number . 2) number . 1) 
+  (make-rat (create-number n) (create-number 1)))
 
 ;;; Define generic methods for both (num rat) and (rat num)
-;;; When add is called with a number and a rational, apply-generic will apply
-;;; a procedure that converts the number to a rational, *then* calls the generic
-;;; add again, which will apply a procedure that adds two rationals. 
+;;; add, sub, mul, div : (GN, GN) --> GN
+;;; put procedure that takes (RepNum, RepRat) --> ({rational} X RepRat)
+(put 'add '(number rational) (RRmethod->NRmethod +rational))
+(put 'sub '(number rational) (RRmethod->NRmethod -rational))
+(put 'mul '(number rational) (RRmethod->NRmethod *rational))
+(put 'div '(number rational) (RRmethod->NRmethod /rational))
 
-(define (tag-args-NR method)
-  (lambda (n r)
-    ((RRmethod->NRmethod method) (attach-tag 'number n) 
-                                 (attach-tag 'rational r))))
-
-(define (tag-args-RN method)
-  (lambda (r n)
-    ((RRmethod->RNmethod method) (attach-tag 'rational r)
-                                 (attach-tag 'number n))))
-
-;;; apply-generic strips the tags off of our numbers BEFORE passing them to the
-;;; conversion procedure, so we need to artificially add them back in.
-(put 'add '(number rational) (tag-args-NR add))
-(put 'sub '(number rational) (tag-args-NR sub))
-(put 'mul '(number rational) (tag-args-NR mul))
-(put 'div '(number rational) (tag-args-NR div))
-
-;;;  ((RepRat,RepRat) --> T) --> ((RepRat,RepNum) --> T)
+;;; Same as above, but switch the order of the arguments
+;;;  ((RepRat, RepRat) --> T) --> ((RepRat, RepNum) --> T)
 (define (RRmethod->RNmethod method)
   (lambda (rat num) 
     (method rat (repnum->reprat num))))
 
-(put 'add '(rational number) (tag-args-RN add))
-(put 'sub '(rational number) (tag-args-RN sub))
-(put 'mul '(rational number) (tag-args-RN mul))
-(put 'div '(rational number) (tag-args-RN div))
+;;; put procedure that takes (RepRat, RepNum) --> ({rational} X RepRat)
+(put 'add '(rational number) (RRmethod->RNmethod +rational))
+(put 'sub '(rational number) (RRmethod->RNmethod -rational))
+(put 'mul '(rational number) (RRmethod->RNmethod *rational))
+(put 'div '(rational number) (RRmethod->RNmethod /rational))
 
 ;; Equality
-(put 'equ? '(number rational) (tag-args-NR equ?))
-(put 'equ? '(rational number) (tag-args-RN equ?))
+;;; equ? : GN --> Bool
+;;; put procedure that takes (RepRat, RepNum) --> Bool
+(put 'equ? '(number rational) (RRmethod->NRmethod equ-rational?))
+(put 'equ? '(rational number) (RRmethod->RNmethod equ-rational?))
 
 ;;; (B) Install and test new methods
 (newline)
@@ -124,7 +113,7 @@
 ;        Exercise 5.5
 ;-------------------------------------------------------------------------------
 ;;; (A) What type it map-terms?
-;;; map-terms : ((RepTerm->RepTerm), RepTerms) -> RepTerms
+;;; map-terms : ((RepTerm->RepTerm), RepTerms) --> RepTerms
 (define (map-terms proc tlist)
   (if (empty-termlist? tlist)
     (the-empty-termlist)
@@ -132,7 +121,7 @@
                  (map-terms proc (rest-terms tlist)))))
 
 ;;; (B) 
-;;; create-numerical-polynomial : (Variable, List(Sch-Num)) -> RepPoly
+;;; create-numerical-polynomial : (Variable, List(Sch-Num)) --> RepPoly
 (define (create-numerical-polynomial var coeffs)
   (create-polynomial var (map create-number coeffs)))
 
@@ -206,35 +195,35 @@
 ;;; equ?          ✓         ✓         ✗
 
 ;;; (A) use map-terms to write negate-terms, then negate-poly
-;; negate-terms : RepTerms -> RepTerms
+;; negate-terms : RepTerms --> RepTerms
 (define (negate-terms tlist)
   (map-terms (lambda (x) 
                (make-term (order x) 
                           (negate (coeff x)))) 
              tlist))
 
-;; negate-poly : RepPoly -> RepPoly
+;; negate-poly : RepPoly --> RepPoly
 (define (negate-poly poly)
   (make-poly (variable poly) (negate-terms (term-list poly))))
 
-;; negate-polynomial : RepPoly -> ({polynomial} X RepPoly)
+;; negate-polynomial : RepPoly --> ({polynomial} X RepPoly)
 (define (negate-polynomial poly)
   (make-polynomial (negate-poly poly)))
 
 ;;; (B)
-;; -poly : (RepPoly, RepPoly) -> RepPoly
+;; -poly : (RepPoly, RepPoly) --> RepPoly
 (define (-poly p1 p2)
   (+poly p1 (negate-poly p2)))
 
-;; -polynomial : (RepPoly, RepPoly) -> ({polynomial} X RepPoly)
+;; -polynomial : (RepPoly, RepPoly) --> ({polynomial} X RepPoly)
 (define (-polynomial p1 p2)
   (make-polynomial (-poly p1 p2)))
 
-;; equ-poly? : (RepPoly, RepPoly) -> Bool
+;; equ-poly? : (RepPoly, RepPoly) --> Bool
 (define (equ-poly? p1 p2)
   (=zero-poly? (-poly p1 p2)))
 
-;; equ-polynomial? : (RepPoly, RepPoly) -> Bool
+;; equ-polynomial? : (RepPoly, RepPoly) --> Bool
 (define (equ-polynomial? p1 p2)
   (equ-poly? p1 p2))
 
@@ -254,57 +243,22 @@
 ;------------------------------------------------------------------------------- 
 ;        Exercise 5.8
 ;-------------------------------------------------------------------------------
-;;; (A) repnum->reppoly : (Variable, RepNum) -> RepPoly
+;;; (A) repnum->reppoly : (Variable, RepNum) --> RepPoly
 (define (repnum->reppoly var n)
-  (create-polynomial var (list n)))
+  (make-poly var (adjoin-term (make-term 0 (create-number n))
+                              (the-empty-termlist))))
 
 ;;; Test code:
 (newline)
 (display ";;; Exercise 5.8")
-(printval (repnum->reppoly 'x (create-number 3))) 
-; Value: (polynomial x (0 (number . 3)))
+(printval (repnum->reppoly 'x 3)) 
+; Value: (x (0 (number . 3)))
 
 ;;; Define methods for generic add, sub, mul, equ? at types (number polynomial),
 ;;; and (polynomial number), and div at (polynomial number)
 
-;;;  ((RepPoly, RepPoly) --> T) --> ((RepNum, RepPoly) --> T)
-(define (RRmethod->NPmethod method)
-  (lambda (num poly) 
-    (method (repnum->reppoly (variable poly) num) poly)))
-
-;;;  ((RepPoly, RepPoly) --> T) --> ((RepPoly, RepNum) --> T)
-(define (RRmethod->PNmethod method)
-  (lambda (poly num) 
-    (method poly (repnum->reppoly (variable poly) num))))
-
-(define (tag-args-NP method)
-  (lambda (n r)
-    ((RRmethod->NPmethod method) (attach-tag 'number n) 
-                                 (attach-tag 'polynomial r))))
-
-(define (tag-args-PN method)
-  (lambda (r n)
-    ((RRmethod->PNmethod method) (attach-tag 'polynomial r)
-                                 (attach-tag 'number n))))
-
-;;; apply-generic strips the tags off of our numbers BEFORE passing them to the
-;;; conversion procedure, so we need to artificially add them back in.
-(put 'add '(number polynomial) (tag-args-NP add))
-(put 'sub '(number polynomial) (tag-args-NP sub))
-(put 'mul '(number polynomial) (tag-args-NP mul))
-; NOT ALLOWED: (put 'div '(number polynomial) (tag-args-NP div))
-
-(put 'add '(polynomial number) (tag-args-PN add))
-(put 'sub '(polynomial number) (tag-args-PN sub))
-(put 'mul '(polynomial number) (tag-args-PN mul))
-(put 'div '(polynomial number) (tag-args-PN div))
-
-;; Equality
-(put 'equ? '(number polynomial) (tag-args-NP equ?))
-(put 'equ? '(polynomial number) (tag-args-PN equ?))
-
 ;;; (B) Test code:
-(printval (equ? (sub (add p1 p3) p1) p3))
+; (printval (equ? (sub (add p1 p3) p1) p3))
 ; (printval (square p2-mixed))
 
 ;;==============================================================================
