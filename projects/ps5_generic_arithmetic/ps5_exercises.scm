@@ -183,17 +183,69 @@
                                        s)))
 
 ;;; (B)
-(newline)
-(display ";;; Exercise 5.6") (newline)
-(display "(square p2) = ") (newline)
-(pp (square p2))
-(display "(square p3) = ") (newline)
-(pp (square p3))
-(display "(square (square p2)) = ") (newline)
-(pp (square (square p2)))
+; (newline)
+; (display ";;; Exercise 5.6") (newline)
+; (display "(square p2) = ") (newline)
+; (pp (square p2))
+; (display "(square p3) = ") (newline)
+; (pp (square p3))
+; (display "(square (square p2)) = ") (newline)
+; (pp (square (square p2)))
 
 ;------------------------------------------------------------------------------- 
 ;        Exercise 5.7
 ;-------------------------------------------------------------------------------
+;;; Dispatch table
+;;; Op Type->   RepNum    RepRat    RepPoly
+;;; add           ✓         ✓         ✓
+;;; sub           ✓         ✓         ✓
+;;; mul           ✓         ✓         ✓
+;;; div           ✓         ✓         ✓
+;;; negate        ✓         ✓         ✗
+;;; =zero?        ✓         ✓         ✗
+;;; equ?          ✓         ✓         ✗
+
+;;; (A) use map-terms to write negate-terms, then negate-poly
+;; negate-terms : RepTerms -> RepTerms
+(define (negate-terms tlist)
+  (map-terms (lambda (x) 
+               (make-term (order x) 
+                          (negate (coeff x)))) 
+             tlist))
+
+;; negate-poly : RepPoly -> RepPoly
+(define (negate-poly poly)
+  (make-poly (variable poly) (negate-terms (term-list poly))))
+
+;; negate-polynomial : RepPoly -> ({polynomial} X RepPoly)
+(define (negate-polynomial poly)
+  (make-polynomial (negate-poly poly)))
+
+;;; (B)
+;; -poly : (RepPoly, RepPoly) -> RepPoly
+(define (-poly p1 p2)
+  (+poly p1 (negate-poly p2)))
+
+;; -polynomial : (RepPoly, RepPoly) -> ({polynomial} X RepPoly)
+(define (-polynomial p1 p2)
+  (make-polynomial (-poly p1 p2)))
+
+;; equ-poly? : (RepPoly, RepPoly) -> Bool
+(define (equ-poly? p1 p2)
+  (=zero-poly? (-poly p1 p2)))
+
+;; equ-polynomial? : (RepPoly, RepPoly) -> ({polynomial} X RepPoly)
+(define (equ-polynomial? p1 p2)
+  (make-polynomial (equ-poly? p1 p2)))
+
+;;; (C) install procedures
+(put 'negate '(polynomial) negate-polynomial)
+(put 'sub '(polynomial) -polynomial)
+(put 'equ? '(polynomial) equ-polynomial?)
+
+;;; Test code:
+(newline)
+(display ";;; Exercise 5.7")
+(printval (negate p1))
 ;;==============================================================================
 ;;==============================================================================
