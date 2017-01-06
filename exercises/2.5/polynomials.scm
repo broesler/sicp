@@ -6,7 +6,7 @@
 ;;  Description: Polynomial arithmetic system
 ;;
 ;;==============================================================================
-(load "ex2_85.scm")
+(load "ex2_84.scm")
 
 ;------------------------------------------------------------------------------- 
 ;        Polynomial package
@@ -116,9 +116,9 @@
       (let ((qr (div-terms (term-list p1)
                            (term-list p2))))
         ;; return both quotient and remainder
-        (list (make-poly (variable p1) 
+        (list (make-polynomial (variable p1) 
                          (car qr))
-              (make-poly (variable p1) 
+              (make-polynomial (variable p1) 
                          (cadr qr))))
       (error "Polys not in same var -- MUL-POLY"
              (list p1 p2))))
@@ -162,8 +162,10 @@
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
   (put 'sub '(polynomial polynomial)
        (lambda (p1 p2) (tag (sub-poly p1 p2))))
+  ;; Ex 2.91:
+  ;; div returns a list of 2 polynomials (quotient remainder)
   (put 'div '(polynomial polynomial)
-       (lambda (p1 p2) (tag (div-poly p1 p2))))
+       (lambda (p1 p2) (div-poly p1 p2)))
   (put 'negate '(polynomial)
        (lambda (p) (tag (negate-poly p))))
   ;; Ex 2.87:

@@ -98,14 +98,14 @@
         ;; adding new procedures! We need to check the op because "project" was
         ;; defined using apply-generic as well... so we'll get an infinite loop
         ;; if we try to drop the result of a projection!
-        ; (let ((result (apply proc (map contents args))))
-        ;   (if (or (eq? op 'add) 
-        ;           (eq? op 'sub) 
-        ;           (eq? op 'mul)
-        ;           (eq? op 'div))
-        ;     (drop result)
-        ;     result))
-        (apply proc (map contents args)) ; exclude "dropping" result
+        (let ((result (apply proc (map contents args))))
+          (if (or (eq? op 'add) 
+                  (eq? op 'sub) 
+                  (eq? op 'mul)
+                  (eq? op 'div))
+            (drop result)
+            result))
+        ; (apply proc (map contents args)) ; exclude "dropping" result
         (if (> (length args) 1) 
           (let ((t1 (car type-tags)) 
                 (t2 (cadr type-tags)) 
