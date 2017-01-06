@@ -200,12 +200,19 @@
       (greatest-common-divisor (coeff (first-term p))
                                (gcd-coeffs (rest-terms p)))))
 
-  ;; Ex 2.97 (b)
+  ;; Ex 2.97 (a)
+  ;; (RepTerms, RepTerms) --> (RepTerms, RepTerms)
+  (define (reduce-terms n d)
+    < implement algorithm here >)
+
+  ;; Reduce a rational polynomial to its lowest terms
   ;; (RepPoly, RepPoly) --> RepPoly
   (define (reduce-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
-      (make-poly (variable p1) (reduce-terms (term-list p1)
-                                             (term-list p2)))
+      (let ((nd (reduce-terms (term-list p1)
+                              (term-list p2))))
+        (make-rational (make-poly (variable p1) (car nd))
+                       (make-poly (variable p1) (cadr nd))))
       (error "Polys not in same var -- REDUCE-POLY"
              (list p1 p2))))
 
