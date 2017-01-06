@@ -140,6 +140,23 @@
               (list (adjoin-term res (car rest-of-result))
                     (cadr rest-of-result))))))))
 
+  ;; Ex 2.94:
+  (define (gcd-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+      (make-poly (variable p1) (gcd-terms (term-list p1)
+                                          (term-list p2)))
+      (error "Polys not in same var -- GCD-POLY"
+             (list p1 p2))))
+
+  (define (gcd-terms a b)
+    (if (empty-termlist? b)
+      a
+      (gcd-terms b (remainder-terms a b))))
+
+  ;; procedures used by gcd-terms
+  (define (remainder-terms a b)
+    (cadr (div-terms a b)))
+
   ;; Ex 2.87:
   (define (p=zero? p) ; distinguish name from generic =zero?
     (define (all-coeffs-zero? terms)
@@ -170,6 +187,9 @@
        (lambda (p) (tag (negate-poly p))))
   ;; Ex 2.87:
   (put '=zero? '(polynomial) p=zero?)
+  ;; Ex 2.94:
+  (put 'gcd '(polynomial polynomial) 
+       (lambda (a b) (tag (gcd-poly a b))))
   'done)
 
 ;;; Constructor

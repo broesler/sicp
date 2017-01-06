@@ -35,6 +35,9 @@
 ;;; Ex 2.88:
 (define (negate x) (apply-generic 'negate x))
 
+;;; Ex 2.94:
+(define (greatest-common-divisor a b) (apply-generic 'gcd a b))
+
 ;-------------------------------------------------------------------------------
 ;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
@@ -105,6 +108,8 @@
   ;; Ex 2.88:
   (put 'negate '(scheme-number)
        (lambda (x) (tag (- x)))) 
+  ;; Ex 2.94:
+  (put 'gcd '(scheme-number scheme-number) gcd)
   'done)
 
 ;;; Constructor
@@ -119,7 +124,7 @@
   (define (numer x) (car x))
   (define (denom x) (cdr x))
   (define (make-rat n d)
-    (cons n d))
+    (cons n d)) ; Ex 2.93, implement for polynomials and use generic ops
     ; (let ((g (gcd n d)))
     ;   (cons (/ n g) (/ d g))))
   (define (add-rat x y)
