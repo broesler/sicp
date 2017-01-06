@@ -80,7 +80,7 @@
 
 ;;; Define generic methods for both (num rat) and (rat num)
 ;;; When add is called with a number and a rational, apply-generic will apply
-;;; a procedure that converts the number to a rational, then calls the generic
+;;; a procedure that converts the number to a rational, *then* calls the generic
 ;;; add again, which will apply a procedure that adds two rationals. 
 
 (define (tag-args-NR method)
@@ -234,18 +234,78 @@
 (define (equ-poly? p1 p2)
   (=zero-poly? (-poly p1 p2)))
 
-;; equ-polynomial? : (RepPoly, RepPoly) -> ({polynomial} X RepPoly)
+;; equ-polynomial? : (RepPoly, RepPoly) -> Bool
 (define (equ-polynomial? p1 p2)
-  (make-polynomial (equ-poly? p1 p2)))
+  (equ-poly? p1 p2))
 
 ;;; (C) install procedures
 (put 'negate '(polynomial) negate-polynomial)
-(put 'sub '(polynomial) -polynomial)
-(put 'equ? '(polynomial) equ-polynomial?)
+(put 'sub '(polynomial polynomial) -polynomial)
+(put 'equ? '(polynomial polynomial) equ-polynomial?)
 
 ;;; Test code:
 (newline)
 (display ";;; Exercise 5.7")
 (printval (negate p1))
+; Value: (polynomial x (3 (number . -1)) (2 (number . -5)) (0 (number . 2)))
+(printval (equ? p2 p2)) ; Value: #t
+(printval (=zero? (sub p3 p3))) ; Value: #t
+
+;------------------------------------------------------------------------------- 
+;        Exercise 5.8
+;-------------------------------------------------------------------------------
+;;; (A) repnum->reppoly : (Variable, RepNum) -> RepPoly
+(define (repnum->reppoly var n)
+  (create-polynomial var (list n)))
+
+;;; Test code:
+(newline)
+(display ";;; Exercise 5.8")
+(printval (repnum->reppoly 'x (create-number 3))) 
+; Value: (polynomial x (0 (number . 3)))
+
+;;; Define methods for generic add, sub, mul, equ? at types (number polynomial),
+;;; and (polynomial number), and div at (polynomial number)
+
+;;;  ((RepPoly, RepPoly) --> T) --> ((RepNum, RepPoly) --> T)
+(define (RRmethod->NPmethod method)
+  (lambda (num poly) 
+    (method (repnum->reppoly (variable poly) num) poly)))
+
+;;;  ((RepPoly, RepPoly) --> T) --> ((RepPoly, RepNum) --> T)
+(define (RRmethod->PNmethod method)
+  (lambda (poly num) 
+    (method poly (repnum->reppoly (variable poly) num))))
+
+(define (tag-args-NP method)
+  (lambda (n r)
+    ((RRmethod->NPmethod method) (attach-tag 'number n) 
+                                 (attach-tag 'polynomial r))))
+
+(define (tag-args-PN method)
+  (lambda (r n)
+    ((RRmethod->PNmethod method) (attach-tag 'polynomial r)
+                                 (attach-tag 'number n))))
+
+;;; apply-generic strips the tags off of our numbers BEFORE passing them to the
+;;; conversion procedure, so we need to artificially add them back in.
+(put 'add '(number polynomial) (tag-args-NP add))
+(put 'sub '(number polynomial) (tag-args-NP sub))
+(put 'mul '(number polynomial) (tag-args-NP mul))
+; NOT ALLOWED: (put 'div '(number polynomial) (tag-args-NP div))
+
+(put 'add '(polynomial number) (tag-args-PN add))
+(put 'sub '(polynomial number) (tag-args-PN sub))
+(put 'mul '(polynomial number) (tag-args-PN mul))
+(put 'div '(polynomial number) (tag-args-PN div))
+
+;; Equality
+(put 'equ? '(number polynomial) (tag-args-NP equ?))
+(put 'equ? '(polynomial number) (tag-args-PN equ?))
+
+;;; (B) Test code:
+(printval (equ? (sub (add p1 p3) p1) p3))
+; (printval (square p2-mixed))
+
 ;;==============================================================================
 ;;==============================================================================
