@@ -220,11 +220,11 @@
       (let ((coeff (car rev-coeffs))
             (rev-coeffs (cdr rev-coeffs)))
         (if (=zero? coeff)
-          (dt->st rev-coeffs terms (1+ degree))
+          (dt->st rev-coeffs terms (inc degree))
           (dt->st rev-coeffs
                   (adjoin-term (make-term degree coeff)
                                terms)
-                  (1+ degree))))))
+                  (inc degree))))))
   (dt->st (reverse coeffs) (the-empty-termlist) 0))
 
 
@@ -359,30 +359,24 @@
 
 ;;; APPLYING POLYNOMIALS
 
+;;; (RepTerm, GN) --> RepTerm
 (define (apply-term t gn)
   (mul (coeff t)
        (power gn (order t))))
 
+;;; (GN, Sch-NatNum) --> GN
 (define (power gn k)
   (if (< k 1)
     (create-number 1)
     (mul gn (power gn (dec k)))))
 
+;;; (RepPoly, GN) --> GN
 (define (apply-polynomial p gn)
   (apply-terms
     (term-list (contents p))
     gn))
 
-
-
-
-
-
-
-
-
-
-
-
-
+;;; Added by Bernie to make it work:
+(define inc 1+)
+(define dec -1+)
 

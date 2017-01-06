@@ -172,14 +172,14 @@
                                        s)))
 
 ;;; (B)
-; (newline)
-; (display ";;; Exercise 5.6") (newline)
-; (display "(square p2) = ") (newline)
-; (pp (square p2))
-; (display "(square p3) = ") (newline)
-; (pp (square p3))
-; (display "(square (square p2)) = ") (newline)
-; (pp (square (square p2)))
+(newline)
+(display ";;; Exercise 5.6") (newline)
+(display "(square p2) = ") (newline)
+(pp (square p2))
+(display "(square p3) = ") (newline)
+(pp (square p3))
+(display "(square (square p2)) = ") (newline)
+(pp (square (square p2)))
 
 ;------------------------------------------------------------------------------- 
 ;        Exercise 5.7
@@ -187,9 +187,9 @@
 ;;; Dispatch table
 ;;; Op Type->   RepNum    RepRat    RepPoly
 ;;; add           ✓         ✓         ✓
-;;; sub           ✓         ✓         ✓
+;;; sub           ✓         ✓         ✗
 ;;; mul           ✓         ✓         ✓
-;;; div           ✓         ✓         ✓
+;;; div           ✓         ✓         ✗
 ;;; negate        ✓         ✓         ✗
 ;;; =zero?        ✓         ✓         ✗
 ;;; equ?          ✓         ✓         ✗
@@ -254,12 +254,63 @@
 (printval (repnum->reppoly 'x 3)) 
 ; Value: (x (0 (number . 3)))
 
+;;; Same as above, but switch the order of the arguments
+;;;  ((RepPoly, RepPoly) --> T) --> ((RepPoly, RepNum) --> T)
+(define (PPmethod->NPmethod method)
+  (lambda (num poly) 
+    (method (repnum->reppoly (variable poly) num) poly)))
+
 ;;; Define methods for generic add, sub, mul, equ? at types (number polynomial),
 ;;; and (polynomial number), and div at (polynomial number)
+;;; put procedure that takes (RepNum, RepPoly) --> ({polynomial} X RepPoly)
+(put 'add '(number polynomial) (PPmethod->NPmethod +polynomial))
+(put 'sub '(number polynomial) (PPmethod->NPmethod -polynomial))
+(put 'mul '(number polynomial) (PPmethod->NPmethod *polynomial))
+;; NOT ALLOWED: (put 'div '(number polynomial) (PPmethod->NPmethod /polynomial))
+
+;;; Same as above, but switch the order of the arguments
+;;;  ((RepPoly, RepPoly) --> T) --> ((RepPoly, RepNum) --> T)
+(define (PPmethod->PNmethod method)
+  (lambda (poly num) 
+    (method poly (repnum->reppoly (variable poly) num))))
+
+;;; put procedure that takes (RepPoly, RepNum) --> ({polynomial} X RepPoly)
+(put 'add '(polynomial number) (PPmethod->PNmethod +polynomial))
+(put 'sub '(polynomial number) (PPmethod->PNmethod -polynomial))
+(put 'mul '(polynomial number) (PPmethod->PNmethod *polynomial))
+; (put 'div '(polynomial number) (PPmethod->PNmethod /polynomial))
+
+;; TODO: create /polynomial for (polynomial number) ONLY, that divides every
+;; term by the number... or that multiplies every term by 1/n? Then we need to
+;; create a rational.
 
 ;;; (B) Test code:
-; (printval (equ? (sub (add p1 p3) p1) p3))
-; (printval (square p2-mixed))
+(printval (equ? (sub (add p1 p3) p1) p3)) ; Value: #t
+(newline)
+(display "; (square p2-mixed) = ") (newline)
+(pp (square p2-mixed))
+
+;;; (C) Why can't we coerce p --> p/1 always? How about r --> (x (0 r))?
+;;; We could have a rational polynomial (i.e. rational function)
+
+;------------------------------------------------------------------------------- 
+;        Exercise 5.9
+;-------------------------------------------------------------------------------
+;;; (A) Define apply-terms
+;;; (RepTerms, GN) --> GN
+(define (apply-terms terms gn)
+  (if (empty-termlist? terms)
+    (create-number 0)
+    (add (apply-term (first-term terms) gn)
+         (apply-terms (rest-terms terms) gn))))
+
+;;; (B) Test code:
+(printval (apply-polynomial p1 (create-number 2))) ; Value: 26
+(newline)
+(display "; apply p2 to x+1 = ") (newline)
+(pp (apply-polynomial p2 (create-numerical-polynomial 'x (list 1 1))))
+(define x (create-numerical-polynomial 'x '(1 0)))
+(equ? (apply-polynomial p1 x) p1) ; Value: #t
 
 ;;==============================================================================
 ;;==============================================================================
