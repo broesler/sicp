@@ -11,7 +11,7 @@
 ;------------------------------------------------------------------------------- 
 ;        Polynomial package
 ;-------------------------------------------------------------------------------
-(define (install-polynomial-package)
+; (define (install-polynomial-package)
   ;; Internal procedures
   ;; Representation of poly
   (define (make-poly variable term-list)
@@ -110,7 +110,12 @@
                                 (negate (coeff t1)))
                      (negate-terms (rest-terms L))))))
 
+  ;; Equality
+  (define (equ-poly? p1 p2)
+    (=zero-poly? (sub-poly p1 p2)))
+  
   ;; Ex 2.91: Division
+  ;; (RepPoly, RepPoly) --> ({polynomial} X RepPoly, {polynomial} X RepPoly)
   (define (div-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
       (let ((qr (div-terms (term-list p1)
@@ -124,7 +129,8 @@
              (list p1 p2))))
 
   ;; Procedures used by div-poly
-  ;; div-terms returns (list quotient remainder)
+  ;; (RepTerms, RepTerms) --> (RepPoly, RepPoly)
+  ;; div-terms returns (quotient remainder)
   (define (div-terms L1 L2)
     (if (empty-termlist? L1)
       (list (the-empty-termlist) (the-empty-termlist))
@@ -141,6 +147,7 @@
                     (cadr rest-of-result))))))))
 
   ;; Ex 2.94:
+  ;; (RepPoly, RepPoly) --> RepPoly
   (define (gcd-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
       (make-poly (variable p1) (gcd-terms (term-list p1)
@@ -148,17 +155,63 @@
       (error "Polys not in same var -- GCD-POLY"
              (list p1 p2))))
 
+  ;; (RepTerms, RepTerms) --> RepTerms
   (define (gcd-terms a b)
     (if (empty-termlist? b)
-      a
-      (gcd-terms b (remainder-terms a b))))
+      (reduce-coeffs a) ; Ex 2.96(b)
+      (gcd-terms b (pseudoremainder-terms a b))))
 
   ;; procedures used by gcd-terms
-  (define (remainder-terms a b)
-    (cadr (div-terms a b)))
+  ;; Ex 2.94: plain remainder
+  ;; (RepTerms, RepTerms) --> RepTerms
+  ; (define (remainder-terms a b)
+  ;   (cadr (div-terms a b)))
+
+  ;; Ex 2.96(a)
+  ;; (RepTerms, RepTerms) --> RepTerms
+  (define (pseudoremainder-terms a b)
+    (cadr (div-terms (integerize a b) b)))
+
+  ;; integerize : (RepTerms, RepTerms) -> RepTerms
+  (define (integerize p q)
+    (mul-terms p (adjoin-term (make-term 0 (integerize-factor p q)) 
+                              (the-empty-termlist))))
+
+  ;; integerize-factor : (RepTerms, RepTerms) --> Sch-NatNum
+  (define (integerize-factor p q)
+    (let ((p1 (first-term p))
+          (q1 (first-term q)))
+      (let ((o1 (order p1))
+            (o2 (order q1))
+            (c  (coeff q1)))
+        (expt c (+ 1 o1 (- o2))))))
+
+  ;; Ex 2.96(b)
+  ;; RepTerms -> RepTerms
+  (define (reduce-coeffs p)
+    ; Take remainder, not quotient
+    (car (div-terms p (adjoin-term (make-term 0 (gcd-coeffs p))
+                                   (the-empty-termlist)))))
+
+  ;; RepTerms -> Sch-Num
+  (define (gcd-coeffs p)
+    (if (empty-termlist? p)
+      0
+      (greatest-common-divisor (coeff (first-term p))
+                               (gcd-coeffs (rest-terms p)))))
+
+  ;; Ex 2.97 (b)
+  ;; (RepPoly, RepPoly) --> RepPoly
+  (define (reduce-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+      (make-poly (variable p1) (reduce-terms (term-list p1)
+                                             (term-list p2)))
+      (error "Polys not in same var -- REDUCE-POLY"
+             (list p1 p2))))
 
   ;; Ex 2.87:
-  (define (p=zero? p) ; distinguish name from generic =zero?
+  ;; RepTerms --> Bool
+  (define (=zero-poly? p) ; distinguish name from generic =zero?
     (define (all-coeffs-zero? terms)
       (if (null? terms) 
         #t
@@ -186,17 +239,18 @@
   (put 'negate '(polynomial)
        (lambda (p) (tag (negate-poly p))))
   ;; Ex 2.87:
-  (put '=zero? '(polynomial) p=zero?)
+  (put '=zero? '(polynomial) =zero-poly?)
+  (put 'equ? '(polynomial polynomial) equ-poly?)
   ;; Ex 2.94:
   (put 'gcd '(polynomial polynomial) 
        (lambda (a b) (tag (gcd-poly a b))))
-  'done)
+  ; 'done)
 
 ;;; Constructor
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
 ;;; Run the procedure
-(install-polynomial-package)
+; (install-polynomial-package)
 ;;==============================================================================
 ;;==============================================================================
