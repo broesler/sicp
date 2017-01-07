@@ -38,6 +38,9 @@
 ;;; Ex 2.94:
 (define (greatest-common-divisor a b) (apply-generic 'gcd a b))
 
+;;; Ex 2.97:
+(define (reduce n d) (apply-generic 'reduce n d))
+
 ;-------------------------------------------------------------------------------
 ;        Ex 2.78: Redefine tagging data
 ;-------------------------------------------------------------------------------
@@ -64,8 +67,14 @@
 ;        Scheme numbers
 ;-------------------------------------------------------------------------------
 (define (install-scheme-number-package)
+  ;; internal procedures
   (define (tag x)
     (attach-tag 'scheme-number x))
+  ;; Ex 2.97: reduce-integers : (RepNum, RepNum) --> (RepNum, RepNum)
+  (define (reduce-integers n d)
+    (let ((g (gcd n d)))
+      (list (/ n g) (/ d g))))
+  ;; interface with system
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -97,19 +106,21 @@
          (let ((root (sqrt x)))
            (make-complex-from-real-imag (make-real (real-part root))
                                         (make-real (imag-part root))))))
-  (put 'square '(scheme-number) 
+  (put 'square '(scheme-number)
        (lambda (x) (tag (* x x))))
-  (put 'sine '(scheme-number) 
+  (put 'sine '(scheme-number)
        (lambda (x) (make-real (sin x))))
   (put 'cose '(scheme-number)
        (lambda (x) (make-real (cos x))))
-  (put 'arctan '(scheme-number scheme-number) 
+  (put 'arctan '(scheme-number scheme-number)
        (lambda (x y) (make-real (atan x y))))
   ;; Ex 2.88:
   (put 'negate '(scheme-number)
-       (lambda (x) (tag (- x)))) 
+       (lambda (x) (tag (- x))))
   ;; Ex 2.94:
   (put 'gcd '(scheme-number scheme-number) gcd)
+  ;; Ex 2.97:
+  (put 'reduce '(scheme-number scheme-number) reduce-integers)
   'done)
 
 ;;; Constructor
@@ -124,9 +135,9 @@
   (define (numer x) (car x))
   (define (denom x) (cdr x))
   (define (make-rat n d)
-    (cons n d)) ; Ex 2.93, implement for polynomials and use generic ops
-    ; (let ((g (gcd n d)))
-    ;   (cons (/ n g) (/ d g))))
+    (let ((nd (reduce n d))) ; Ex 2.93,97 use generic reduce
+      (cons (car nd)         ; convert list to single pair
+            (cadr nd))))
   (define (add-rat x y)
     (make-rat (add (mul (numer x) (denom y))
                    (mul (numer y) (denom x)))
@@ -147,14 +158,14 @@
       (make-complex-from-real-imag (make-real (real-part root))
                                    (make-real (imag-part root)))))
   (define (square-rat x) (mul-rat x x))
-  (define (sin-rat x) 
+  (define (sin-rat x)
     (sin (/ (numer x)
             (denom x))))
   (define (cos-rat x)
     (cos (/ (numer x)
             (denom x))))
   (define (atan-rat x y)
-    (atan (/ (numer x) (denom x)) 
+    (atan (/ (numer x) (denom x))
           (/ (numer y) (denom y))))
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
@@ -202,7 +213,7 @@
   ;; Ex 2.88:
   (put 'negate '(rational)
        (lambda (x) (make-rat (- (numer x))
-                             (denom x)))) 
+                             (denom x))))
   'done)
 
 ;;; Constructor
@@ -247,19 +258,19 @@
        (lambda (x) (make-rational (round x) 1.0)))
        ; (lambda (x) (make-rational (inexact->exact (numerator x))
        ;                            (inexact->exact (denominator x)))))
-       ; (lambda (x) (make-rational (numerator (rationalize (inexact->exact x) 
+       ; (lambda (x) (make-rational (numerator (rationalize (inexact->exact x)
        ;                                                    1/100))
-       ;                            (denominator (rationalize (inexact->exact x) 
+       ;                            (denominator (rationalize (inexact->exact x)
        ;                                                      1/100)))))
   ;; Ex 2.86:
-  (put 'square-root '(real) 
+  (put 'square-root '(real)
        (lambda (x)
          (let ((root (sqrt x)))
            (make-complex-from-real-imag (tag (real-part root))
                                         (tag (imag-part root))))))
   (put 'square '(real)
        (lambda (x) (tag (* x x 1.0))))
-  (put 'sine '(real) 
+  (put 'sine '(real)
        (lambda (x) (tag (+ (sin x) 0.0))))
   (put 'cose '(real)
        (lambda (x) (tag (+ (cos x) 0.0))))
@@ -267,7 +278,7 @@
        (lambda (x) (tag (+ (atan x) 0.0))))
   ;; Ex 2.88:
   (put 'negate '(real)
-       (lambda (x) (tag (- x)))) 
+       (lambda (x) (tag (- x))))
   'done)
 
 ;;; Constructor
@@ -334,7 +345,7 @@
   ;; Ex 2.88:
   (put 'negate '(complex)
        (lambda (x) (make-complex-from-real-imag (negate (c-real-part x))
-                                                (negate (c-imag-part x))))) 
+                                                (negate (c-imag-part x)))))
   'done)
 
 ;;; Constructors
