@@ -181,19 +181,21 @@
 
   ;; integerize-factor : (RepTerms, RepTerms) --> Sch-NatNum
   (define (integerize-factor p q)
-    (let ((p1 (first-term p))
-          (q1 (first-term q)))
-      (let ((o1 (order p1))
-            (o2 (order q1))
-            (c  (coeff q1)))
-        (expt c (+ 1 o1 (- o2))))))
+    (if (or (empty-termlist? p) (empty-termlist? q))
+      0
+      (let ((p1 (first-term p))
+            (q1 (first-term q)))
+        (let ((o1 (order p1))
+              (o2 (order q1))
+              (c  (coeff q1)))
+          (expt c (+ 1 o1 (- o2)))))))
 
   ;; Ex 2.96(b)
   ;; Reduce poly coefficients to lowest terms by their gcd
-  ;; (ASSUMES COEFFS ARE ALL INTEGERS!!!)
+  ;; (ASSUMES COEFFS ARE ALL INTEGERS!!!), use abs to avoid sign switching
   ;; RepTerms -> RepTerms
   (define (reduce-coeffs p)
-    (car (apply-const div-terms p (gcd-coeffs p))))
+    (car (apply-const div-terms p (abs (gcd-coeffs p)))))
 
   ;; Get gcd of all coefficients (ASSUMES COEFFS ARE ALL INTEGERS!!!)
   ;; RepTerms -> Sch-Num

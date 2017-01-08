@@ -185,7 +185,7 @@
                              (denom y)))))
   ;; Ex 2.80:
   (put '=zero? '(rational)
-       (lambda (x) (= (numer x) 0))) ;; denom check already done
+       (lambda (x) (= (numer x) 0))) ; denom check already done
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   ;; Include these proecedures for use in Ex. 2.83 external procedures
@@ -212,8 +212,8 @@
        (lambda (x) (make-real (atan-rat x y))))
   ;; Ex 2.88:
   (put 'negate '(rational)
-       (lambda (x) (make-rat (negate (numer x))
-                             (denom x))))
+       (lambda (x) (tag (make-rat (negate (numer x)) ; use generic negate
+                                  (denom x)))))
   'done)
 
 ;;; Constructor
