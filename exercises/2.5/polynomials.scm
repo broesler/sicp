@@ -181,8 +181,9 @@
 
   ;; integerize-factor : (RepTerms, RepTerms) --> Sch-NatNum
   (define (integerize-factor p q)
-    (if (or (empty-termlist? p) (empty-termlist? q))
-      0
+    (if (or (empty-termlist? p) 
+            (empty-termlist? q))
+      1
       (let ((p1 (first-term p))
             (q1 (first-term q)))
         (let ((o1 (order p1))
@@ -192,12 +193,17 @@
 
   ;; Ex 2.96(b)
   ;; Reduce poly coefficients to lowest terms by their gcd
-  ;; (ASSUMES COEFFS ARE ALL INTEGERS!!!), use abs to avoid sign switching
+  ;; ASSUMES COEFFS ARE ALL INTEGERS!!!
+  ;; If first term coeff is < 0, flip the signs, so we get the "absolute value"
+  ;; of the polynomial gcd
   ;; RepTerms -> RepTerms
   (define (reduce-coeffs p)
-    (car (apply-const div-terms p (abs (gcd-coeffs p)))))
+    (if (< (coeff (first-term p)) 0)
+      (car (apply-const div-terms (negate-terms p) (gcd-coeffs p)))
+      (car (apply-const div-terms               p  (gcd-coeffs p)))))
 
-  ;; Get gcd of all coefficients (ASSUMES COEFFS ARE ALL INTEGERS!!!)
+  ;; Get gcd of all coefficients 
+  ;; ASSUMES COEFFS ARE ALL INTEGERS!!!
   ;; RepTerms -> Sch-Num
   (define (gcd-coeffs p)
     (if (empty-termlist? p)
@@ -218,13 +224,14 @@
            (f (integerize-factor n d))
            (sloppy-n (car (div-terms (apply-const mul-terms n f) g)))
            (sloppy-d (car (div-terms (apply-const mul-terms d f) g)))
-           (reduce-factor (gcd (gcd-coeffs sloppy-n) (gcd-coeffs sloppy-d)))
+           (reduce-factor (abs (gcd (gcd-coeffs sloppy-n) 
+                                    (gcd-coeffs sloppy-d))))
            (clean-n (car (apply-const div-terms sloppy-n reduce-factor)))
            (clean-d (car (apply-const div-terms sloppy-d reduce-factor))))
+      ; (bkpt 'reduce-terms 'foo)
       (list clean-n clean-d)))
 
   ;; Reduce a rational polynomial to its lowest terms
-  ;; UPDATE
   ;; (RepPoly, RepPoly) --> ({polynomial} X RepPoly, {polynomial} X RepPoly)
   (define (reduce-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))

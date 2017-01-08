@@ -32,19 +32,21 @@
 
 ;; With reduce-poly:
 ; Value: (rational (polynomial x (3 2) (0 2)) polynomial x (2 1) (0 1))
+;; Reduced to lowest terms!
 
 ;; Test all procedures:
 (negate rf)
 ; Value: ((polynomial x (3 -1) (0 -1)) 
 ;          polynomial x (2 1) (0 1))
-(sub rf rf) ; Value: (rational (polynomial x) polynomial x) == 0
+(sub rf rf) ; Value: (rational (polynomial x) polynomial x) == 0 ✓ not dropped
 (mul rf rf)
 ; Value: (rational (polynomial x (6 1) (3 2) (0 1)) 
 ;                   polynomial x (4 1) (2 2) (0 1))
 (div rf rf)
 ; Value: (rational (polynomial x (0 1)) 
 ;                   polynomial x (0 1)) 
-; == 1 / 1 = 1 ✓
+; == 1 / 1 = 1 ✓ (but not dropped)
+(=zero? (sub rf rf)) ; Value: #t
 
 ;-------------------------------------------------------------------------------
 ;        Ex 2.94
@@ -92,6 +94,12 @@
 ;;; 4. Reduce terms of n and d to get coeffs smaller
 
 ;;; (b) Create reduce as generic operation for integers or polynomials
+;;; Correct answer: (top of "Extended exercise: Rational functions")
+;;;
+;;;     x + 1          x          x^3 + 2x^2 + 3x + 1
+;;;   ---------- + ---------  = ----------------------
+;;;    x^3 - 1      x^2 - 1       x^4 + x^3 -  x - 1
+;;;
 (define p1 (make-polynomial 'x '((1 1)(0 1))))
 (define p2 (make-polynomial 'x '((3 1)(0 -1))))
 (define p3 (make-polynomial 'x '((1 1))))
@@ -101,24 +109,8 @@
 (define rf2 (make-rational p3 p4))
 
 (printval (add rf1 rf2))
-;; After adding (abs ...) to (reduce-coeffs p):
-; Value: (rational (polynomial x (3 -1) (2 -2) (1 -3) (0 -1)) 
-;                   polynomial x (4 -1) (3 -1) (1 1) (0 1))
-
-;; Correct answer: (top of "Extended exercise: Rational functions")
-;;   x^3 + 2x^2 + 3x + 1
-;; ----------------------
-;;   x^4 + x^3 -  x - 1
-
-;; Test code:
-;; (define x (make-rational (make-polynomial 'x '((2 1)))
-;;                          (make-polynomial 'x '((1 1)))))
-;; (negate x) ; Value: ((polynomial x (1 -1)) polynomial x (0 1))
-;; (add x x) ; Value: (rational (polynomial x (1 2)) polynomial x (0 1))
-;; (sub x x) ; Value: (rational (polynomial x) polynomial x) == 0
-;; (mul x x) ; Value: (rational (polynomial x (2 1)) polynomial x (0 1))
-;; (div x x) ; Value : (rational (polynomial x (0 1)) polynomial x (0 1)) == 1
-
-;; TODO: Implement (project-poly) and (raise-complex)??
+; Value: (rational (polynomial x (3 1) (2 2) (1 3) (0 1)) 
+;                   polynomial x (4 1) (3 1) (1 -1) (0 -1))
+;
 ;;==============================================================================
 ;;==============================================================================
