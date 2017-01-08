@@ -118,8 +118,15 @@
 │   ├── ex2_84.scm
 │   ├── ex2_85.scm
 │   ├── ex2_86.scm
-│   └── generic_arithmetic.scm
+│   ├── ex2_86.scm
+│   ├── ex2_87.scm
+│   ├── ex2_88.scm
+│   ├── ex2_91.scm
+│   ├── ex2_93-7.scm
+│   ├── generic_arithmetic.scm
+│   └── polynomials.scm
 └── README
+
 #}}}
 ### DESCRIPTIONS {{{
 ## Chapter 1 {{{
@@ -214,7 +221,12 @@
 2.5/ex2_84.scm                  Redefine apply-generic for use with (raise)
 2.5/ex2_85.scm                  Define drop procedure to simplify answers
 2.5/ex2_86.scm                  Complex numbers with generic parts
+2.5/ex2_87.scm                  Test polynomial procedures in polynomials.scm
+2.5/ex2_88.scm                  Include sub-poly, and generic negation
+2.5/ex2_91.scm                  Include div-poly
+2.5/ex2_93-7.scm                Rational Functions
 2.5/generic_arithmetic.scm      Generic arithmetic package from SICP Section 2.5
+2.5/polynomials.scm             Polynomial arithmetic system
 #}}}
 #===============================================================================
 #============================================================================}}}
