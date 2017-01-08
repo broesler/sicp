@@ -212,7 +212,7 @@
        (lambda (x) (make-real (atan-rat x y))))
   ;; Ex 2.88:
   (put 'negate '(rational)
-       (lambda (x) (make-rat (- (numer x))
+       (lambda (x) (make-rat (negate (numer x))
                              (denom x))))
   'done)
 

@@ -11,7 +11,7 @@
 ;-------------------------------------------------------------------------------
 ;        Polynomial package
 ;-------------------------------------------------------------------------------
-(define (install-polynomial-package)
+; (define (install-polynomial-package)
   ;; Internal procedures
   ;; Representation of poly
   (define (make-poly variable term-list)
@@ -47,7 +47,7 @@
       (error "Polys not in same var -- ADD-POLY"
              (list p1 p2))))
 
-  ;; Procedures used by add-poly
+  ;; Procedures used by add-poly (union-set for ordered sets)
   (define (add-terms L1 L2)
     (cond ((empty-termlist? L1) L2)
           ((empty-termlist? L2) L1)
@@ -79,6 +79,7 @@
       (the-empty-termlist)
       (add-terms (mul-term-by-all-terms (first-term L1) L2)
                  (mul-terms (rest-terms L1) L2))))
+
   (define (mul-term-by-all-terms t1 L)
     (if (empty-termlist? L)
       (the-empty-termlist)
@@ -111,6 +112,7 @@
                      (negate-terms (rest-terms L))))))
 
   ;; Equality
+  ;; (RepPoly, RepPoly) --> Bool
   (define (equ-poly? p1 p2)
     (=zero-poly? (sub-poly p1 p2)))
 
@@ -130,7 +132,6 @@
 
   ;; Procedures used by div-poly
   ;; (RepTerms, RepTerms) --> (RepPoly, RepPoly)
-  ;; div-terms returns (quotient remainder)
   (define (div-terms L1 L2)
     (if (empty-termlist? L1)
       (list (the-empty-termlist) (the-empty-termlist))
@@ -140,10 +141,11 @@
           (list (the-empty-termlist) L1)
           (let ((new-c (div (coeff t1) (coeff t2)))
                 (new-o (- (order t1) (order t2))))
-            (let* ((res (make-term new-o new-c))
+            (let* ((quo (make-term new-o new-c))
                    (rest-of-result
-                     (div-terms (sub-terms L1 (mul-terms (list res) L2)) L2)))
-              (list (adjoin-term res (car rest-of-result))
+                     (div-terms (sub-terms L1 (mul-terms (list quo) L2)) L2)))
+              ; return (quotient remainder)
+              (list (adjoin-term quo (car rest-of-result))
                     (cadr rest-of-result))))))))
 
   ;; Ex 2.94:
@@ -167,12 +169,13 @@
   ; (define (remainder-terms a b)
   ;   (cadr (div-terms a b)))
 
-  ;; Ex 2.96(a)
+  ;; Ex 2.96(a): replace above with pseudoremainder
   ;; (RepTerms, RepTerms) --> RepTerms
   (define (pseudoremainder-terms a b)
     (cadr (div-terms (integerize a b) b)))
 
-  ;; integerize : (RepTerms, RepTerms) -> RepTerms
+  ;; integerize p, using q to determine integerization factor
+  ;; (RepTerms, RepTerms) -> RepTerms
   (define (integerize p q)
     (apply-const mul-terms p (integerize-factor p q)))
 
@@ -186,10 +189,13 @@
         (expt c (+ 1 o1 (- o2))))))
 
   ;; Ex 2.96(b)
+  ;; Reduce poly coefficients to lowest terms by their gcd
+  ;; (ASSUMES COEFFS ARE ALL INTEGERS!!!)
   ;; RepTerms -> RepTerms
   (define (reduce-coeffs p)
     (car (apply-const div-terms p (gcd-coeffs p))))
 
+  ;; Get gcd of all coefficients (ASSUMES COEFFS ARE ALL INTEGERS!!!)
   ;; RepTerms -> Sch-Num
   (define (gcd-coeffs p)
     (if (empty-termlist? p)
@@ -197,15 +203,26 @@
       (greatest-common-divisor (coeff (first-term p))
                                (gcd-coeffs (rest-terms p)))))
 
-  ;; Ex 2.97 (a)
+  ;; Ex 2.97 (a): Reduce 2 polynomials' terms to lowest factors via their gcd
+  ;; (ASSUMES COEFFS ARE ALL INTEGERS!!!)
   ;; (RepTerms, RepTerms) --> (RepTerms, RepTerms)
+  ;; (a) create reduce-terms
+  ;;      1. Get gcd of numerator and denominator
+  ;;      2. Multiply n and d by integerizing factor
+  ;;      3. Divide f*n and f*d by gcd ==> n and d have integer coeffs!
+  ;;      4. Divide terms of n and d by gcd of ALL coeffs
   (define (reduce-terms n d)
-    (let ((g (gcd-terms n d))
-          (f (integerize-factor n d)))
-      (list (reduce-coeffs (car (div-terms (apply-const mul-terms n f) g)))
-            (reduce-coeffs (car (div-terms (apply-const mul-terms d f) g))))))
+    (let* ((g (gcd-terms n d))
+           (f (integerize-factor n d))
+           (sloppy-n (car (div-terms (apply-const mul-terms n f) g)))
+           (sloppy-d (car (div-terms (apply-const mul-terms d f) g)))
+           (reduce-factor (gcd (gcd-coeffs sloppy-n) (gcd-coeffs sloppy-d)))
+           (clean-n (car (apply-const div-terms sloppy-n reduce-factor)))
+           (clean-d (car (apply-const div-terms sloppy-d reduce-factor))))
+      (list clean-n clean-d)))
 
   ;; Reduce a rational polynomial to its lowest terms
+  ;; UPDATE
   ;; (RepPoly, RepPoly) --> ({polynomial} X RepPoly, {polynomial} X RepPoly)
   (define (reduce-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
@@ -229,6 +246,7 @@
       (or (empty-termlist? terms)
           (all-coeffs-zero? terms))))
 
+  ;; RepTerms --> Bool
   (define (all-coeffs-zero? terms)
     (if (empty-termlist? terms)
       #t
@@ -259,13 +277,13 @@
        (lambda (a b) (tag (gcd-poly a b))))
   ;; Ex 2.97:
   (put 'reduce '(polynomial polynomial) reduce-poly)
-  'done)
+  ; 'done)
 
 ;;; Constructor
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
 ;;; Run the procedure
-(install-polynomial-package)
+; (install-polynomial-package)
 ;;==============================================================================
 ;;==============================================================================
