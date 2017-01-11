@@ -7,6 +7,7 @@
 ;;
 ;;==============================================================================
 
+;;; make-accumulator : Sch-Num --> (Sch-Num --> Sch-Num)
 (define (make-accumulator init)
   (let ((sum init))
     (lambda (amt)
