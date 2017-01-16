@@ -98,32 +98,29 @@
             (set-front-ptr! deque (rear-ptr deque))
             (set-node-next! (rear-ptr deque) '())))))
 
-;;; Auxiliary function
-(define (print-deque q)
-  (define (flatten temp)
+;;; Auxiliary functions
+(define (flatten q)
+  (define (iter temp)
     (if (null? temp)
       '()
       (cons (node-val temp) 
-            (flatten (node-next temp)))))
+            (iter (node-next temp)))))
+  (iter (front-ptr q)))
+
+(define (print-deque q)
   (newline)
-  (display (flatten (front-ptr q))))
+  (display (flatten q)))
 
 ;------------------------------------------------------------------------------- 
 ;        Test code
 ;-------------------------------------------------------------------------------
 (define dq (make-deque))
-(insert-rear-deque! dq 'a)
-(print-deque dq) ; (a)
-(insert-rear-deque! dq 'b)
-(print-deque dq) ; (a b)
-(insert-front-deque! dq 'c)
-(print-deque dq) ; (c a b)
-(delete-front-deque! dq)
-(print-deque dq) ; (a b)
-(delete-rear-deque! dq)
-(print-deque dq) ; (a)
-(delete-rear-deque! dq)
-(print-deque dq) ; ()
-(empty-deque? dq)           ; Value: #t
-; ;;==============================================================================
-; ;;==============================================================================
+(insert-rear-deque! dq 'a) (print-deque dq)  ; (a)
+(insert-rear-deque! dq 'b) (print-deque dq)  ; (a b)
+(insert-front-deque! dq 'c) (print-deque dq) ; (c a b)
+(delete-front-deque! dq) (print-deque dq)    ; (a b)
+(delete-rear-deque! dq) (print-deque dq)     ; (a)
+(delete-rear-deque! dq) (print-deque dq)     ; ()
+(empty-deque? dq)                            ; Value: #t
+;;==============================================================================
+;;==============================================================================
