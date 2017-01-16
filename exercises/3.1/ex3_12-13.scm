@@ -29,11 +29,11 @@
 (define x (list 'a 'b))
 (define y (list 'c 'd))
 (define z (append x y))
-(printval z) ; Value: (a b c d)
-(printval (cdr x)) ; Value: (b)
+; (printval z) ; Value: (a b c d)
+; (printval (cdr x)) ; Value: (b)
 (define w (append! x y))
-(printval w) ; Value: (a b c d)
-(printval (cdr x)) ; Value: (b c d)
+; (printval w) ; Value: (a b c d)
+; (printval (cdr x)) ; Value: (b c d)
 
 ;------------------------------------------------------------------------------- 
 ;        Ex 3.13

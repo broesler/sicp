@@ -19,21 +19,21 @@
 ;;; Test code:
 (define x (list 'a 'b))
 
-(newline)
-(display "count-pairs poorly:")
 (define z3 (cons x 'c))
-(printval (count-pairs z3)) ; Value: 3
-
 (define z4 (cons x (cdr x)))
-(printval (count-pairs z4)) ; Value: 4
 
 (define a (list 'a))
 (define aa (cons a a))
 (define z7 (cons aa aa))
-(printval (count-pairs z7)) ; Value: 7
 
 (define zinf (make-cycle (list 'a 'b 'c)))
-; (count-pairs zinf) ;Aborting!: maximum recursion depth exceeded
+
+; (newline)
+; (display "count-pairs poorly:")
+; (printval (count-pairs z3)) ; Value: 3
+; (printval (count-pairs z4)) ; Value: 4
+; (printval (count-pairs z7)) ; Value: 7
+; ; (count-pairs zinf) ;Aborting!: maximum recursion depth exceeded
 
 ;------------------------------------------------------------------------------- 
 ;        Ex 3.17: properly count pairs
@@ -54,11 +54,11 @@
                      1))))
    (count x)))
 
-(newline)
-(display "count-pairs properly:")
-(printval (count-pairs z3)) ; Value: 3
-(printval (count-pairs z4)) ; Value: 3
-(printval (count-pairs z7)) ; Value: 3
+; (newline)
+; (display "count-pairs properly:")
+; (printval (count-pairs z3)) ; Value: 3
+; (printval (count-pairs z4)) ; Value: 3
+; (printval (count-pairs z7)) ; Value: 3
 
 ;------------------------------------------------------------------------------- 
 ;        Ex 3.18: detecting cycles
@@ -72,16 +72,16 @@
                   (loop (cdr s)))))
     (loop x)))
 
-(newline)
-(display "has-cycle? non-constant space:")
-(printval (has-cycle? z3))   ; Value: #f
-(printval (has-cycle? z4))   ; Value: #f
-(printval (has-cycle? z7))   ; Value: #f
-(printval (has-cycle? zinf)) ; Value: #t
+; (newline)
+; (display "has-cycle? non-constant space:")
+; (printval (has-cycle? z3))   ; Value: #f
+; (printval (has-cycle? z4))   ; Value: #f
+; (printval (has-cycle? z7))   ; Value: #f
+; (printval (has-cycle? zinf)) ; Value: #t
 
 (define ll (list 'a 'b 'c 'd))
 (set-cdr! (last-pair ll) (cdr ll)) ; loop b c d
-(printval (has-cycle? ll)) ; Value: #t
+; (printval (has-cycle? ll)) ; Value: #t
 
 ;------------------------------------------------------------------------------- 
 ;        Ex 3.19: has-cycle? in constant space
@@ -99,6 +99,8 @@
 ;;; Tortoise and hare algorithm:
 ;;; Hare jumps forwards 2 elements at a time, tortoise moves 1. Go until hare
 ;;; hits the end of the list, or they catch up with each other.
+;;; NOTE: this algorithm only works for cdr-ing down a list. It does not account
+;;; for tree-like structures where the car may also be a list
 (define (has-cycle? x) 
   (define (seen-last-pair? x)
     (or (not (pair? x))
@@ -112,13 +114,13 @@
           (else (chase (cdr turtle) (cddr rabbit)))))
     (chase x (cdr x)))
 
-(newline)
-(display "has-cycle? constant space:")
-(printval (has-cycle? z3))   ; Value: #f
-(printval (has-cycle? z4))   ; Value: #f
-(printval (has-cycle? z7))   ; Value: #f
-(printval (has-cycle? zinf)) ; Value: #t
-(printval (has-cycle? ll))   ; Value: #t
+; (newline)
+; (display "has-cycle? constant space:")
+; (printval (has-cycle? z3))   ; Value: #f
+; (printval (has-cycle? z4))   ; Value: #f
+; (printval (has-cycle? z7))   ; Value: #f
+; (printval (has-cycle? zinf)) ; Value: #t
+; (printval (has-cycle? ll))   ; Value: #t
 
 ;;==============================================================================
 ;;==============================================================================
