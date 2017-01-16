@@ -9,6 +9,26 @@
 (load "ex3_16-19.scm") ; has-cycle?
 
 ;------------------------------------------------------------------------------- 
+;        Doubly-linked list procedures
+;-------------------------------------------------------------------------------
+;;; Constructor
+(define (make-node val)
+  (list val '() '()))
+
+;;; Selectors
+(define node-val car)
+(define node-prev cadr)
+(define node-next caddr)
+
+;;; Mutators
+(define (set-node-prev! node p*)
+  (define p (cdr node))
+  (set-car! p p*))
+(define (set-node-next! node p*)
+  (define p (cddr node))
+  (set-car! p p*))
+
+;------------------------------------------------------------------------------- 
 ;        Pointer procedures
 ;-------------------------------------------------------------------------------
 ;;; Selectors
@@ -28,83 +48,82 @@
 ;;; Selectors
 (define (empty-deque? deque) 
   (null? (front-ptr deque)))
+
 (define (front-deque deque)
   (if (empty-deque? deque)
       (error "FRONT called with an empty deque" deque)
-      (car (front-ptr deque))))
+      (node-val (front-ptr deque))))
+
 (define (rear-deque deque)
   (if (empty-deque? deque)
       (error "REAR called with an empty deque" deque)
-      (car (rear-ptr deque))))
+      (node-val (rear-ptr deque))))
 
 ;;; Mutators
 (define (insert-front-deque! deque item)
-  (let ((new-pair (cons item '())))
+  (let ((new-node (make-node item)))
     (cond ((empty-deque? deque)
-           (set-front-ptr! deque new-pair)
-           (set-rear-ptr! deque new-pair)
-           deque)
+           (set-front-ptr! deque new-node)
+           (set-rear-ptr! deque new-node))
           (else
-           (set-cdr! new-pair (front-ptr deque))
-           (set-front-ptr! deque new-pair)
-           deque))))
+           (set-node-prev! (front-ptr deque) new-node)
+           (set-node-next! new-node (front-ptr deque))
+           (set-front-ptr! deque new-node)))))
 
 (define (insert-rear-deque! deque item) ; same as original insert
-  (let ((new-pair (cons item '())))
+  (let ((new-node (make-node item)))
     (cond ((empty-deque? deque)
-           (set-front-ptr! deque new-pair)
-           (set-rear-ptr! deque new-pair)
-           deque)
+           (set-front-ptr! deque new-node)
+           (set-rear-ptr! deque new-node))
           (else
-           (set-cdr! (rear-ptr deque) new-pair)
-           (set-rear-ptr! deque new-pair)
-           deque)))) 
+           (set-node-prev! new-node (rear-ptr deque))
+           (set-node-next! (rear-ptr deque) new-node)
+           (set-rear-ptr! deque new-node)))))
 
 (define (delete-front-deque! deque) ; same as original delete
   (cond ((empty-deque? deque)
          (error "DELETE! called with an empty deque" deque))
         (else
-         (set-front-ptr! deque (cdr (front-ptr deque)))
-         deque))) 
+         (set-front-ptr! deque (node-next (front-ptr deque)))
+         (if (null? (front-ptr deque))
+           (set-rear-ptr! deque (front-ptr deque))
+           (set-node-prev! (front-ptr deque) '())))))
 
 (define (delete-rear-deque! deque)
   (cond ((empty-deque? deque)
          (error "DELETE! called with an empty deque" deque))
-        ((eq? (front-ptr deque) (rear-ptr deque))
-         (set-front-ptr! deque '())
-         (set-rear-ptr! deque '()))
         (else 
-          (let ((p (penultimate-ptr deque)))
-            (set-cdr! p '())
-            (set-rear-ptr! deque p))
-         deque))) 
-
-(define (penultimate-ptr deque)
-  (let ((temp (front-ptr deque)))
-    (cond ((or (null? temp) 
-               (null? (cdr temp)))
-           temp)
-          ((eq? (cdr temp) (rear-ptr deque))
-           temp)
-          (else 
-            (penultimate-ptr (cdr temp))))))
+          (set-rear-ptr! deque (node-prev (rear-ptr deque)))
+          (if (null? (rear-ptr deque))
+            (set-front-ptr! deque (rear-ptr deque))
+            (set-node-next! (rear-ptr deque) '())))))
 
 ;;; Auxiliary function
 (define (print-deque q)
-  (cond ((not (has-cycle? q))
-    (newline)
-    (display (front-ptr q)))))
+  (define (flatten temp)
+    (if (null? temp)
+      '()
+      (cons (node-val temp) 
+            (flatten (node-next temp)))))
+  (newline)
+  (display (flatten (front-ptr q))))
 
 ;------------------------------------------------------------------------------- 
-;        Ex 3.12:
+;        Test code
 ;-------------------------------------------------------------------------------
-(define q1 (make-deque))
-(insert-rear-deque! q1 'a)  ; Value: ((a) a)
-(insert-rear-deque! q1 'b)  ; Value: ((a b) b)
-(insert-front-deque! q1 'c) ; Value: ((c a b) b)
-(delete-front-deque! q1)    ; Value: ((a b) b)
-(delete-rear-deque! q1)     ; Value: ((a) a)
-(delete-rear-deque! q1)     ; Value: (() b)
-(empty-deque? q1)           ; Value: #t
-;;==============================================================================
-;;==============================================================================
+(define dq (make-deque))
+(insert-rear-deque! dq 'a)
+(print-deque dq) ; (a)
+(insert-rear-deque! dq 'b)
+(print-deque dq) ; (a b)
+(insert-front-deque! dq 'c)
+(print-deque dq) ; (c a b)
+(delete-front-deque! dq)
+(print-deque dq) ; (a b)
+(delete-rear-deque! dq)
+(print-deque dq) ; (a)
+(delete-rear-deque! dq)
+(print-deque dq) ; ()
+(empty-deque? dq)           ; Value: #t
+; ;;==============================================================================
+; ;;==============================================================================
