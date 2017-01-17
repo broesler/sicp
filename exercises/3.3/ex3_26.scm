@@ -14,7 +14,7 @@
   (let ((local-table (list '*table*)))
     ;; Tree procedures from ../2.3/set-tree.scm
     (define (entry tree) (car tree)) 
-    (define (left-branch tree) (caar tree)) 
+    (define (left-branch tree) (cadr tree)) 
     (define (right-branch tree) (caddr tree)) 
     (define (make-tree entry left right) 
       (list entry left right)) 
@@ -25,32 +25,30 @@
 
     ;;; Add a leaf
     (define (adjoin-set x set)
-      (let ((c (compare-keys (key x) (key (entry set)))))
-        (cond ((null? set) (make-tree x '() '()))
-              ((= c 0) set)
-              ((= c -1)
-               ; (make-tree (entry set)
-               ;            (adjoin-set x (left-branch set))
-               ;            (right-branch set)))
-               (let ((left (left-branch set))) 
-                 (set! left (adjoin-set x left))))
-              ((= c 1)
-               ; (make-tree (entry set)
-               ;            (left-branch set)
-               ;            (adjoin-set x (right-branch set)))
-               (let ((right (right-branch set)))
-                 (set! right (adjoin-set x right)))))))
+      (if (null? set) 
+        (make-tree x '() '())
+        (let ((c (compare-keys (key x) (key (entry set)))))
+          (cond ((= c 0) set)
+                ((= c -1)
+                 (make-tree (entry set)
+                            (adjoin-set x (left-branch set))
+                            (right-branch set)))
+                ((= c 1)
+                 (make-tree (entry set)
+                            (left-branch set)
+                            (adjoin-set x (right-branch set))))))))
 
     ;; Find record associated with given key
     (define (assoc key records)
-      (let ((c (compare-keys key (key (entry records)))))
-        (cond ((null? records) false)
-              ((= c 0)
-               (entry records))
-              ((= c -1)
-               (assoc key (left-branch records)))
-              ((= c 1)
-               (assoc key (right-branch records))))))
+      (if (null? records) 
+        false
+        (let ((c (compare-keys key (key (entry records)))))
+          (cond ((= c 0)
+                 (entry records))
+                ((= c -1)
+                 (assoc key (left-branch records)))
+                ((= c 1)
+                 (assoc key (right-branch records)))))))
 
     ;; Lookup function for a tree data structure
     (define (lookup key)
@@ -64,7 +62,8 @@
       (let ((record (assoc key (cdr local-table))))
         (if record
           (set-cdr! record value)
-          (adjoin-set (cons key value) (cdr local-table))))
+          (set-cdr! local-table 
+                    (adjoin-set (cons key value) (cdr local-table)))))
       'ok)
 
     ;; Dispatch proper procedure to local table
