@@ -19,15 +19,11 @@
     (define (make-tree entry left right) 
       (list entry left right)) 
 
-    ;; key-value selectors
-    (define key car)
-    (define val cdr)
-
-    ;;; Add a leaf
+    ;;; Add a leaf (key . value)
     (define (adjoin-set x set)
       (if (null? set) 
         (make-tree x '() '())
-        (let ((c (compare-keys (key x) (key (entry set)))))
+        (let ((c (compare-keys (car x) (car (entry set)))))
           (cond ((= c 0) set)
                 ((= c -1)
                  (make-tree (entry set)
@@ -42,7 +38,7 @@
     (define (assoc key records)
       (if (null? records) 
         false
-        (let ((c (compare-keys key (key (entry records)))))
+        (let ((c (compare-keys key (car (entry records)))))
           (cond ((= c 0)
                  (entry records))
                 ((= c -1)
@@ -54,11 +50,11 @@
     (define (lookup key)
       (let ((record (assoc key (cdr local-table))))
         (if record
-          (val record)
+          (cdr record)
           false)))
 
     ;; Insert an entry at the given location
-    (define (insert! keys value)
+    (define (insert! key value)
       (let ((record (assoc key (cdr local-table))))
         (if record
           (set-cdr! record value)
@@ -70,6 +66,7 @@
     (define (dispatch m)
       (cond ((eq? m 'lookup-proc) lookup)
             ((eq? m 'insert-proc!) insert!)
+            ((eq? m 'print) local-table)
             (else (error "Unknown operation -- TABLE" m))))
     dispatch))
 
@@ -79,12 +76,21 @@
         ((= x y) 0)
         ((> x y) 1)))
 
-;;; Test code:
+;------------------------------------------------------------------------------- 
+;        Test code:
+;-------------------------------------------------------------------------------
 (define my-table (make-table compare))
 (define get (my-table 'lookup-proc))
 (define put (my-table 'insert-proc!))
 
-(put 1 7)
-(printval (get 1)) ; Value: 7
+(put 1 'a)
+(put 2 'b)
+(put 3 'c)
+(put 4 'd)
+(put 5 'e)
+(my-table 'print)
+;;; NOTE: Unbalanced tree!! Random order would balance better
+; (*table* (1 . a) () ((2 . b) () ((3 . c) () ((4 . d) () ((5 . e) () ())))))
+(get 1) ; Value: a
 ;;==============================================================================
 ;;==============================================================================
