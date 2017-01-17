@@ -7,15 +7,14 @@
 ;;
 ;;==============================================================================
 
-;; Find record associated with given key
-(define (assoc key records)
-  (cond ((null? records) false)
-        ((same-key? key (caar records)) (car records))
-        (else (assoc key (cdr records)))))
-
 ;;; Redefine local tables with a same-key? argument
 (define (make-table same-key?)
   (let ((local-table (list '*table*)))
+    ;; Find record associated with given key
+    (define (assoc key records)
+      (cond ((null? records) false)
+            ((same-key? key (caar records)) (car records))
+            (else (assoc key (cdr records)))))
 
     ;; Find record at coordinates provided
     (define (lookup keys)
@@ -54,7 +53,9 @@
             (else (error "Unknown operation -- TABLE" m))))
     dispatch))
 
-;; Build a local table
+;------------------------------------------------------------------------------- 
+;        Build a local table
+;-------------------------------------------------------------------------------
 (define (same-key? x y)
   (let ((tol 0.1))
     (<= (abs (- x y)) tol)))
@@ -69,13 +70,15 @@
 (printval (get '(1.1  1))) ; Value: #f
 
 (define same-key? equal?)
+(define my-table (make-table same-key?))
+(define get (my-table 'lookup-proc))
+(define put (my-table 'insert-proc!))
+(put '(z) 3)
+(printval (get '(z)))      ; Value: 3
 (put '(a b c d) 8)
 (printval (get '(a b c d))) ; Value: 8
-(put '(e f)
-     (lambda (x) 
-       (+ x 
-          (get '(1 1)) 
-          (get '(a b c d)))))
-(printval ((get '(e f)) 5)) ; Value: 20
+;; Possible issue below if we put a value at, say '(a b c)??
+(put '(a b c e) (lambda (x) (+ x 15)))
+(printval ((get '(a b c e)) 5)) ; Value: 20
 ;;==============================================================================
 ;;==============================================================================

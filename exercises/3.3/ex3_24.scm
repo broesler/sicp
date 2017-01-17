@@ -7,20 +7,19 @@
 ;;
 ;;==============================================================================
 
-;; Find record associated with given key
-(define (assoc key records)
-  (cond ((null? records) false)
-        ; Use same-key? instead of equal? here
-        ((same-key? key (caar records)) (car records))
-        (else (assoc key (cdr records)))))
-
 ;;; Redefine local tables with a same-key? argument
 (define (make-table same-key?)
   (let ((local-table (list '*table*)))
+    ;; Find record associated with given key
+    (define (assoc key records)
+      (cond ((null? records) false)
+            ; Use same-key? instead of equal? here
+            ((same-key? key (caar records)) (car records))
+            (else (assoc key (cdr records)))))
+
 
     ;; Find record at row/column provided
     (define (lookup key-1 key-2)
-      (bkpt 'test)
       (let ((subtable (assoc key-1 (cdr local-table))))
         (if subtable
           (let ((record (assoc key-2 (cdr subtable))))
