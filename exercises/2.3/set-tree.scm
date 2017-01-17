@@ -3,7 +3,7 @@
 ;;  Created: 11/20/2016, 17:59
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: Sets as binary trees 
+;;  Description: Sets as binary trees
 ;;
 ;;==============================================================================
 ;;; Constructor:
@@ -29,7 +29,7 @@
   (cond ((null? set) (make-tree x '() '()))
         ((= x (entry set)) set)
         ((< x (entry set))
-         (make-tree (entry set) 
+         (make-tree (entry set)
                     (adjoin-set x (left-branch set))
                     (right-branch set)))
         ((> x (entry set))
@@ -40,8 +40,8 @@
 ;;; Test code:
 ; (define tree1 '(7 (3 (1 () ()) (5 () ())) (9 () (11 () ()))))
 ; (printval (element-of-set? 6 tree1)) ; Value: #t
-; (printval (adjoin-set 6 tree1)) 
-; Value: (7 (3 (1 () ()) (5 () (6 () ()))) (9 () (11 () ()))) 
+; (printval (adjoin-set 6 tree1))
+; Value: (7 (3 (1 () ()) (5 () (6 () ()))) (9 () (11 () ())))
 ; (define tree2 (adjoin-set 6 tree1))
 ;;==============================================================================
 ;;==============================================================================
