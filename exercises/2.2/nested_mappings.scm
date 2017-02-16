@@ -10,7 +10,8 @@
 ;;
 ;;==============================================================================
 (load "sequence_operations.scm") ; for accumulate, filter, enumerate-interval
-(load "../../ch1/1.2/ex1_22-24.scm") ; for (prime?)
+; (load "../../ch1/1.2/ex1_22-24.scm") ; for (prime?)
+(load "../1.2/ex1_22-24.scm") ; for (prime?)
 
 ;;; Steps to solve:
 ;;;   1. get sequence of all ordered pairs of positive integers <= n
