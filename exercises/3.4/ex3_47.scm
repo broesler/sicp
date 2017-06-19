@@ -11,44 +11,54 @@
 ;;; (a) semaphore in terms of mutexes
 ;;; From: https://github.com/felix021/sicp/blob/master/code/3-47.scm
 (define (make-semaphore-mutex n)
-  (let ((the-mutex (make-mutex)))
+  (let ((the-mutex (make-mutex))
+        (taken 0))
+    (define (acquire)
+      (the-mutex 'acquire) ; protect count operations
+      (cond ((< taken n) 
+             (set! taken (+ taken 1)) ; acquire a semaphore
+             (the-mutex 'release))   ; enable other threads to access semaphore
+            (else 
+              (the-mutex 'release)    ; release first so others can release semaphore
+              (acquire))))            ; try again until someone else releases
+    (define (release)
+      (the-mutex 'acquire)
+      (if (zero? taken)
+        (error "This semaphore is not yet acquired!")
+        (set! taken (- taken 1)))  ; one more available now
+      (the-mutex 'release))
     (define (the-semaphore m)
-      (cond ((eq? m 'acquire)
-             (the-mutex 'acquire) ; protect count operations
-             (cond ((= n 0) 
-                    (the-mutex 'release) ; release first
-                    (the-semaphore m))
-                   (else 
-                     (set! n (- n 1))
-                     (the-mutex 'release)))) ; enable other threads
-            ((eq? m 'release)
-             (the-mutex 'acquire)
-             (set! n (+ n 1))
-             (the-mutex 'release))
+      (cond ((eq? m 'acquire) (acquire))
+            ((eq? m 'release) (release))
             (else (error "unknown request" m))))
     the-semaphore))
 
 ;;; (b) semaphore in terms of atomic test-and-set! operations
 (define (make-semaphore n)
-  (let ((cell (list #t)))
+  (let ((cell (list #t))
+        (taken 0))
+    (define (acquire)
+      (if (test-and-set! cell)
+        (acquire)
+        (cond ((< taken n)
+               (set! taken (+ taken 1))
+               (clear! cell))
+              (else
+                (clear! cell)
+                (acquire)))))
+    (define (release)
+      (cond ((test-and-set! cell)
+             (release))
+            (else
+              (if (zero? taken)
+                (error "This semaphore is not yet acquired!")
+                (set! taken (- taken 1)))
+              (clear! cell))))
     (define (the-semaphore m)
-      (cond ((eq? m 'acquire)
-             (if (test-and-set! cell)
-               (the-semaphore m)
-               (cond ((= n 0)
-                      (clear! cell) ; release first
-                      (the-semaphore m))
-                     (else
-                       (set! n (- n 1))
-                       (clear! cell))))) ;enable other threads
-            ((eq? m 'release)
-             (if (test-and-set! cell)
-               (the-semaphore m)
-               (begin
-                 (set! n (+ n 1))
-                 (clear! cell))))
+      (cond ((eq? m 'acquire) (acquire))
+            ((eq? m 'release) (release))
             (else (error "unknown request" m))))
-    the-semaphore))
+  the-semaphore))
 
 ;;==============================================================================
 ;;==============================================================================
