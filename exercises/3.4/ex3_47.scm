@@ -7,48 +7,48 @@
 ;;
 ;;==============================================================================
 (load "serializer.scm") ; make-serializer, -mutex, etc.
-
+;
 ;;; (a) semaphore in terms of mutexes
-(define (make-semaphore n)
-  (let ((count n) ; n available processes
-        (the-mutex (make-mutex)))
+;;; From: https://github.com/felix021/sicp/blob/master/code/3-47.scm
+(define (make-semaphore-mutex n)
+  (let ((the-mutex (make-mutex)))
     (define (the-semaphore m)
-      (cond ((eq? (m 'acquire))
+      (cond ((eq? m 'acquire)
              (the-mutex 'acquire) ; protect count operations
-             (if (zero? count)
-               (begin (the-mutex 'release)
-                      (the-semaphore 'acquire))
-               (begin (set! count (- count 1))
-                      (the-mutex 'release)))
-             ((eq? m 'release)
-              (the-mutex 'acquire)
-              (if (= count n)
-                (the-mutex 'release)
-                (begin (set! count (+ count 1))
-                       (the-mutex 'release))))))))
-  the-semaphore)
+             (cond ((= n 0) 
+                    (the-mutex 'release) ; release first
+                    (the-semaphore m))
+                   (else 
+                     (set! n (- n 1))
+                     (the-mutex 'release)))) ; enable other threads
+            ((eq? m 'release)
+             (the-mutex 'acquire)
+             (set! n (+ n 1))
+             (the-mutex 'release))
+            (else (error "unknown request" m))))
+    the-semaphore))
 
 ;;; (b) semaphore in terms of atomic test-and-set! operations
 (define (make-semaphore n)
-  (let ((count n) ; n available processes
-        (cell (list false))
+  (let ((cell (list #t)))
     (define (the-semaphore m)
-      (cond ((eq? (m 'acquire))
-             (if (test-and-set! cell) ; protect count operations
-               (the-semaphore 'acquire)
-               (if (zero? count)
-                  (clear! cell)
-                  (begin (set! count (- count 1)) 
-                         (clear! cell))))
-             ((eq? m 'release)
-              (if (test-and-set! cell)
-                (the-semaphore 'release)
-                (if (= count n)
-                  (clear! cell)
-                  (begin (set! count (+ count 1))
-                         (clear! cell))))))))
-  the-semaphore)
-
+      (cond ((eq? m 'acquire)
+             (if (test-and-set! cell)
+               (the-semaphore m)
+               (cond ((= n 0)
+                      (clear! cell) ; release first
+                      (the-semaphore m))
+                     (else
+                       (set! n (- n 1))
+                       (clear! cell))))) ;enable other threads
+            ((eq? m 'release)
+             (if (test-and-set! cell)
+               (the-semaphore m)
+               (begin
+                 (set! n (+ n 1))
+                 (clear! cell))))
+            (else (error "unknown request" m))))
+    the-semaphore))
 
 ;;==============================================================================
 ;;==============================================================================
