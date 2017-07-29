@@ -11,7 +11,7 @@
 ;-------------------------------------------------------------------------------
 ;        Polynomial package
 ;-------------------------------------------------------------------------------
-; (define (install-polynomial-package)
+(define (install-polynomial-package)
   ;; Internal procedures
   ;; Representation of poly
   (define (make-poly variable term-list)
@@ -172,12 +172,14 @@
   ;; Ex 2.96(a): replace above with pseudoremainder
   ;; (RepTerms, RepTerms) --> RepTerms
   (define (pseudoremainder-terms a b)
-    (cadr (div-terms (integerize a b) b)))
+    (let ((integerize (make-integerizer a b)))
+      (cadr (div-terms (integerize a) b))))
 
   ;; integerize p, using q to determine integerization factor
-  ;; (RepTerms, RepTerms) -> RepTerms
-  (define (integerize p q)
-    (apply-const mul-terms p (integerize-factor p q)))
+  ;; (RepTerms, RepTerms) -> (RepTerms --> RepTerms)
+  (define (make-integerizer p q)
+    (lambda (pp)
+      (apply-const mul-terms pp (integerize-factor p q))))
 
   ;; integerize-factor : (RepTerms, RepTerms) --> Sch-NatNum
   (define (integerize-factor p q)
@@ -221,9 +223,9 @@
   ;;      4. Divide terms of n and d by gcd of ALL coeffs
   (define (reduce-terms n d)
     (let* ((g (gcd-terms n d))
-           (f (integerize-factor n d))
-           (sloppy-n (car (div-terms (apply-const mul-terms n f) g)))
-           (sloppy-d (car (div-terms (apply-const mul-terms d f) g)))
+           (integerize (make-integerizer n d))
+           (sloppy-n (car (div-terms (integerize n) g)))
+           (sloppy-d (car (div-terms (integerize d) g)))
            (reduce-factor (abs (gcd (gcd-coeffs sloppy-n) 
                                     (gcd-coeffs sloppy-d))))
            (clean-n (car (apply-const div-terms sloppy-n reduce-factor)))
@@ -286,13 +288,13 @@
        (lambda (a b) (tag (gcd-poly a b))))
   ;; Ex 2.97:
   (put 'reduce '(polynomial polynomial) reduce-poly)
-  ; 'done)
+  'done)
 
 ;;; Constructor
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
 ;;; Run the procedure
-; (install-polynomial-package)
+(install-polynomial-package)
 ;;==============================================================================
 ;;==============================================================================

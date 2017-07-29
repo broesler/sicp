@@ -26,26 +26,26 @@
 
 (define (withdraw amount)
   (if (>= balance amount)
-      (begin (set! balance (- balance amount))
-             balance)
-      "Insufficient funds"))
+    (begin (set! balance (- balance amount))
+           balance)
+    "Insufficient funds"))
 
 
 (define new-withdraw
   (let ((balance 100))
     (lambda (amount)
       (if (>= balance amount)
-          (begin (set! balance (- balance amount))
-                 balance)
-          "Insufficient funds"))))
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))))
 
 
 (define (make-withdraw balance)
   (lambda (amount)
     (if (>= balance amount)
-        (begin (set! balance (- balance amount))
-               balance)
-        "Insufficient funds")))
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds")))
 
 
 ;: (define W1 (make-withdraw 100))
@@ -59,9 +59,9 @@
 (define (make-account balance)
   (define (withdraw amount)
     (if (>= balance amount)
-        (begin (set! balance (- balance amount))
-               balance)
-        "Insufficient funds"))
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds"))
   (define (deposit amount)
     (set! balance (+ balance amount))
     balance)
@@ -116,7 +116,7 @@
   (sqrt (/ 6 (monte-carlo trials cesaro-test))))
 
 (define (cesaro-test)
-   (= (gcd (rand) (rand)) 1))
+  (= (gcd (rand) (rand)) 1))
 
 (define (monte-carlo trials experiment)
   (define (iter trials-remaining trials-passed)
@@ -125,7 +125,7 @@
           ((experiment)
            (iter (- trials-remaining 1) (+ trials-passed 1)))
           (else
-           (iter (- trials-remaining 1) trials-passed))))
+            (iter (- trials-remaining 1) trials-passed))))
   (iter trials 0))
 
 ;; second version (no assignment)
@@ -143,9 +143,9 @@
                      (+ trials-passed 1)
                      x2))
               (else
-               (iter (- trials-remaining 1)
-                     trials-passed
-                     x2))))))
+                (iter (- trials-remaining 1)
+                      trials-passed
+                      x2))))))
   (iter trials 0 initial-x))
 
 
@@ -208,9 +208,9 @@
 (define (factorial n)
   (define (iter product counter)
     (if (> counter n)
-        product
-        (iter (* counter product)
-              (+ counter 1))))
+      product
+      (iter (* counter product)
+            (+ counter 1))))
   (iter 1 1))
 
 (define (factorial n)
@@ -218,10 +218,10 @@
         (counter 1))
     (define (iter)
       (if (> counter n)
-          product
-          (begin (set! product (* counter product))
-                 (set! counter (+ counter 1))
-                 (iter))))
+        product
+        (begin (set! product (* counter product))
+               (set! counter (+ counter 1))
+               (iter))))
     (iter)))
 
 
@@ -259,18 +259,18 @@
 
 (define (factorial n)
   (if (= n 1)
-      1
-      (* n (factorial (- n 1)))))
+    1
+    (* n (factorial (- n 1)))))
 
 (define (factorial n)
   (fact-iter 1 1 n))
 
 (define (fact-iter product counter max-count)
   (if (> counter max-count)
-      product
-      (fact-iter (* counter product)
-                 (+ counter 1)
-                 max-count)))
+    product
+    (fact-iter (* counter product)
+               (+ counter 1)
+               max-count)))
 
 
 ;;;SECTION 3.2.3
@@ -278,9 +278,9 @@
 (define (make-withdraw balance)
   (lambda (amount)
     (if (>= balance amount)
-        (begin (set! balance (- balance amount))
-               balance)
-        "Insufficient funds")))
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds")))
 
 ;: (define W1 (make-withdraw 100))
 ;: (W1 50)
@@ -294,9 +294,9 @@
   (let ((balance initial-amount))
     (lambda (amount)
       (if (>= balance amount)
-          (begin (set! balance (- balance amount))
-                 balance)
-          "Insufficient funds"))))
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))))
 
 
 ;: (define W1 (make-withdraw 100))
@@ -314,8 +314,8 @@
     (average guess (/ x guess)))
   (define (sqrt-iter guess)
     (if (good-enough? guess)
-        guess
-        (sqrt-iter (improve guess))))
+      guess
+      (sqrt-iter (improve guess))))
   (sqrt-iter 1.0))
 
 
@@ -324,9 +324,9 @@
 (define (make-account balance)
   (define (withdraw amount)
     (if (>= balance amount)
-        (begin (set! balance (- balance amount))
-               balance)
-        "Insufficient funds"))
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds"))
   (define (deposit amount)
     (set! balance (+ balance amount))
     balance)
@@ -359,8 +359,8 @@
 ;; EXERCISE 3.12
 (define (append x y)
   (if (null? x)
-      y
-      (cons (car x) (append (cdr x) y))))
+    y
+    (cons (car x) (append (cdr x) y))))
 
 (define (append! x y)
   (set-cdr! (last-pair x) y)
@@ -368,8 +368,8 @@
 
 (define (last-pair x)
   (if (null? (cdr x))
-      x
-      (last-pair (cdr x))))
+    x
+    (last-pair (cdr x))))
 
 ;: (define x (list 'a 'b))
 ;: (define y (list 'c 'd))
@@ -394,10 +394,10 @@
 (define (mystery x)
   (define (loop x y)
     (if (null? x)
-        y
-        (let ((temp (cdr x)))
-          (set-cdr! x y)
-          (loop temp x))))
+      y
+      (let ((temp (cdr x)))
+        (set-cdr! x y)
+        (loop temp x))))
   (loop x '()))
 
 
@@ -420,10 +420,10 @@
 ;; EXERCISE 3.16
 (define (count-pairs x)
   (if (not (pair? x))
-      0
-      (+ (count-pairs (car x))
-         (count-pairs (cdr x))
-         1)))
+    0
+    (+ (count-pairs (car x))
+       (count-pairs (cdr x))
+       1)))
 
 
 ;;;Mutation as assignment
@@ -481,8 +481,8 @@
 
 (define (front-queue queue)
   (if (empty-queue? queue)
-      (error "FRONT called with an empty queue" queue)
-      (car (front-ptr queue))))
+    (error "FRONT called with an empty queue" queue)
+    (car (front-ptr queue))))
 
 (define (insert-queue! queue item)
   (let ((new-pair (cons item '())))
@@ -491,16 +491,16 @@
            (set-rear-ptr! queue new-pair)
            queue)
           (else
-           (set-cdr! (rear-ptr queue) new-pair)
-           (set-rear-ptr! queue new-pair)
-           queue)))) 
+            (set-cdr! (rear-ptr queue) new-pair)
+            (set-rear-ptr! queue new-pair)
+            queue)))) 
 
 (define (delete-queue! queue)
   (cond ((empty-queue? queue)
          (error "DELETE! called with an empty queue" queue))
         (else
-         (set-front-ptr! queue (cdr (front-ptr queue)))
-         queue))) 
+          (set-front-ptr! queue (cdr (front-ptr queue)))
+          queue))) 
 
 
 ;; EXERCISE 3.21
@@ -516,8 +516,8 @@
 (define (lookup key table)
   (let ((record (assoc key (cdr table))))
     (if record
-        (cdr record)
-        false)))
+      (cdr record)
+      false)))
 
 (define (assoc key records)
   (cond ((null? records) false)
@@ -527,9 +527,9 @@
 (define (insert! key value table)
   (let ((record (assoc key (cdr table))))
     (if record
-        (set-cdr! record value)
-        (set-cdr! table
-                  (cons (cons key value) (cdr table)))))
+      (set-cdr! record value)
+      (set-cdr! table
+                (cons (cons key value) (cdr table)))))
   'ok)
 
 (define (make-table)
@@ -539,25 +539,25 @@
 (define (lookup key-1 key-2 table)
   (let ((subtable (assoc key-1 (cdr table))))
     (if subtable
-        (let ((record (assoc key-2 (cdr subtable))))
-          (if record
-              (cdr record)
-              false))
-        false)))
+      (let ((record (assoc key-2 (cdr subtable))))
+        (if record
+          (cdr record)
+          false))
+      false)))
 
 (define (insert! key-1 key-2 value table)
   (let ((subtable (assoc key-1 (cdr table))))
     (if subtable
-        (let ((record (assoc key-2 (cdr subtable))))
-          (if record
-              (set-cdr! record value)
-              (set-cdr! subtable
-                        (cons (cons key-2 value)
-                              (cdr subtable)))))
-        (set-cdr! table
-                  (cons (list key-1
-                              (cons key-2 value))
-                        (cdr table)))))
+      (let ((record (assoc key-2 (cdr subtable))))
+        (if record
+          (set-cdr! record value)
+          (set-cdr! subtable
+                    (cons (cons key-2 value)
+                          (cdr subtable)))))
+      (set-cdr! table
+                (cons (list key-1
+                            (cons key-2 value))
+                      (cdr table)))))
   'ok)
 
 ;; local tables
@@ -566,24 +566,24 @@
     (define (lookup key-1 key-2)
       (let ((subtable (assoc key-1 (cdr local-table))))
         (if subtable
-            (let ((record (assoc key-2 (cdr subtable))))
-              (if record
-                  (cdr record)
-                  false))
-            false)))
+          (let ((record (assoc key-2 (cdr subtable))))
+            (if record
+              (cdr record)
+              false))
+          false)))
     (define (insert! key-1 key-2 value)
       (let ((subtable (assoc key-1 (cdr local-table))))
         (if subtable
-            (let ((record (assoc key-2 (cdr subtable))))
-              (if record
-                  (set-cdr! record value)
-                  (set-cdr! subtable
-                            (cons (cons key-2 value)
-                                  (cdr subtable)))))
-            (set-cdr! local-table
-                      (cons (list key-1
-                                  (cons key-2 value))
-                            (cdr local-table)))))
+          (let ((record (assoc key-2 (cdr subtable))))
+            (if record
+              (set-cdr! record value)
+              (set-cdr! subtable
+                        (cons (cons key-2 value)
+                              (cdr subtable)))))
+          (set-cdr! local-table
+                    (cons (list key-1
+                                (cons key-2 value))
+                          (cdr local-table)))))
       'ok)    
     (define (dispatch m)
       (cond ((eq? m 'lookup-proc) lookup)
