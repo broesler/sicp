@@ -66,7 +66,8 @@
 
 
 
-(define transaction-cost 1.0)
+; (define transaction-cost 1.0) ; default
+(define transaction-cost 0.1)
 
 (define (make-arbitrager name balance contracts authorization)
   (let ((trader-serializer (make-serializer)))
@@ -104,7 +105,11 @@
     me))
 
 (define nick-leeson
-  (make-arbitrager "Nick Leeson" 1000000000. 0.0 10000.))
+  ; (make-arbitrager "Nick Leeson" 1000000000. 0.0 10000.))
+  (make-arbitrager "Nick Leeson" 1.0e9 0.0 1.0e4))
+
+(define bob-citron
+  (make-arbitrager "Bob Citron" 1.7e9 0.0 1.0e4))
 
 ;;; The following parameters determine the way the Nikkei average
 ;;;  drifts over time, and how the two markets differ.  The details of
@@ -179,6 +184,8 @@
 ;;; The following starts a bunch of threads running in parallel
 ;;;  and makes a procedure to stop all of the parallel threads.
 
+(define stop-world (lambda () true))
+
 (define (start-world)
   (if stop-world (stop-world))
   (set! stop-world
@@ -188,9 +195,15 @@
                         3000) 
       (do-aperiodically (lambda ()
                           (nick-leeson 'consider-a-trade))
-                        4000) 
+                        4000)  ; default
+      (do-aperiodically (lambda ()
+                          (bob-citron 'consider-a-trade))
+                        3000)  ; default
       (do-aperiodically (lambda ()
                           (audit nick-leeson))
+                        20000)
+      (do-aperiodically (lambda ()
+                          (audit bob-citron))
                         20000)
       (do-aperiodically (lambda ()
                           (tokyo 'execute-an-order))

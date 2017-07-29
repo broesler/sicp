@@ -7,16 +7,11 @@
 ;;      Simulation and Concurrency: How England Lost Her Barings
 ;;
 ;;==============================================================================
-(load "gauss.scm")
-(load "parallel.scm")
-(load "nikkei.scm")
-
-;;; Test function
-(define (SHOULD-BE x?)
-  (newline)
-  (if x?
-    (display "; Passed test!")
-    (display "; Failed test!")))
+(define load-ps 
+  (lambda ()
+    (load "gauss.scm")
+    (load "parallel.scm")
+    (load "nikkei.scm")))
 
 ;------------------------------------------------------------------------------- 
 ;       Exercises 
@@ -77,5 +72,22 @@
 ; Thus, the pending-orders list may be altered by a new-order! before it is
 ; executed.
 
+; (newline) (display ";;;;;;;;;; Exercise 3 ;;;;;;;;;;")
+; The shared values protected by make-arbitrager are:
+;   1. balance
+;   2. contracts
+; trader-serializer serializes the set! operation on balance and contracts, such
+; that the traders' account always has a balance and number of contracts that
+; are self-consistent.
+
+; (newline) (display ";;;;;;;;;; Exercise 4 ;;;;;;;;;;")
+; Leeson's anomalous contracts values appear when the audit happens between
+; arbitrage trades. Leeson holds a position only for the time it takes to
+; complete two transactions, so, occasionally, the audit occurs between these
+; transactions. We could set up the simulation such that audits only occur at
+; the end of the "day", or at set times, and only have Nick complete his
+; arbitrage trades between those times. 
+
+; (newline) (display ";;;;;;;;;; Exercise 5 ;;;;;;;;;;")
 ;;==============================================================================
 ;;==============================================================================
