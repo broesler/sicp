@@ -61,10 +61,19 @@
 (define (prime? n)
   (fast-prime? n 100))
 
-(stream-car
- (stream-cdr
-  (stream-filter prime?
-                 (stream-enumerate-interval 10000 1000000))))
+;; Original code:
+; (stream-car
+;  (stream-cdr
+;   (stream-filter prime?
+;                  (stream-enumerate-interval 10000 1000000))))
+
+;; Define stream-cadr
+(define (stream-cadr x) (stream-car (stream-cdr x)))
+
+;;; Test code:
+; (stream-cadr
+;   (stream-filter prime?
+;                  (stream-enumerate-interval 10000 1000000)))
 
 ;;==============================================================================
 ;;==============================================================================
