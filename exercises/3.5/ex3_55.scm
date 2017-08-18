@@ -18,7 +18,7 @@
     (add-streams (stream-cdr s)
                  (partial-sums s))))
 
-(display-stream-n (partial-sums integers) 4)
+; (display-stream-n (partial-sums integers) 4)
 
 ; Value: 1
 ; Value: 3
