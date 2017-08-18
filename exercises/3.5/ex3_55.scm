@@ -17,12 +17,6 @@
     (add-streams (stream-cdr s)
                  (partial-sums s))))
 
-;;; Enumerate items in a sequence
-(define (enumerate-interval low high)
-  (if (> low high)
-    nil
-    (cons low (enumerate-interval (+ low 1) high))))
-
 (define irange (enumerate-interval 0 3))
 (for-each (lambda (x) (printval (stream-ref (partial-sums integers) x)))
           irange)
