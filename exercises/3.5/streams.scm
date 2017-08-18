@@ -39,6 +39,13 @@
   (newline)
   (display x))
 
+;; Display n elements of stream
+(define (display-stream-n s n)
+  (define irange (enumerate-interval 0 n))
+  (define (p-val x) (printval (stream-ref s x)))
+  (for-each p-val irange)
+  (newline))
+
 (define (stream-car stream) (car stream))
 (define (stream-cdr stream) (force (cdr stream)))
 
