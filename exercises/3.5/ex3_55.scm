@@ -26,6 +26,7 @@
 (define irange (enumerate-interval 0 3))
 (for-each (lambda (x) (printval (stream-ref (partial-sums integers) x)))
           irange)
+
 ; Value: 1
 ; Value: 3
 ; Value: 6
