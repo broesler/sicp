@@ -6,6 +6,7 @@
 ;;  Description: 
 ;;
 ;;==============================================================================
+(load "streams.scm")
 
 ;;; Exercise 3.55.  Define a procedure partial-sums that takes as argument a stream
 ;;; S and returns the stream whose elements are S0, S0 + S1, S0 + S1 + S2, ... 
@@ -17,9 +18,7 @@
     (add-streams (stream-cdr s)
                  (partial-sums s))))
 
-(define irange (enumerate-interval 0 3))
-(for-each (lambda (x) (printval (stream-ref (partial-sums integers) x)))
-          irange)
+(display-stream-n (partial-sums integers) 4)
 
 ; Value: 1
 ; Value: 3

@@ -16,29 +16,28 @@
 (define (integrate-series s)
   (div-streams s integers))
 
-(display "∫ 1 + x + x^2 + ... dx = ")
-(define s (cons-stream 0 (integrate-series ones)))
-(display-stream-n s 5)
+;;; Test code:
+; (display "∫ 1 + x + x^2 + ... dx = ")
+; (define s (cons-stream 0 (integrate-series ones)))
+; (display-stream-n s 6)
 
 ;;; (b) Define exponential series as its own derivative, except for e^0 = 1
 (define exp-series
   (cons-stream 1 (integrate-series exp-series)))
 
 ;;; Generate sin and cos series from exponential
-(define (negate x) (- x))
-
 (define cosine-series
-  (cons-stream 1 (integrate-series (stream-map negate sine-series))))
+  (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
 
 (define sine-series
   (cons-stream 0 (integrate-series cosine-series)))
 
 ;;; Test code:
-(display "e^x = ")
-(display-stream-n exp-series 5)
-(display "Cosine = ")
-(display-stream-n cosine-series 5)
-(display "Sine = ")
-(display-stream-n   sine-series 5)
+; (display "e^x = ")
+; (display-stream-n exp-series 6)
+; (display "Cosine = ")
+; (display-stream-n cosine-series 6)
+; (display "Sine = ")
+; (display-stream-n   sine-series 6)
 ;;==============================================================================
 ;;==============================================================================

@@ -41,7 +41,7 @@
 
 ;; Display n elements of stream
 (define (display-stream-n s n)
-  (define irange (enumerate-interval 0 n))
+  (define irange (enumerate-interval 0 (- n 1)))
   (define (p-val x) (printval (stream-ref s x)))
   (for-each p-val irange)
   (newline))
@@ -87,6 +87,8 @@
 (define integers (cons-stream 1 (add-streams ones integers)))
 (define (add-streams s1 s2)
   (stream-map + s1 s2))
+(define (mul-streams s1 s2)
+  (stream-map * s1 s2))
 (define (scale-stream stream factor)
   (stream-map (lambda (x) (* x factor)) stream))
 
@@ -127,6 +129,13 @@
   (if (> low high)
     nil
     (cons low (enumerate-interval (+ low 1) high))))
+
+;;; Convert list to stream for ease of testing
+(define (list-stream lst)
+  (if (null? lst)
+    the-empty-stream
+    (cons-stream (car lst)
+                 (list-stream (cdr lst)))))
 
 ;;==============================================================================
 ;;==============================================================================
