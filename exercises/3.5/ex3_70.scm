@@ -41,8 +41,8 @@
 (define (weight p)
   (+ (car p) (cadr p)))
 (define s (weighted-pairs integers integers weight))
-(display "i+j:")
-(display-stream-n s 10)
+; (display "i+j:")
+; (display-stream-n s 10)
 
 ;; (b) (i,j) s.t. i ≤ j, neither is divisible by 2, 3, or 5, order by 2i+3j+5ij
 (define (weight p)
@@ -60,8 +60,8 @@
 (define ndints (stream-filter divisible? integers))
 
 (define s (weighted-pairs ndints ndints weight))
-(display "2*i + 3*j + 5*i+j:")
-(display-stream-n s 10)
+; (display "2*i + 3*j + 5*i+j:")
+; (display-stream-n s 10)
 
 
 
