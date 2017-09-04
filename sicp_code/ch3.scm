@@ -1484,7 +1484,7 @@
 
 
 ;;;SECTION 3.5.3
-
+(define (average a b) (/ (+ a b) 2))
 (define (sqrt-improve guess x)
   (average guess (/ x guess)))
 
@@ -1504,8 +1504,8 @@
   (cons-stream (/ 1.0 n)
                (stream-map - (pi-summands (+ n 2)))))
 
-;: (define pi-stream
-;:   (scale-stream (partial-sums (pi-summands 1)) 4))
+(define pi-stream
+  (scale-stream (partial-sums (pi-summands 1)) 4))
 
 ;: (display-stream pi-stream)
 
