@@ -17,21 +17,15 @@
                  (p2car (stream-car p2))
                  (w1 (weight p1car))
                  (w2 (weight p2car)))
-            (cond ((< w1 w2)
-                   (cons-stream p1car 
-                                (weighted-merge (stream-cdr p1) 
-                                                p2 
-                                                weight)))
-                  ((> w1 w2)
-                   (cons-stream p2car 
-                                (weighted-merge p1 
-                                                (stream-cdr p2) 
-                                                weight)))
-                  (else
-                    (cons-stream p1car
-                                 (weighted-merge (stream-cdr p1)
-                                                 (stream-cdr p2) 
-                                                 weight))))))))
+            (if (< w1 w2)
+                (cons-stream p1car 
+                             (weighted-merge (stream-cdr p1) 
+                                             p2 
+                                             weight))
+                (cons-stream p2car 
+                             (weighted-merge p1 
+                                             (stream-cdr p2) 
+                                             weight)))))))
 
 ;; Create stream of pairs ordered by weight
 (define (weighted-pairs s t weight)
@@ -48,18 +42,20 @@
   (+ (car p) (cadr p)))
 (define s (weighted-pairs integers integers weight))
 (display "i+j:")
-(display-stream-n s 20)
+(display-stream-n s 10)
 
 ;; (b) (i,j) s.t. i ≤ j, neither is divisible by 2, 3, or 5, order by 2i+3j+5ij
 (define (weight p)
-  (+ (* 2 (car p)) 
-     (* 3 (cadr p)) 
-     (* 5 (car p) (cadr p))))
+  (let ((i (car p))
+        (j (cadr p)))
+  (+ (* 2 i) 
+     (* 3 j) 
+     (* 5 i j))))
 
 (define (divisible? x)
-  (not (or (= (remainder x 2) 0)
-           (= (remainder x 3) 0)
-           (= (remainder x 5) 0))))
+  (not (or (zero? (remainder x 2))
+           (zero? (remainder x 3))
+           (zero? (remainder x 5)))))
 
 (define ndints (stream-filter divisible? integers))
 
