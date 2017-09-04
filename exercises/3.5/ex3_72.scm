@@ -1,35 +1,35 @@
 ;;==============================================================================
-;;     File: ex3_71.scm
-;;  Created: 09/04/2017, 18:14
+;;     File: ex3_72.scm
+;;  Created: 09/04/2017, 18:42
 ;;   Author: Bernie Roesler
 ;;
-;;  Description: Ramanujan numbers (i,j) s.t. i^3 + j^3 = i^3 + j^3 for
-;;    different pairs of (i,j)
+;;  Description: Numbers that can be written as sum of two squares in three
+;;    different ways
 ;;
 ;;==============================================================================
 (load "ex3_70.scm") ; weighted-pairs
 
 ;; Generate stream of Ramanujan numbers
-(define (ramanujan-s)
-  (define (cube x) (* x x x))
+(define (sum-of-squares)
+  (define (square x) (* x x))
   (define (weight p)
-    (+ (cube (car p)) 
-       (cube (cadr p))))
+    (+ (square (car p)) 
+       (square (cadr p))))
   (define s (weighted-pairs integers integers weight))  ; ordered pairs
   (define (search t)
     (let* ((a (stream-car t))
            (b (stream-cadr t))
+           (c (stream-caddr t))
            (wa (weight a))
-           (wb (weight b)))
-      (if (= wa wb)
-        (cons-stream (list wa a b) 
-                     (search (stream-cdr (stream-cdr t))))
+           (wb (weight b))
+           (wc (weight c)))
+      (if (and (= wa wb) (= wb wc))
+        (cons-stream (list wa a b c) 
+                     (search (stream-cdr (stream-cdr (stream-cdr t)))))
         (search (stream-cdr t)))))
   (search s))
 
-(display "stream-s:")
-(display-stream-n (ramanujan-s) 6)
-
+(display-stream-n (sum-of-squares) 6)
 
 ;;==============================================================================
 ;;==============================================================================

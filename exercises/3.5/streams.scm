@@ -76,6 +76,7 @@
 
 ;; Define stream-cadr
 (define (stream-cadr x) (stream-car (stream-cdr x)))
+(define (stream-caddr x) (stream-car (stream-cdr (stream-cdr x))))
 
 ;;; Test code:
 ; (stream-cadr
