@@ -1638,7 +1638,7 @@
   y)
 
 
-;: (stream-ref (solve (lambda (y) y) 1 0.001) 1000)
+;: (stream-ref (solve (lambda (y) y) 1 1e-3) 1e3)
 
 
 ;; EXERCISE 3.77

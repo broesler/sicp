@@ -132,11 +132,11 @@
     (cons low (enumerate-interval (+ low 1) high))))
 
 ;;; Convert list to stream for ease of testing
-(define (list-stream lst)
+(define (list->stream lst)
   (if (null? lst)
     the-empty-stream
     (cons-stream (car lst)
-                 (list-stream (cdr lst)))))
+                 (list->stream (cdr lst)))))
 
 ;;; SECTION 3.5.3
 (define (average a b) (/ (+ a b) 2))
